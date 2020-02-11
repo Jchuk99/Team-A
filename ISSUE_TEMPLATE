@@ -12,3 +12,5 @@ Steps to reproduce: Tell us how to reproduce this issue.
 Expected behaviour: Tell us what should happen
 
 Actual behaviour: Tell us what happens instead
+
+Inspired by https://github.com/angular-translate/angular-translate/blob/master/.github/ISSUE_TEMPLATE.md
