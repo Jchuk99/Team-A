@@ -2,7 +2,7 @@
  * TrainController
  * Primary Author: Jacob Heilman
  * Secondary Authors: Calvin Yu, Eric Price, Jason Chukwu, Chi Kwok Lee
- * Version 0.2
+ * Version 0.3
  *
  * Copyright notice
  * This program provies functionality for a train controller. 
@@ -54,7 +54,7 @@ public class TrainController extends Module {
 	/**
 	
 	*/
-	public class ControllerInternals{
+	public class Controller{
 		/**
 		
 		*/
@@ -187,7 +187,7 @@ public class TrainController extends Module {
 	// /**
 		
 	// */
-	// public class TrainInterface{
+	// public class Train{
 		
 		// /**
 		
@@ -242,7 +242,7 @@ public class TrainController extends Module {
 	// /**
 		
 	// */
-	// public class PowerStuff{
+	// public class Power{
 		
 		// /**
 		

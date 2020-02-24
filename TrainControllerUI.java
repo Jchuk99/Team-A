@@ -2,7 +2,7 @@
  * TrainControllerUI
  * Primary Author: Jacob Heilman
  * Secondary Authors: Calvin Yu, Eric Price, Jason Chukwu, Chi Kwok Lee
- * Version 0.3
+ * Version 0.5
  *
  * Copyright notice
  * This program provides a GUI for a train controller 
@@ -74,11 +74,12 @@ public class TrainControllerUI extends Application {
 						
 							
 							ToggleButton manualModeButton=new ToggleButton("Manual Mode");
+							manualModeButton.setSelected(attachedTrainController.Controller.getManualModeOn());
 							manualModeButton.setOnAction(new EventHandler<ActionEvent>() {
  
 								@Override
 								public void handle(ActionEvent event) {
-									attachedTrainController.setManualModeOn(!attachedTrainController.getManualModeOn());
+									attachedTrainController.setManualModeOn(!attachedTrainController.Controller.getManualModeOn());
 								}
 							});
 							
