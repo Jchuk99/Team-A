@@ -1,5 +1,3 @@
-package src.track_controller;
-
 public class PLC{
 	private String id = null;
 	public PLC(String[] plcTokens){
@@ -14,5 +12,9 @@ public class PLC{
 
     public void setID(String id) {
         this.id = id;
+    }
+
+    public void parseAndCompile(){
+    	
     }
 }
