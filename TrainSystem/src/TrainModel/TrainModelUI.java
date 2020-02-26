@@ -116,9 +116,11 @@ public class TrainModelUI extends Application {
         Circle circleG = createCircle(10, Color.GREEN);
         Circle circleY = createCircle(10, Color.YELLOW);
         Circle circleR = createCircle(10, Color.RED);
-        final HBox signalBox = new HBox(10, circleG, circleY, circleR);
-        signalBox.setAlignment(Pos.CENTER);
-        signalBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 2; -fx-padding: 10;");
+        final HBox circleBox = new HBox(10, circleG, circleY, circleR);
+        circleBox.setAlignment(Pos.CENTER);
+        circleBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 2; -fx-padding: 10;");
+
+        final HBox signalBox = new HBox(10, createTextBox("Signal Light"), circleBox);
 
         final HBox topBox = new HBox(10, createHSpacer(), timeBox, createHSpacer(), signalBox, createHSpacer());
         return topBox;
