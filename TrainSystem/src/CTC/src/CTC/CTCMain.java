@@ -1,6 +1,7 @@
+package CTC;
 import javafx.application.Application;
 
-public class Main{
+public class CTCMain{
 
   /*  public static void main(String [] args){
         Application.launch(CTCUI.class, args);
@@ -17,8 +18,7 @@ public class Main{
        
         CTCModule ctcOffice = new CTCModule(30);
         ctcUI.setCTCModule(ctcOffice);
-        ctcOffice.setTest(20);
-        ctcUI.printSomething();
+
 
 }
 }

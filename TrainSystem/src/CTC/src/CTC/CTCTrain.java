@@ -1,13 +1,26 @@
+package CTC;
+
 public class CTCTrain{
 
     private int authority;
     private int suggestedSpeed; // IN METERS PER SECOND INTERALLY
     private int trainID;
     private int destination;
+    private int currPos;
+    private Route route;
 
     public CTCTrain(){
+        // to show that train is in the yard
+        currPos = -1;
+        route = new Route();
     }
-    
+
+    public void dispatchRoute(int blockDest){
+        int start = 0;
+        if (currPos != -1) start = currPos;
+        route = new Route();
+        route.addPath(start, blockDest);
+    }
     
     public void setAuthority(int authority){
         this.authority = authority;

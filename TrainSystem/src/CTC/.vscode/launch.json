@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - CTCMain",
+            "request": "launch",
+            "mainClass": "CTC.CTCMain",
+            "projectName": "CTCUI"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - Main",
             "request": "launch",
             "mainClass": "Main",
@@ -15,14 +22,14 @@
             "type": "java",
             "name": "Debug (Launch) - Current File",
             "request": "launch",
-            "vmArgs": "--module-path C:\\Users\\Udoka\\Desktop\\javafx-sdk-13.0.2\\lib --add-modules javafx.controls,javafx.fxml",
+            "vmArgs": "--module-path C:\\Users\\Jason\\Desktop\\javafx-sdk-13.0.2\\lib --add-modules javafx.controls,javafx.fxml",
             "mainClass": "${file}"
         },
         {
             "type": "java",
             "name": "Debug (Launch) - CTCUI<CTCUI>",
             "request": "launch",
-            "vmArgs": "--module-path C:\\Users\\Udoka\\Desktop\\javafx-sdk-13.0.2\\lib --add-modules javafx.controls,javafx.fxml",
+            "vmArgs": "--module-path C:\\Users\\Jason\\Desktop\\javafx-sdk-13.0.2\\lib --add-modules javafx.controls,javafx.fxml",
             "mainClass": "CTCUI",
             "projectName": "CTCUI"
         }
