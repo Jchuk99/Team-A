@@ -1,3 +1,5 @@
+package src.train_controller;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

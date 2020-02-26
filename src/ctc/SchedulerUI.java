@@ -1,4 +1,6 @@
-public class Schedule extends Person {
+package src.ctc;
+
+public class SchedulerUI extends Person {
 
     private String blockID = null;
     private String station = null;
@@ -6,10 +8,10 @@ public class Schedule extends Person {
     private String trainTwo  = null;
     private String trainThree  = null;
 
-    public Schedule(){
+    public SchedulerUI(){
     }
 
-    public Schedule (String blockID, String station, String trainOne, String trainTwo, String trainThree){
+    public SchedulerUI (String blockID, String station, String trainOne, String trainTwo, String trainThree){
         this.blockID = blockID;
         this.station = station;
         this.trainOne = trainOne;

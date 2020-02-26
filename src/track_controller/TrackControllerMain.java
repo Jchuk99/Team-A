@@ -1,3 +1,5 @@
+package src.track_controller;
+
 import javafx.application.Application;
 
 public class TrackControllerMain{

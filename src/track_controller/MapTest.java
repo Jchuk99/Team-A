@@ -1,3 +1,5 @@
+package src.track_controller;
+
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;

@@ -1,3 +1,5 @@
+package src.ctc; 
+
 public class Person {
 
     private String firstName = null;

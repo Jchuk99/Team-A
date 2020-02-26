@@ -1,3 +1,4 @@
+package src.track_controller;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -48,7 +49,11 @@ public class WaysideUI extends Application {
         trackControllerModule = trackControllerModule0;
     }
 
+    }
 
+    public static void setTrackControllerModule(TrackControllerModule trackControllerModule0){
+        trackControllerModule = trackControllerModule0;
+    }
 
     public static void getPLCTextBox(int option){
         Stage popupwindow = new Stage();   
@@ -121,11 +126,19 @@ public class WaysideUI extends Application {
         TableView plcTable = new TableView();
         TableColumn<String, Person> plcs = new TableColumn<>("Select PLC");
         plcs.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+
         for(Map.Entry mapElement : waysideController.entrySet()){
             plc.setCellValueFactory(waysideControllers.get(section)
         }
         
         
+
+        /*for(Map.Entry mapElement : waysideController.entrySet()){
+            plc.setCellValueFactory(waysideControllers.get(section)
+        }
+        
+        */
+
         plcTable.getColumns().add(plcs);
         plcTable.getItems().add(new Person("3", "1"));
         /*plcTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
