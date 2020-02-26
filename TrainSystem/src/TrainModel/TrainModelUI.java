@@ -149,7 +149,7 @@ public class TrainModelUI extends Application {
 
         VBox label5 = createLabelBox("150");
         VBox label6 = createLabelBox("52.2 tons");
-        VBox label7 = createLabelBox("0.44 m/s^2");
+        VBox label7 = createLabelBox("0.44 ft/s^2");
         VBox label8 = createLabelBox("0.5 %");
         VBox label9 = createLabelBox("70 F");
         VBox labelBox2 = new VBox(10, label5, label6, label7, label8, label9);
