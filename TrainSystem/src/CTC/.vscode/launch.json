@@ -4,7 +4,13 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - CTCUI",
+            "request": "launch",
+            "mainClass": "CTCUI",
+            "projectName": "CTC_64e204a8"
+        },
         {
             "type": "java",
             "name": "Debug (Launch) - Current File",
@@ -19,7 +25,6 @@
             "vmArgs": "--module-path C:\\Users\\Jason\\Desktop\\javafx-sdk-13.0.2\\lib --add-modules javafx.controls,javafx.fxml",
             "mainClass": "CTCUI",
             "projectName": "CTCUI"
-       
         }
     ]
 }
