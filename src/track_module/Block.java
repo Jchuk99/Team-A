@@ -3,46 +3,15 @@ package src.track_module;
 import java.util.HashSet;
 import java.util.Set;
 
-abstract public class Block {
-    Set<Edge> edges= new HashSet<Edge>();
-    boolean occupied= false;
-    boolean functional= true;
-    String line;
-    char section;
-    int length;
-    int blockNumber;
-    float speedLimit;
-    float grade;
-    float elevation;
-    float cummElevation;
-    boolean underground;
-    boolean heater= false;
+import src.track_module.FinalBlock;
 
+abstract public class Block extends FinalBlock {
+    Set<Edge> edges= new HashSet<Edge>();
 
     Block( String line, char section, int blockNumber, int length, float speedLimit, float grade, 
         float elevation, float cummElevation, boolean underground) {
-        this.line= line;
-        this.section= section;
-        this.blockNumber= blockNumber;
-        this.length= length;
-        this.speedLimit= speedLimit;
-        this.grade= grade;
-        this.elevation= elevation;
-        this.underground= underground;
+        super(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground);
     }
-
-    public String getLine() {return line;};
-    public char getSection() {return section;};
-    public int getBlockNumber() {return blockNumber;};
-    public boolean getOccupied() {return occupied;};
-    public boolean getFunctional() {return functional;};
-    public boolean getUndeground() {return underground;};
-    public boolean getHeater() {return heater;};
-    public int getLength() {return length;};
-    public float getSpeedLimit() {return speedLimit;};
-    public float getElevation() {return elevation;};
-    public float getCummElevation() {return cummElevation;};
-    public float getGrade() {return grade;};
 
     public void setOccupied( boolean set) {occupied= set;};
     public void setFunctional( boolean set) {functional= set;};
@@ -53,10 +22,10 @@ abstract public class Block {
 }
 
 class Edge {
-    Block block;
+    FinalBlock block;
     Boolean connected;
 
-    Edge( Block block, Boolean connected) {
+    Edge( FinalBlock block, Boolean connected) {
         this.block= block;
         this.connected= connected;
     }

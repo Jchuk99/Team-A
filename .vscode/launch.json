@@ -13,13 +13,13 @@
             "name": "CodeLens (Launch) - Main",
             "request": "launch",
             "mainClass": "src.Main",
-            "vmArgs": "--module-path ${workspaceFolder}/deps/javafx-sdk-13.0.2/lib --add-modules javafx.controls,javafx.fxml"
+            "vmArgs": "--module-path \"${workspaceFolder}/deps/javafx-sdk-13.0.2/lib\" --add-modules javafx.controls,javafx.fxml"
         },
         {
             "type": "java",
             "name": "Debug (Launch) - Current File",
             "request": "launch",
-            "vmArgs": "--module-path ${workspaceFolder}/deps/javafx-sdk-13.0.2/lib --add-modules javafx.controls,javafx.fxml",
+            "vmArgs": "--module-path \"${workspaceFolder}/deps/javafx-sdk-13.0.2/lib\" --add-modules javafx.controls,javafx.fxml",
             "mainClass": "${file}"
         }
     ]
