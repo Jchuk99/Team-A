@@ -1,4 +1,15 @@
 {
     "java.dependency.packagePresentation": "hierarchical",
-    "java.home":"C:\\Program Files\\Java\\jdk-13.0.2"
+    "java.home": "C:\\Program Files\\Java\\jdk-13.0.2",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Users\\Udoka\\Desktop\\javafx-sdk-13.0.2\\lib\\javafx.base.jar",
+        "c:\\Users\\Udoka\\Desktop\\javafx-sdk-13.0.2\\lib\\javafx.controls.jar",
+        "c:\\Users\\Udoka\\Desktop\\javafx-sdk-13.0.2\\lib\\javafx.fxml.jar",
+        "c:\\Users\\Udoka\\Desktop\\javafx-sdk-13.0.2\\lib\\javafx.graphics.jar",
+        "c:\\Users\\Udoka\\Desktop\\javafx-sdk-13.0.2\\lib\\javafx.media.jar",
+        "c:\\Users\\Udoka\\Desktop\\javafx-sdk-13.0.2\\lib\\javafx.swing.jar",
+        "c:\\Users\\Udoka\\Desktop\\javafx-sdk-13.0.2\\lib\\javafx.web.jar",
+        "c:\\Users\\Udoka\\Desktop\\javafx-sdk-13.0.2\\lib\\javafx-swt.jar"
+    ]
 }

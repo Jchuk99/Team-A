@@ -1,64 +1,26 @@
-public class Schedule extends Person {
+public class Schedule{
 
-    private String blockID = null;
-    private String station = null;
-    private String trainOne = null;
-    private String trainTwo  = null;
-    private String trainThree  = null;
-
+    private int trainCount = 0;
+    
     public Schedule(){
     }
 
-    public Schedule (String blockID, String station, String trainOne, String trainTwo, String trainThree){
-        this.blockID = blockID;
-        this.station = station;
-        this.trainOne = trainOne;
-        this.trainTwo = trainTwo;
-        this.trainThree = trainThree;
+    public void uploadSchedule(){
     }
 
-    public String getBlockID() {
-        return blockID;
+    public CTCTrain createTrain(int suggestedSpeed, int destination){
+        CTCTrain train = new CTCTrain();
+        
+        
+        train.setTrainID(++trainCount);
+        //train.setAuthority(authority);
+        train.setDestination(destination);
+        train.setSuggestedSpeed(suggestedSpeed);
+
+        return train;
     }
-
-    public void setBlockID(String blockID) {
-        this.blockID = blockID;
+    
+    public  void getTrains(){
     }
-
-    public String getStation() {
-        return station;
-    }
-
-    public void setStation(String station) {
-        this.station = station;
-    }
-
-    public String getTrainOne() {
-        return trainOne;
-    }
-
-    public void setTrainOne(String trainOne) {
-        this.trainOne = trainOne;
-    }
-
-    public String getTrainTwo() {
-        return trainTwo;
-    }
-
-    public void setTrainTwo(String trainTwo) {
-        this.trainTwo = trainTwo;
-    }
-    public String getTrainThree() {
-        return trainThree;
-    }
-
-    public void setTrainThree(String trainThree) {
-        this.trainThree = trainThree;
-    }
-
-
-
 
 }
-
-

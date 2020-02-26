@@ -31,11 +31,41 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import java.util.concurrent.CountDownLatch;
  
 public class CTCUI extends Application {
+    public static final CountDownLatch latch = new CountDownLatch(1);
+    public static CTCUI ctcUI = null;
+    
+    public static CTCModule ctcOffice;
     static int trainID = 0;
-    public static void main(String[] args) {
-        launch(args);
+    /*public static void main(String[] args) {
+        //launch(args);
+    }*/
+    public static CTCUI waitForStartUpTest() {
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return ctcUI;
+    }
+
+    public static void setStartUpTest(CTCUI ctcUI0) {
+        ctcUI = ctcUI0;
+        latch.countDown();
+    }
+
+    public CTCUI(){
+        setStartUpTest(this);
+    }
+
+    public void printSomething(){
+        System.out.println(ctcOffice.getTest());
+    }
+    
+    public void setCTCModule(CTCModule ctcOffice0){
+        ctcOffice = ctcOffice0;
     }
 
     public static void getManualDisplay(){
@@ -194,8 +224,8 @@ public class CTCUI extends Application {
                            "-fx-font-size:12;" + "-fx-text-fill: black;" + "-fx-padding: 5;");
         Slider speedSlider = new Slider();
         speedSlider.setMin(0); 
-        speedSlider.setMax(100); 
-        speedSlider.setValue(80); 
+        speedSlider.setMax(40); 
+        speedSlider.setValue(20); 
 
         speedSlider.valueProperty().addListener( new ChangeListener<Number>() { 
  
@@ -250,19 +280,19 @@ public class CTCUI extends Application {
         TableView scheduleTable = new TableView();
         scheduleTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         
-        TableColumn<String, Schedule> blockID = new TableColumn<>("Block ID");
+        TableColumn<String, SchedulerUI> blockID = new TableColumn<>("Block ID");
         blockID.setCellValueFactory(new PropertyValueFactory<>("blockID"));
 
-        TableColumn<String, Schedule> station = new TableColumn<>("Station");
+        TableColumn<String, SchedulerUI> station = new TableColumn<>("Station");
         station.setCellValueFactory(new PropertyValueFactory<>("station"));
 
-        TableColumn<String, Schedule> trainOne = new TableColumn<>("Train 1 Arrival Time");
+        TableColumn<String, SchedulerUI> trainOne = new TableColumn<>("Train 1 Arrival Time");
         trainOne.setCellValueFactory(new PropertyValueFactory<>("trainOne"));
 
-        TableColumn<String, Schedule> trainTwo = new TableColumn<>("Train 2 Arrival Time");
+        TableColumn<String, SchedulerUI> trainTwo = new TableColumn<>("Train 2 Arrival Time");
         trainTwo.setCellValueFactory(new PropertyValueFactory<>("trainTwo"));
 
-        TableColumn<String, Schedule> trainThree = new TableColumn<>("Train 3 Arrival Time");
+        TableColumn<String, SchedulerUI> trainThree = new TableColumn<>("Train 3 Arrival Time");
         trainThree.setCellValueFactory(new PropertyValueFactory<>("trainThree"));
 
         scheduleTable.getColumns().add(blockID);
@@ -271,10 +301,10 @@ public class CTCUI extends Application {
         scheduleTable.getColumns().add(trainTwo);
         scheduleTable.getColumns().add(trainThree);
 
-        scheduleTable.getItems().add(new Schedule("5", "WHITED", "7:30am", "8:00am", "8:30am"));
-        scheduleTable.getItems().add(new Schedule("9", "SOUTH BANK", "8:00am", "8:30am", "9:00am"));
-        scheduleTable.getItems().add(new Schedule("11", "CENTRAL", "8:30am", "9:00am", "9:30am"));
-        scheduleTable.getItems().add(new Schedule("15", "EDGEBROOK", "9:00am", "9:30am", "10:00am"));
+        scheduleTable.getItems().add(new SchedulerUI("5", "WHITED", "7:30am", "8:00am", "8:30am"));
+        scheduleTable.getItems().add(new SchedulerUI("9", "SOUTH BANK", "8:00am", "8:30am", "9:00am"));
+        scheduleTable.getItems().add(new SchedulerUI("11", "CENTRAL", "8:30am", "9:00am", "9:30am"));
+        scheduleTable.getItems().add(new SchedulerUI("15", "EDGEBROOK", "9:00am", "9:30am", "10:00am"));
         
         scheduleTable.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
   
