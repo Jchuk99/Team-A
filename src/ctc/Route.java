@@ -1,13 +1,21 @@
-package src.ctc;
+package CTC;
+import java.util.*;
 
-public class Route{
+public class Route {
 
-    Path currPath;
+    private List<Path> paths = new ArrayList<Path>();
 
     public Route(){
     }
     
     public Path getCurrPath(){
-        return currPath;
+        if (!paths.isEmpty()){
+            return paths.get(0);
+        }
+        return null;
+    }
+
+    public void addPath(int start, int end){
+        paths.add(new Path(start, end));
     }
 }

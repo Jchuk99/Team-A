@@ -1,5 +1,9 @@
+<<<<<<< HEAD:src/ctc/SchedulerUI.java
 package src.ctc;
 
+=======
+package CTC;
+>>>>>>> jason:TrainSystem/src/CTC/SchedulerUI.java
 public class SchedulerUI extends Person {
 
     private String blockID = null;
