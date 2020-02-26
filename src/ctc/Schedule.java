@@ -1,4 +1,4 @@
-package CTC;
+package src.ctc;
 public class Schedule{
 
     // list of trains

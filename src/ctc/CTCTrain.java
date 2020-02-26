@@ -1,8 +1,4 @@
-<<<<<<< HEAD:src/ctc/CTCTrain.java
 package src.ctc;
-=======
-package CTC;
->>>>>>> jason:TrainSystem/src/CTC/CTCTrain.java
 
 public class CTCTrain{
 

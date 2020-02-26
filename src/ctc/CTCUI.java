@@ -1,8 +1,4 @@
-<<<<<<< HEAD:src/ctc/CTCUI.java
 package src.ctc;
-=======
-package CTC;
->>>>>>> jason:TrainSystem/src/CTC/CTCUI.java
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;

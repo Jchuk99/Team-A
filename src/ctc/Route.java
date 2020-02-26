@@ -1,4 +1,4 @@
-package CTC;
+package src.ctc;
 import java.util.*;
 
 public class Route {

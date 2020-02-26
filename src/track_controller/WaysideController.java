@@ -1,4 +1,6 @@
-public class WaysideController{
+package src.track_controller;
+
+public class WaysideController {
 
 	//private LinkedList<Block> blocks;
 	//private LinkedList<Train> trains;

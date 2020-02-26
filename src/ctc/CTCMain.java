@@ -1,9 +1,5 @@
-<<<<<<< HEAD:src/ctc/Main.java
 package src.ctc;
 
-=======
-package CTC;
->>>>>>> jason:TrainSystem/src/CTC/CTCMain.java
 import javafx.application.Application;
 
 public class CTCMain{

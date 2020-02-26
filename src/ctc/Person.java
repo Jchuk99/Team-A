@@ -1,9 +1,5 @@
-<<<<<<< HEAD:src/ctc/Person.java
 package src.ctc; 
 
-=======
-package CTC;
->>>>>>> jason:TrainSystem/src/CTC/Person.java
 public class Person {
 
     private String firstName = null;

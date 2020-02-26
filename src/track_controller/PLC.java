@@ -1,4 +1,6 @@
-public class PLC{
+package src.track_controller;
+
+public class PLC {
 	private String id = null;
 	public PLC(String[] plcTokens){
 
