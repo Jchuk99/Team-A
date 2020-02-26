@@ -1,52 +1,58 @@
 public class WaysideController{
 
-	LinkedList<Block> blocks;
-	LinkedList<Train> trains;
+	//private LinkedList<Block> blocks;
+	//private LinkedList<Train> trains;
+	private int id;
+	private PLC plc;
 
-public WaysideController(){
 
+	public WaysideController(){
+
+	}
+
+
+	/*public void addBlock(Block block){
+		
+	}*/
+
+	private void uploadPLC(){
+		plc = new PLC("PLC 1");
+
+	}
 }
-
-public void addBlock(){
-	
-}
-private void getPLC(){
-	
-}
-
-private void setTrains()
+/*private void setTrains()
 
 
-/*private LinkedList<Block> getBlockJurisdiction(){
+private LinkedList<Block> getBlockJurisdiction(){
 	return blocks
 }
 
 private void setBlockJurisdiction(LinkedList<Block> blocks){
 	this.blocks = blocks
-}*/
+}
 
 private void toggleSwitch(LinkedList<Block>){
-	runPLC()
+	plc.runPLC()
 }
 
 private void closeBlock(LinkedList<Block>){
-	runPLC()
+	plc.runPLC()
 }
 
 private void openGate(LinkedList<Block>){
-	runPLC()
+	plc.runPLC()
 }
 
 private void activateLights(LinkedList<Block>){
-	runPLC()
+	plc.runPLC()
 }
 
 private void setSuggestedSpeed(LinkedList<Block>){
-	runPLC()
+	plc.runPLC()
 }
 
 private void setAuthority(LinkedList<Block>){
-	runPLC()
+	plc.runPLC()
 }
 
 private LinkedList<Block> getBlockInfo(LinkedList<Block>){
@@ -54,4 +60,4 @@ private LinkedList<Block> getBlockInfo(LinkedList<Block>){
 
 private
 
-}
+}*/

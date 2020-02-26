@@ -12,6 +12,7 @@ import javafx.geometry.*;
 import javafx.scene.layout.Priority; 
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.shape.*;
 import javafx.scene.paint.Color;
@@ -19,13 +20,37 @@ import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
  
 public class WaysideUI extends Application {
-    public static void main(String[] args) {
-        launch(args);
+    public static final CountDownLatch latch = new CountDownLatch(1);
+    public static WaysideUI waysideUI = null;
+    public static TrackControllerModule trackControllerModule;
+
+    public static WaysideUI waitForStartUpTest(){
+        try{
+            latch.await();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+        return waysideUI;
     }
 
-    public static void getPLCTextBox(int option, TableView plcTable){
+    public static void setStartUpTest(WaysideUI waysideUI0){
+        waysideUI = waysideUI0;
+        latch.countDown();
+    }
+
+    public static void setTrackControllerModule(TrackControllerModule trackControllerModule0){
+        trackControllerModule = trackControllerModule0;
+    }
+
+
+
+    public static void getPLCTextBox(int option){
         Stage popupwindow = new Stage();   
         popupwindow.initModality(Modality.APPLICATION_MODAL);
         final TextArea textArea3 = new TextArea();
@@ -41,16 +66,14 @@ public class WaysideUI extends Application {
          
         Button confirm = new Button("Confirm");           
         confirm.setOnAction(new EventHandler<ActionEvent>(){
-            String line;
-            //String[]; 
+            StringBuilder plcText = new StringBuilder("");
+            String line; 
             public void handle(ActionEvent event){
                 System.out.println(textArea3.getText());
                 try{
                     BufferedReader in = new BufferedReader(new FileReader(textArea3.getText()));
                     while((line = in.readLine()) != null) {
-                    
-                        PLC newPLC = new PLC(line.split(" "));
-
+                        plcText.append(line);
                     }
                 }
                 catch(FileNotFoundException e){ 
@@ -58,8 +81,8 @@ public class WaysideUI extends Application {
                 }
                 catch(IOException e) {
                 System.out.println("Error processing file.");
-                }
-                plcTable.getItems().add(new Person(textArea3.getText()));          
+                }         
+                
                 popupwindow.close();
             }
 
@@ -90,13 +113,35 @@ public class WaysideUI extends Application {
         int length = 1200;
         int height = 800;
 
+        
+        //HashMap<Character, WaysideController> waysideControllers = trackControllerModule.getWaysideControllers()
+
         /******top half******/
         //box1
-        final TableView plcTable = new TableView();
+        TableView plcTable = new TableView();
         TableColumn<String, Person> plcs = new TableColumn<>("Select PLC");
         plcs.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        /*for(Map.Entry mapElement : waysideController.entrySet()){
+            plc.setCellValueFactory(waysideControllers.get(section)
+        }
         
+        */
         plcTable.getColumns().add(plcs);
+        plcTable.getItems().add(new Person("3", "1"));
+        /*plcTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+        @Override
+        public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
+            //Check whether item is selected and set value of selected item to Label
+            if(plcTable.getSelectionModel().getSelectedItem() != null) 
+            {    
+               TableViewSelectionModel selectionModel = plcTable.getSelectionModel();
+               ObservableList selectedCells = plcTable.getSelectedCells();
+               TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+               Object val = tablePosition.getTableColumn().getCellData(newValue);
+               System.out.println("Selected Value" + val);
+             }
+             }
+         });*/
         plcTable.setPrefWidth(length/6);
 
         HBox spacer = new HBox();
@@ -107,7 +152,7 @@ public class WaysideUI extends Application {
  
             @Override
             public void handle(ActionEvent event) {
-                getPLCTextBox(1, plcTable);
+                getPLCTextBox(1);
             }
         });
         Button plcUpload = new Button();
@@ -116,7 +161,7 @@ public class WaysideUI extends Application {
  
             @Override
             public void handle(ActionEvent event) {
-                getPLCTextBox(2, plcTable);
+                getPLCTextBox(2);
             }
         });
         VBox buttonGrouper = new VBox(10, spacer, plcInput, plcUpload);
