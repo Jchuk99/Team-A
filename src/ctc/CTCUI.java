@@ -7,17 +7,18 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.beans.value.ChangeListener; 
-import javafx.beans.value.ObservableValue; 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.text.Text; 
+import javafx.scene.text.Text;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.HBox;
@@ -33,6 +34,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Pair;
+
+import java.text.DecimalFormat;
 import java.util.concurrent.CountDownLatch;
  
 public class CTCUI extends Application {
@@ -77,86 +81,22 @@ public class CTCUI extends Application {
 
         int length = 900;
         int height = 800; 
-
-        ObservableList<Person> trainData;
-        ObservableList<Person> stationData;
-        ObservableList<Person> blockData;
-
-        
+  
         /******top half******/
         //trainBox
-        TableView trainTable = new TableView();
-        trainTable.setPlaceholder(new Label("No trains available"));
-        trainTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        TableColumn<String, Person> trains = new TableColumn<>("Select Train");
-        trains.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        trainTable.getColumns().add(trains);
-
-        //TODO: Make it so that it gets stations from CTC
-        trainData = FXCollections.observableArrayList();
-        trainTable.setItems(trainData);
-        trainTable.setPrefWidth(length/6);
-        
-        Button trainInput = new Button();
-        trainInput.setText("Create new train");
-
-
-        trainInput.setOnAction(new EventHandler<ActionEvent>() {
- 
-            @Override
-            public void handle(ActionEvent event) {
-                trainData.add(new Person("Train " + ++trainID));
-            }
-        });
-        
-        
-        HBox buttonGrouper = new HBox(10, trainInput);
-        buttonGrouper.setAlignment(Pos.CENTER);
-        buttonGrouper.setPrefHeight(height/6); 
-
-        VBox trainBox = new VBox(10, trainTable, buttonGrouper);
+        Pair<VBox, TableView<Person>> p = createTrainBox(length, height);
+        VBox trainBox = p.getKey();
+        TableView<Person> trainTable = p.getValue();
         trainBox.setPrefWidth(length/3);
         trainBox.setPrefHeight(height/2);  
         trainBox.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;"); 
 
 
         //destBox
-        TableView stationTable = new TableView();
-        stationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        Pair<TableView<Person>, TableView<Person>> bTable = createBlockTables();
+        TableView<Person> stationTable = bTable.getKey();
+        TableView<Person> blocksTable = bTable.getValue();
 
-        TableColumn<String, Person> stations = new TableColumn<>("Select Destination");
-        stations.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        stationTable.getColumns().add(stations);
-         
-        //TODO: Make it so that it gets stations from CTC
-        stationData = FXCollections.observableArrayList(
-            new Person("YARD"),
-            new Person("WHITED"),
-            new Person("SOUTH BANK"),
-            new Person("CENTRAL"),
-            new Person("EDGEBROOK")
-        );
-        stationTable.setItems(stationData);
-
-        TableView blocksTable = new TableView();
-        blocksTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        TableColumn<String, Person> blocks = new TableColumn<>("Select Block");
-        blocks.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        blocksTable.getColumns().add(blocks);
-         
-        //TODO: Make it so that it gets map blocks from the CTC
-        blockData = FXCollections.observableArrayList(
-            new Person("1"),
-            new Person("2"),
-            new Person("3"),
-            new Person("4"),
-            new Person("5"),
-            new Person("6"),
-            new Person("7")
-        );
-        blocksTable.setItems(blockData);
        
         HBox destBox = new HBox(10, stationTable, blocksTable);
         destBox.setPrefWidth(length/3);
@@ -166,20 +106,20 @@ public class CTCUI extends Application {
         HBox topHalf1 = new HBox(10, trainBox, destBox);
 
 
-        TableView statusTable = new TableView();
+        TableView<Person> statusTable = new TableView();
         //statusTable.setPlaceholder(new Label("No trains selected"));
         statusTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<String, Person> trainIDStatus = new TableColumn<>("Train");
+        TableColumn<Person, String> trainIDStatus = new TableColumn<>("Train");
         trainIDStatus.setCellValueFactory(new PropertyValueFactory<>("firstName"));
 
-        TableColumn<String, Person> posStatus = new TableColumn<>("Current Position");
+        TableColumn<Person, String> posStatus = new TableColumn<>("Current Position");
         posStatus.setCellValueFactory(new PropertyValueFactory<>("currPos"));
 
-        TableColumn<String, Person> destStatus = new TableColumn<>("Destination");
+        TableColumn<Person, String> destStatus = new TableColumn<>("Destination");
         destStatus.setCellValueFactory(new PropertyValueFactory<>("destination"));
 
-        TableColumn<String, Person> speedStatus = new TableColumn<>("Suggested Speed(mph)");
+        TableColumn<Person, String> speedStatus = new TableColumn<>("Suggested Speed(mph)");
         speedStatus.setCellValueFactory(new PropertyValueFactory<>("suggestedSpeed"));
 
         statusTable.getColumns().add(trainIDStatus);
@@ -193,65 +133,33 @@ public class CTCUI extends Application {
 
         VBox box1 = new VBox(10, topHalf1, statusTable);
         box1.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
-        
-
-        Button dispatch = new Button();
-        dispatch.setText("DISPATCH");
-        dispatch.setPrefWidth(400);
-        dispatch.setPrefHeight(100);
-        //dispatch.setMaxSize(800, 800);
-        dispatch.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
-                              "-fx-background-color: green;" + "-fx-font-size:30;" + "-fx-text-fill: white;");
-
-        DropShadow shadow = new DropShadow();
-        //Adding the shadow when the mouse cursor is on
-        dispatch.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
-            @Override 
-            public void handle(MouseEvent e) {
-                dispatch.setEffect(shadow);
-            }
-        });
-        //Removing the shadow when the mouse cursor is off
-        dispatch.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
-            @Override 
-            public void handle(MouseEvent e) {
-                dispatch.setEffect(null);
-            }
-        });
-        //TODO: define a dispatch listener
 
 
         Label speed = new Label(" "); 
         speed.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
                            "-fx-font-size:12;" + "-fx-text-fill: black;" + "-fx-padding: 5;");
-        Slider speedSlider = new Slider();
-        speedSlider.setMin(0); 
-        speedSlider.setMax(40); 
-        speedSlider.setValue(20); 
+        Slider speedSlider = createSpeedSlider(speed);
+        
 
-        speedSlider.valueProperty().addListener( new ChangeListener<Number>() { 
- 
-           public void changed(ObservableValue <? extends Number > observable, Number oldValue, Number newValue) { 
-               speed.setText("Miles per Hour: " + newValue); 
-           } 
-       }); 
+        VBox sliderBox = new VBox(10, speedSlider, speed);
+        sliderBox.setAlignment(Pos.CENTER);
 
-       VBox sliderBox = new VBox(10, speedSlider, speed);
-       sliderBox.setAlignment(Pos.CENTER);
+        Text timeText = new Text("Time");
+        Label timeLabel = new Label("11:00:23 am");
+        timeLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
 
-       Text timeText = new Text("Time");
-       Label timeLabel = new Label("11:00:23 am");
-       timeLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+        HBox timeBox = new HBox(10, timeText, timeLabel);
+        timeBox.setAlignment(Pos.CENTER);
+            
 
-       HBox timeBox = new HBox(10, timeText, timeLabel);
-       timeBox.setAlignment(Pos.CENTER);
+        Button dispatch = createDispatchButton(trainTable, blocksTable, stationTable, speedSlider);
 
-   
-       VBox box3 = new VBox(10, timeBox, createSpacer(), sliderBox, createSpacer(),  dispatch);
-       box3.setPrefWidth(length/3);
-       box3.setPrefHeight(height/2);
-       box3.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
-       box3.setAlignment(Pos.CENTER);
+    
+        VBox box3 = new VBox(10, timeBox, createSpacer(), sliderBox, createSpacer(),  dispatch);
+        box3.setPrefWidth(length/3);
+        box3.setPrefHeight(height/2);
+        box3.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+        box3.setAlignment(Pos.CENTER);
 
 
         /******bottom half******/
@@ -262,9 +170,10 @@ public class CTCUI extends Application {
         scheduleButton.setPrefHeight(100);
         //scheduleButton.setMaxSize(800, 800);
         scheduleButton.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
-                               "-fx-font-size:20;" + "-fx-text-fill: black;");
+                            "-fx-font-size:20;" + "-fx-text-fill: black;");
 
         //Adding the shadow when the mouse cursor is on
+        DropShadow shadow = new DropShadow();
         scheduleButton.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
             @Override 
             public void handle(MouseEvent e) {
@@ -309,7 +218,7 @@ public class CTCUI extends Application {
         scheduleTable.getItems().add(new SchedulerUI("15", "EDGEBROOK", "9:00am", "9:30am", "10:00am"));
         
         scheduleTable.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
-  
+
         VBox bottomHalf = new VBox(10, scheduleButton, scheduleTable);
         bottomHalf.setAlignment(Pos.CENTER);
 
@@ -418,6 +327,159 @@ public class CTCUI extends Application {
         primaryStage.setScene(new Scene(fullScreen, length, height));
         primaryStage.show();
  
+    }
+    private static Pair<VBox, TableView<Person>> createTrainBox(int length, int height){
+        
+        TableView<Person> trainTable = new TableView<Person>();
+        trainTable.setPlaceholder(new Label("No trains available"));
+        trainTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<Person, String> trains = new TableColumn<>("Select Train");
+        trains.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        trainTable.getColumns().add(trains);
+
+        ObservableList<Person> trainData = FXCollections.observableArrayList();
+        trainTable.setItems(trainData);
+        trainTable.setPrefWidth(length/6);
+        
+        Button trainInput = new Button();
+        trainInput.setText("Create new train");
+
+        trainInput.setOnAction(new EventHandler<ActionEvent>() {
+ 
+            @Override
+            public void handle(ActionEvent event) {
+                trainData.add(new Person("Train " + ++trainID));
+            }
+        });
+        
+        
+        HBox buttonGrouper = new HBox(10, trainInput);
+        buttonGrouper.setAlignment(Pos.CENTER);
+        buttonGrouper.setPrefHeight(height/6); 
+
+        VBox trainBox = new VBox(10, trainTable, buttonGrouper);
+        return new Pair<VBox, TableView<Person>>(trainBox, trainTable);
+
+
+    }
+
+    private static Pair<TableView<Person>, TableView<Person>> createBlockTables(){
+        TableView<Person> stationTable = new TableView();
+        stationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<Person, String> stations = new TableColumn<>("Select Destination");
+        stations.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        stationTable.getColumns().add(stations);
+         
+        //TODO: Make it so that it gets stations from CTC
+        ObservableList<Person> stationData = FXCollections.observableArrayList(
+            new Person("YARD"),
+            new Person("WHITED"),
+            new Person("SOUTH BANK"),
+            new Person("CENTRAL"),
+            new Person("EDGEBROOK")
+        );
+        stationTable.setItems(stationData);
+
+        TableView<Person> blockTable = new TableView();
+        blockTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<Person, String> blocks = new TableColumn<>("Select Block");
+        blocks.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        blockTable.getColumns().add(blocks);
+         
+        //TODO: Make it so that it gets map blocks from the CTC
+        ObservableList<Person> blockData = FXCollections.observableArrayList(
+            new Person("1"),
+            new Person("2"),
+            new Person("3"),
+            new Person("4"),
+            new Person("5"),
+            new Person("6"),
+            new Person("7")
+        );
+        blockTable.setItems(blockData);
+       
+       
+        stationTable.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
+            if (newItem != null) {
+                blockTable.getSelectionModel().clearSelection();
+            }
+        });
+    
+        blockTable.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
+            if (newItem != null) {
+                stationTable.getSelectionModel().clearSelection();
+            }
+        });
+
+        return new Pair<TableView<Person>, TableView<Person>>(stationTable, blockTable);
+    }
+
+    private static Button createDispatchButton(TableView<Person> trainTable, TableView<Person> blocksTable,TableView<Person> stationTable  ,Slider speedSlider){
+        Button dispatch = new Button();
+        dispatch.setText("DISPATCH");
+        dispatch.setPrefWidth(400);
+        dispatch.setPrefHeight(100);
+        //dispatch.setMaxSize(800, 800);
+        dispatch.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
+                                "-fx-background-color: green;" + "-fx-font-size:30;" + "-fx-text-fill: white;");
+
+        DropShadow shadow = new DropShadow();
+        //Adding the shadow when the mouse cursor is on
+        dispatch.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+            @Override 
+            public void handle(MouseEvent e) {
+                dispatch.setEffect(shadow);
+            }
+        });
+        //Removing the shadow when the mouse cursor is off
+        dispatch.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
+            @Override 
+            public void handle(MouseEvent e) {
+                dispatch.setEffect(null);
+            }
+        });
+        //TODO: define a dispatch listener
+        dispatch.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Person block;
+                Person train;
+                double speed;
+
+                if (!blocksTable.getSelectionModel().isEmpty()){
+                    block = blocksTable.getSelectionModel().getSelectedItem();
+                }
+                else{
+                    // this is a station, so I'm going to need to transform station name into a block number... static hash table for now?
+                    block = stationTable.getSelectionModel().getSelectedItem(); 
+                }
+
+                train = trainTable.getSelectionModel().getSelectedItem();
+                speed = speedSlider.getValue();
+                ctcOffice.dispatch(train.getFirstName(), speed, block.getFirstName());
+            }
+            });                                                    
+
+            return dispatch;
+    }
+
+    private static Slider createSpeedSlider(Label speed){
+        Slider speedSlider = new Slider();
+        speedSlider.setMin(0); 
+        speedSlider.setMax(40); 
+        speedSlider.setValue(20); 
+
+        speedSlider.valueProperty().addListener( new ChangeListener<Number>() { 
+ 
+           public void changed(ObservableValue <? extends Number > observable, Number oldValue, Number newValue) { 
+                DecimalFormat df = new DecimalFormat("##.##");
+                speed.setText("Miles per Hour: " + df.format(newValue)); 
+           } 
+       }); 
+        return speedSlider;
     }
 
     private static Node createSpacer() {

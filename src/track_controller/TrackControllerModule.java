@@ -1,33 +1,34 @@
 package src.track_controller;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.*;
 
-import src.train_module.Train;
-import src.Module;
-
-public class TrackControllerModule extends Module{
+public class TrackControllerModule{
 	
-	LinkedList<Train> trains;
-	ArrayList<WaysideController> waysideControllers;
+	//LinkedList<Train> trains;
+	HashMap<Character, WaysideController> waysideControllers;
 
-	private void setWaysideControllers(ArrayList<WaysideController> waysideControllers){
-		this.waysideControllers = waysideControllers;
-	}
-	private ArrayList<WaysideController> getWaysideControllers(){
-		return waysideControllers;
-	}
+public TrackControllerModule(){
 
-	private void getTrackStatus(){
-		//go through all the waysides 
-	}
+}
 
-	private void setTrains(LinkedList<Train> trains){
-		this.trains = trains;
-	}
+private void setWaysideControllers(HashMap<Character, WaysideController> waysideControllers){
+	this.waysideControllers = waysideControllers;
+}
+private HashMap<Character, WaysideController> getWaysideControllers(){
+	return waysideControllers;
+}
 
-	public static WaysideController createWayside(){
-		WaysideController waysideController = new WaysideController();
-		return waysideController;
-	}
+/**private getTrackStatus(){
+	//go through all the waysides 
+}
+private void setTrains(LinkedList<Train> trains){
+	this.trains = trains;
+}
+private void createWayside(){
+	WaysideController waysideController = new WaysideController();
+}**/
+
+
+
+
 }

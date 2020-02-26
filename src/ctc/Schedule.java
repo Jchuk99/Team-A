@@ -1,7 +1,8 @@
 package src.ctc;
-
 public class Schedule{
 
+    // list of trains
+    // data structure to hold schedule file
     private int trainCount = 0;
     
     public Schedule(){
@@ -10,14 +11,15 @@ public class Schedule{
     public void uploadSchedule(){
     }
 
-    public CTCTrain createTrain(int suggestedSpeed, int destination){
+    public CTCTrain createTrain(String trainID, double suggestedSpeed, String destination){
         CTCTrain train = new CTCTrain();
         
         
-        train.setTrainID(++trainCount);
+        train.setTrainID(Integer.parseInt(trainID.split(" ")[1]));
         //train.setAuthority(authority);
-        train.setDestination(destination);
-        train.setSuggestedSpeed(suggestedSpeed);
+        //train.setDestination(destination);
+        //train.setSuggestedSpeed(suggestedSpeed);
+        //train.dispatchRoute(destination);
 
         return train;
     }
