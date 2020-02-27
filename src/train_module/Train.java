@@ -1,12 +1,14 @@
 package src.train_module;
 
+import src.track_module.Block;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class Train {
 
    int UUID;
-   int currentBlock = -1;
+   Block currentBlock;
+   Boolean goForward = true;
    float currentSpeed = 0;
    float currentPower = 0;
    float currentPosition = 0;
@@ -28,9 +30,13 @@ public class Train {
    Boolean engineWorking = true;
 
    final static float emptyWeight = 47;
+   final static float length = 100;
 
-   public Train(int id) {
+   public Train(int id, Block block) {
       UUID = id;
+      currentBlock = block;
+      // TODO: check direction
+
       // TODO: create train controller with UUID
       // trainControllerModule.createTrainController(id, this);
    }
@@ -43,12 +49,7 @@ public class Train {
       // TODO: put train id in correct block
    }
 
-   public void setBlock() {
-      // setBlock called by Yard
-
-   }
-
-   public void setTrain(float suggestedSpeed, float authority) {
+   public void setTrainProperties(float suggestedSpeed, float authority) {
       // setTrain called by track model only
       // TODO: pass data to train controller
       // trainController.setTrain(UUID, suggestedSpeed, authority);
@@ -63,5 +64,10 @@ public class Train {
       // TODO: destroy train controller
    }
 
-   // TODO: add rest of the methods
+   // private methods
+
+   private void setBlock() {
+
+   }
+
 }

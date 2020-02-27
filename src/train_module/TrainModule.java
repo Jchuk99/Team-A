@@ -1,12 +1,12 @@
 package src.train_module;
 
 import src.Module;
+import src.track_module.Block;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class TrainModule extends Module {
 
-   int nextID = 0;
    ObservableList<Train> trainList;
 
    public TrainModule() {
@@ -19,18 +19,8 @@ public class TrainModule extends Module {
       }
    }
 
-   public void setTrain(int id, float suggestedSpeed, float authority) {
-      Train train = getTrain(id);
-      if (train != null) train.setTrain(suggestedSpeed, authority);
-   }
-
-   public void setPower(int id, float power) {
-      Train train = getTrain(id);
-      if (train != null) train.setPower(power);
-   }
-
-   public int createTrain() {
-      Train train = new Train(++nextID);
+   public int createTrain(int id, Block block) {
+      Train train = new Train(id, block);
       trainList.add(train);
       return train.UUID;
    }
