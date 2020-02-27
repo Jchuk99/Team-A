@@ -225,7 +225,7 @@ public class TrainControllerUI extends Application {
             x=Color.RED;
         }*/
 
-        VBox light1 = createCircleBox(10, x);
+        VBox light1 = createCircleBox(10, Color.GREEN);
         VBox light2 = createCircleBox(10, Color.GREEN);
         VBox light3 = createCircleBox(10, Color.GREEN);
         VBox light4 = createCircleBox(10, Color.GREEN);
