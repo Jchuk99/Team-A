@@ -101,7 +101,7 @@ public class TrainControllerUI extends Application {
         trainTable.setPrefWidth(width / 8);
 
         // testing: add a train to test
-        trainData.add(new Train(1));
+        trainData.add(new Train(1, null));
         /****** select train ******/
 
         /****** beacon ******/
