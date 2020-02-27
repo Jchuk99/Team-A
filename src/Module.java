@@ -17,7 +17,7 @@ public abstract class Module {
     final int PERIOD= 1;
 
     public TrainModule trainModule;
-    public TrainControllerModule trainController;
+    public TrainControllerModule trainControllerModule;
     public TrackModule trackModule;
     public TrackControllerModule trackControllerModule;
     public CTCModule ctcModule;
@@ -33,8 +33,9 @@ public abstract class Module {
     }
 
     public void setTrainModule( TrainModule trainModule) {this.trainModule= trainModule;};
-    public void setTrainControllerModule( TrainControllerModule trainController) {this.trainController= trainController;};
+    public void setTrainControllerModule( TrainControllerModule trainControllerModule) {this.trainControllerModule= trainControllerModule;};
     public void setTrackModule( TrackModule trackModule) {this.trackModule= trackModule;};
     public void setTrackControllerModule( TrackControllerModule trackControllerModule) {this.trackControllerModule= trackControllerModule;};
     public void setCTCModule( CTCModule ctcModule) {this.ctcModule= ctcModule;};
+    public abstract void main();
 }

@@ -9,16 +9,17 @@ public class CTCMain{
     }*/
 
     public static void main(String[] args) {
+        CTCModule ctcOffice = new CTCModule();
+        CTCUI.setCTCModule(ctcOffice);
+
         new Thread() {
             @Override
             public void run() {
                 Application.launch(CTCUI.class);
             }
         }.start();
-        CTCUI ctcUI = CTCUI.waitForStartUpTest();
+       // CTCUI ctcUI = CTCUI.waitForStartUpTest();
        
-        CTCModule ctcOffice = new CTCModule();
-        ctcUI.setCTCModule(ctcOffice);
    
     }  
 } 
