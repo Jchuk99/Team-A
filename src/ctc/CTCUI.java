@@ -432,6 +432,14 @@ public class CTCUI extends Stage {
                 else{
                     // this is a station, so I'm going to need to transform station name into a block number... static hash table for now?
                     block = stationTable.getSelectionModel().getSelectedItem(); 
+                    if (block.getFirstName().equalsIgnoreCase("Pioneer"))
+                    {
+                        block.setFirstName("2");
+                    }
+                    else
+                    {
+                        block.setFirstName("9");
+                    }
                 }
 
                 train = trainTable.getSelectionModel().getSelectedItem();
