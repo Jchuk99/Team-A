@@ -1,12 +1,14 @@
 package src.train_module;
 
+import src.track_module.Block;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class Train {
 
    int UUID;
-   int currentBlock = -1;
+   Block currentBlock;
+   Boolean goForward = true;
    float currentSpeed = 0;
    float currentPower = 0;
    float currentPosition = 0;
@@ -18,7 +20,7 @@ public class Train {
    float targetPower = 0;
 
    int passengerCount = 10;
-   float weight = (float)52.2;
+   float currentWeight = (float)52.2;
 
    Boolean leftDoorWorking = true;
    Boolean rightDoorWorking = true;
@@ -28,23 +30,28 @@ public class Train {
    Boolean engineWorking = true;
 
    final static float emptyWeight = 47;
+   final static float length = 100;
 
-   public Train(int id) {
+   public Train(int id, Block block) {
       UUID = id;
+      currentBlock = block;
+      // TODO: check direction
+
       // TODO: create train controller with UUID
       // trainControllerModule.createTrainController(id, this);
    }
 
-   public StringProperty getName() {
-      return new SimpleStringProperty("Train " + UUID);
-   }
-
    public void update() {
-      // TODO: put train id in correct block
-   }
+      // TODO: use the formula here
+      currentPower = targetPower;
 
-   public void setBlock() {
-      // setBlock called by Yard
+      // TODO: use the formula here
+      currentAcceleration = 1;
+      currentSpeed = 10;
+
+      currentPosition += currentSpeed;
+
+      // TODO: put train id in correct block
 
    }
 
@@ -63,5 +70,20 @@ public class Train {
       // TODO: destroy train controller
    }
 
-   // TODO: add rest of the methods
+   // for GUI
+
+   public StringProperty getName() {
+      return new SimpleStringProperty("Train " + UUID);
+   }
+
+   // private methods
+
+   private void setBlock(Boolean occupied) {
+      if (occupied) {
+         // set block occupied
+      } else {
+         // set block empty
+      }
+   }
+
 }
