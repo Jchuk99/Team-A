@@ -10,12 +10,15 @@
 
 package src.train_controller;
 
+import java.util.HashSet;
 import java.util.concurrent.*;
 
 import javafx.application.Application;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.text.Text;
@@ -48,27 +51,75 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 
 import java.lang.Boolean;
+import java.lang.Integer;
+
  
-public class TrainControllerUI extends Stage {
+public class TrainControllerUI extends Application {
 
     final int width = 900;
     final int height = 800;
-
-	private static TrainController attachedTrainController;
+    
+    
+	//public static final CountDownLatch latch=new CountDownLatch(1);
+	private static TrainControllerUI tcUI;
+	private static TrainControllerModule attachedTrainControllerModule;
+	private TrainController tc;
 	
-	public TrainControllerUI(){
-        setTitle("TrainModel UI");
+	
+	public static void setTC(TrainControllerModule tcm){
+		attachedTrainControllerModule=tcm;
+    }
+    
+	
+	//public TrainControllerUI(TrainController x){
+	//	attachedTrainController=x;
+	//}
+	 //commented out to deal with UI creation
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(final Stage primaryStage) {
+        primaryStage.setTitle("TrainModel UI");
 
         /****** select train ******/
         // TODO: get train data from module
-        ObservableList<Train> trainData;
+        ObservableList<TrainController> trainData;
         trainData = FXCollections.observableArrayList();
 
-        final TableView trainTable = createTrainTable(trainData);
+        //final TableView trainTable = createTrainTable(trainData);
+        
+        final TableView<TrainController> trainTable = new TableView<TrainController>();
+        trainTable.setPlaceholder(new Label("No trains available"));
+
+        final TableColumn<TrainController, String> trainTableCol = new TableColumn<TrainController, String>("Select Train");
+        trainTableCol.setCellValueFactory(cellData -> cellData.getValue().getName());
+        trainTable.getColumns().add(trainTableCol);
+
+        trainTable.setItems(trainData);
+
+        
         trainTable.setPrefWidth(width / 8);
 
+        tc=attachedTrainControllerModule.getList().lastElement();
+
         // testing: add a train to test
-        trainData.add(new Train(1, null));
+        trainData.add(attachedTrainControllerModule.getList().firstElement());
+        
+        /*attachedTrainControllerModule.getList().addListener(new ChangeListener<HashSet<TrainControllerModule.TrainController>>() {
+            public void changed(ObservableValue <? extends HashSet<TrainControllerModule.TrainController> > observable, HashSet<TrainControllerModule.TrainController> oldValue, HashSet<TrainControllerModule.TrainController> newValue) { 
+                
+            } 
+        });*/
+        
+        
+        
+        
+        
+
+
         /****** select train ******/
 
         /****** beacon ******/
@@ -106,28 +157,23 @@ public class TrainControllerUI extends Stage {
 
         fullScreen.setPadding(new Insets(10));
 
-        setScene(new Scene(fullScreen, width, height));
-        show();
-		
-	}
-	
-	public void setTC(TrainController tc){
-		attachedTrainController=tc;
-	}
+        primaryStage.setScene(new Scene(fullScreen, width, height));
+        primaryStage.show();
+ 
+    }
 
-
-    private TableView<Train> createTrainTable(ObservableList<Train> item) {
-        final TableView<Train> trainTable = new TableView<Train>();
+    /*private TableView<TrainController> createTrainTable(ObservableList<TrainController> trainData) {
+        final TableView<TrainController> trainTable = new TableView<TrainController>();
         trainTable.setPlaceholder(new Label("No trains available"));
 
-        final TableColumn<Train, String> trainTableCol = new TableColumn<Train, String>("Select Train");
+        final TableColumn<TrainController, String> trainTableCol = new TableColumn<TrainController, String>("Select Train");
         trainTableCol.setCellValueFactory(cellData -> cellData.getValue().getName());
         trainTable.getColumns().add(trainTableCol);
 
-        trainTable.setItems(item);
+        trainTable.setItems(trainData);
 
         return trainTable;
-    }
+    }*/
 
     private HBox createTopBox() {
         VBox time = createLabelBox("11:00:23 am");
@@ -228,10 +274,10 @@ public class TrainControllerUI extends Stage {
             public void handle(ActionEvent event) {
                 // TODO: button handle
                 if (button1.isSelected()==false){
-                    attachedTrainController.setLeftDoorsControlClosed(false);
+                    tc.setLeftDoorsControlClosed(false);
                 }
                 else{
-                    attachedTrainController.setLeftDoorsControlClosed(true);
+                    tc.setLeftDoorsControlClosed(true);
                 }
             }
         });
@@ -242,10 +288,10 @@ public class TrainControllerUI extends Stage {
             public void handle(ActionEvent event) {
                 // TODO: button handle
                 if (button2.isSelected()==false){
-                    attachedTrainController.setRightDoorsControlClosed(false);
+                    tc.setRightDoorsControlClosed(false);
                 }
                 else{
-                    attachedTrainController.setRightDoorsControlClosed(true);
+                    tc.setRightDoorsControlClosed(true);
                 }
             }
         });
@@ -256,10 +302,10 @@ public class TrainControllerUI extends Stage {
             public void handle(ActionEvent event) {
                 // TODO: button handle
                 if (button3.isSelected()==false){
-                    attachedTrainController.setCabinLightsControlOn(false);
+                    tc.setCabinLightsControlOn(false);
                 }
                 else{
-                    attachedTrainController.setCabinLightsControlOn(true);
+                    tc.setCabinLightsControlOn(true);
                 }
             }
         });
@@ -271,10 +317,10 @@ public class TrainControllerUI extends Stage {
             public void handle(ActionEvent event) {
                 // TODO: button handle
                 if (button4.isSelected()==false){
-                    attachedTrainController.setHeadLightsControlOn(false);
+                    tc.setHeadLightsControlOn(false);
                 }
                 else{
-                    attachedTrainController.setHeadLightsControlOn(true);
+                    tc.setHeadLightsControlOn(true);
                 }
             }
         });
@@ -285,10 +331,10 @@ public class TrainControllerUI extends Stage {
             public void handle(ActionEvent event) {
                 // TODO: button handle
                 if (button5.isSelected()==false){
-                    attachedTrainController.setServiceBrakeControlOn(false);
+                    tc.setServiceBrakeControlOn(false);
                 }
                 else{
-                    attachedTrainController.setServiceBrakeControlOn(true);
+                    tc.setServiceBrakeControlOn(true);
                 }
             }
         });
@@ -315,12 +361,12 @@ public class TrainControllerUI extends Stage {
                 // TODO: button handle
                 if (eBrakeButton.isSelected()==false){
                     eBrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: red;");
-                    attachedTrainController.setEmergencyBrakeControlOn(false);
+                    tc.setEmergencyBrakeControlOn(false);
                     
                 }
                 else{
                     eBrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: firebrick;");
-                    attachedTrainController.setEmergencyBrakeControlOn(true);
+                    tc.setEmergencyBrakeControlOn(true);
                     
                 }
             }
@@ -357,10 +403,10 @@ public class TrainControllerUI extends Stage {
             public void handle(ActionEvent event) {
                 // TODO: button handle
                 if (manControlToggle.isSelected()==false){
-                    attachedTrainController.setManualModeOn(false);
+                    tc.setManualModeOn(false);
                 }
                 else{
-                    attachedTrainController.setManualModeOn(true);
+                    tc.setManualModeOn(true);
                 }
             }
         });
