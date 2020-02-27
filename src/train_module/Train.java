@@ -42,7 +42,17 @@ public class Train {
    }
 
    public void update() {
+      // TODO: use the formula here
+      currentPower = targetPower;
+
+      // TODO: use the formula here
+      currentAcceleration = 1;
+      currentSpeed = 10;
+
+      currentPosition += currentSpeed;
+
       // TODO: put train id in correct block
+
    }
 
    public void setTrainProperties(float suggestedSpeed, float authority) {
@@ -68,8 +78,12 @@ public class Train {
 
    // private methods
 
-   private void setBlock() {
-
+   private void setBlock(Boolean occupied) {
+      if (occupied) {
+         // set block occupied
+      } else {
+         // set block empty
+      }
    }
 
 }
