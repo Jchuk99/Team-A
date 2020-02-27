@@ -53,9 +53,16 @@ public class TrainModuleUI extends Stage {
 
         // testing displaying info for selected train
         trainModule.createTrain(1, null);
-        trainData.setTrain(trainModule.trainList.get(0));
+        trainModule.createTrain(2, null);
 
-        // TODO: set trainData to selected train
+        trainTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Train>() {
+            @Override
+            public void changed(ObservableValue observableValue, Train oldValue, Train newValue) {
+                //Check whether item is selected and set value of selected item to Label
+                Train train = trainTable.getSelectionModel().getSelectedItem();
+                trainData.setTrain(train);
+            }
+        });
 
         /****** select train ******/
 
