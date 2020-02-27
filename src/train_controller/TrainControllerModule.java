@@ -26,6 +26,19 @@ import java.util.Scanner;
 import src.train_module.TrainModule;
 
 public class TrainControllerModule extends Module {
+	public HashSet<TrainController> controllerList=new HashSet<TrainController>();
+	
+	public HashSet<TrainController> getList(){
+		return controllerList;
+	}
+
+	public TrainController createTrainController(TrainModule train){//
+		TrainController tc=new TrainController(train);
+		controllerList.add(tc);
+		return tc;
+	}
+	
+	public class TrainController{
 	public TrainModule attachedTrain;
 	public TrainControllerUI attachedUI;
 	public boolean leftDoorsControlClosed;
@@ -37,14 +50,14 @@ public class TrainControllerModule extends Module {
 	public float driverSpeed;
 	public boolean emergencyBrakeControlOn;
 	public boolean serviceBrakeControlOn;
-	public int UUID;
+	//public int UUID;
 	
 	/**
 	
 	*/
-	public TrainControllerModule(){ //int id, TrainModule train
+	public TrainController(TrainModule train){ //
 		//attachedUI = new TrainControllerUI(this);
-		//attachedTrain=train;
+		attachedTrain=train;
 		//UUID=id;
 		leftDoorsControlClosed=false;
 		rightDoorsControlClosed=false;
@@ -60,7 +73,7 @@ public class TrainControllerModule extends Module {
 	/**
 	
 	*/
-	public class Controller{
+	//public class Controller{
 		/**
 		
 		*/
@@ -186,14 +199,14 @@ public class TrainControllerModule extends Module {
 		public void setServiceBrakeControlOn(boolean x){
 			serviceBrakeControlOn=x;
 		}
-	}
+	
 	
 	
 	
 	// /**
 		
 	// */
-	// public class Train{
+	//// public class Train{
 		
 		// /**
 		
@@ -255,7 +268,7 @@ public class TrainControllerModule extends Module {
 	// /**
 		
 	// */
-	// public class Power{
+	//// public class Power{
 		
 		// /**
 		
@@ -269,4 +282,5 @@ public class TrainControllerModule extends Module {
 			// }
 		// }
 	// }
+	}
 }

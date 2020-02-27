@@ -34,6 +34,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import src.train_controller.TrainControllerModule.TrainController;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.*;
@@ -53,7 +54,7 @@ public class TrainControllerUI extends Application {
     
 	public static final CountDownLatch latch=new CountDownLatch(1);
 	private static TrainControllerUI tcUI;
-	private static TrainControllerModule attachedTrainController;
+	private static TrainController attachedTrainController;
 	
 	public static TrainControllerUI waitForStartUpTest(){
 		try{
@@ -71,7 +72,7 @@ public class TrainControllerUI extends Application {
 		setStartUpTest(this);
 	}
 	
-	public void setTC(TrainControllerModule tc){
+	public void setTC(TrainController tc){
 		attachedTrainController=tc;
 	}
 	
@@ -216,7 +217,15 @@ public class TrainControllerUI extends Application {
         VBox name6 = createTextBox("Train Engine");
         VBox nameBox = new VBox(10, createVBox(), name1, name2, name3, name4, name5, name6);
 
-        VBox light1 = createCircleBox(10, Color.GREEN);
+        /*Color x;
+        if(attachedTrainController.getLeftDoorsControlClosed()){
+            x=Color.GREEN;
+        }
+        else{
+            x=Color.RED;
+        }*/
+
+        VBox light1 = createCircleBox(10, x);
         VBox light2 = createCircleBox(10, Color.GREEN);
         VBox light3 = createCircleBox(10, Color.GREEN);
         VBox light4 = createCircleBox(10, Color.GREEN);
@@ -236,12 +245,14 @@ public class TrainControllerUI extends Application {
 
         final ToggleButton eBrakeButton = createToggleButton("Emergency Brake", 200, 50);
         eBrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: red;");
+        eBrakeButton.setSelected(false);
         eBrakeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 // TODO: button handle
                 if (eBrakeButton.isSelected()){
                     eBrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: red;");
+   
                 }
                 else{
                     eBrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: firebrick;");

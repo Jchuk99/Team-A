@@ -1,6 +1,9 @@
 package src.train_controller;
 
-public class TrainControllerMain{
+import src.train_controller.TrainControllerModule.TrainController;
+import src.train_module.TrainModule;
+
+public class TrainControllerMain {
 	public static void main(String[] args){
 		new Thread(){
 			@Override
@@ -8,8 +11,10 @@ public class TrainControllerMain{
 				javafx.application.Application.launch(TrainControllerUI.class);
 			}
 		}.start();
+		TrainModule t=new TrainModule();
+		TrainControllerModule TCM=new TrainControllerModule();
 		TrainControllerUI tcUI=TrainControllerUI.waitForStartUpTest();
-		TrainControllerModule tc=new TrainControllerModule();
+		TrainController tc=TCM.createTrainController(t);
 		tcUI.setTC(tc);
 		
 	}
