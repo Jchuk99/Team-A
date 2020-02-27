@@ -27,93 +27,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
  
-public class WaysideUI extends Application {
+public class WaysideUI extends Stage {
     public static final CountDownLatch latch = new CountDownLatch(1);
     public static WaysideUI waysideUI = null;
     public static TrackControllerModule trackControllerModule;
 
     public WaysideUI(){
-        setStartUpTest(this);
-    }
-
-    public static WaysideUI waitForStartUpTest(){
-        try{
-            latch.await();
-        }catch(InterruptedException e){
-            e.printStackTrace();
-        }
-        return waysideUI;
-    }
-
-    public static void setStartUpTest(WaysideUI waysideUI0){
-        waysideUI = waysideUI0;
-        latch.countDown();
-    }
-
-    public void setTrackControllerModule(TrackControllerModule trackControllerModule0){
-        trackControllerModule = trackControllerModule0;
-    }
-
-    public static void getPLCTextBox(int option, WaysideController waysideController){
-        Stage popupwindow = new Stage();   
-        popupwindow.initModality(Modality.APPLICATION_MODAL);
-        final TextArea textArea3 = new TextArea();
-        TextArea textArea2 = new TextArea();
-        if(option == 1){
-            popupwindow.setTitle("PLC Input");        
-            textArea2 = new TextArea("{Enter PLC Code Here} \n\n //sample code \n\n if(~block1){ \n block1 = 1; \n } \n else{ \n block1 = 0; \n } \n\n enableCrossing = block1 & block2;");
-        }
-        else{
-            popupwindow.setTitle("Enter the file path");
-            //textArea3 = new TextArea();
-        }
-         
-        Button confirm = new Button("Confirm");           
-        confirm.setOnAction(new EventHandler<ActionEvent>(){
-            StringBuilder plcText = new StringBuilder("");
-            String line; 
-            public void handle(ActionEvent event){
-                System.out.println(textArea3.getText());
-                try{
-                    BufferedReader in = new BufferedReader(new FileReader(textArea3.getText()));
-                    while((line = in.readLine()) != null) {
-                        plcText.append(line);
-                    }
-                }
-                catch(FileNotFoundException e){ 
-                    System.out.println("file not found");
-                }
-                catch(IOException e) {
-                System.out.println("Error processing file.");
-                }         
-                waysideController.uploadPLC(plcText);
-                popupwindow.close();
-            }
-
-        });
-
-        Button cancel = new Button("Cancel");           
-        cancel.setOnAction(e -> popupwindow.close());
-        HBox buttons = new HBox(10, confirm, cancel);
-        buttons.setStyle("-fx-padding: 5;"); 
-        VBox layout= new VBox(10);   
-        if(option == 1){      
-            layout.getChildren().addAll(textArea2, buttons); 
-        }
-        else{
-            layout.getChildren().addAll(textArea3, buttons);     
-        }          
-        layout.setAlignment(Pos.CENTER);           
-        Scene scene1= new Scene(layout, 300, 250);            
-        popupwindow.setScene(scene1);          
-        popupwindow.showAndWait();
-    }
-
-    
-    @Override
-    public void start(Stage primaryStage) {
-        
-        primaryStage.setTitle("Wayside Controller UI");
+	setTitle("Wayside Controller UI");
         ArrayList<WaysideController> waysideControllers = trackControllerModule.getWaysideControllers();
         WaysideController waysideController = new WaysideController();
 
@@ -279,7 +199,83 @@ public class WaysideUI extends Application {
 
         fullScreen.setPadding(new Insets(10));
 
-        primaryStage.setScene(new Scene(fullScreen, length, height));
-        primaryStage.show();
+        setScene(new Scene(fullScreen, length, height));
+        show();
+        //setStartUpTest(this);
     }
+
+    /*public static WaysideUI waitForStartUpTest(){
+        try{
+            latch.await();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+        return waysideUI;
+    }
+
+    public static void setStartUpTest(WaysideUI waysideUI0){
+        waysideUI = waysideUI0;
+        latch.countDown();
+    }*/
+
+    public void setTrackControllerModule(TrackControllerModule trackControllerModule0){
+        trackControllerModule = trackControllerModule0;
+    }
+
+    public static void getPLCTextBox(int option, WaysideController waysideController){
+        Stage popupwindow = new Stage();   
+        popupwindow.initModality(Modality.APPLICATION_MODAL);
+        final TextArea textArea3 = new TextArea();
+        TextArea textArea2 = new TextArea();
+        if(option == 1){
+            popupwindow.setTitle("PLC Input");        
+            textArea2 = new TextArea("{Enter PLC Code Here} \n\n //sample code \n\n if(~block1){ \n block1 = 1; \n } \n else{ \n block1 = 0; \n } \n\n enableCrossing = block1 & block2;");
+        }
+        else{
+            popupwindow.setTitle("Enter the file path");
+            //textArea3 = new TextArea();
+        }
+         
+        Button confirm = new Button("Confirm");           
+        confirm.setOnAction(new EventHandler<ActionEvent>(){
+            StringBuilder plcText = new StringBuilder("");
+            String line; 
+            public void handle(ActionEvent event){
+                System.out.println(textArea3.getText());
+                try{
+                    BufferedReader in = new BufferedReader(new FileReader(textArea3.getText()));
+                    while((line = in.readLine()) != null) {
+                        plcText.append(line);
+                    }
+                }
+                catch(FileNotFoundException e){ 
+                    System.out.println("file not found");
+                }
+                catch(IOException e) {
+                System.out.println("Error processing file.");
+                }         
+                waysideController.uploadPLC(plcText);
+                popupwindow.close();
+            }
+
+        });
+
+        Button cancel = new Button("Cancel");           
+        cancel.setOnAction(e -> popupwindow.close());
+        HBox buttons = new HBox(10, confirm, cancel);
+        buttons.setStyle("-fx-padding: 5;"); 
+        VBox layout= new VBox(10);   
+        if(option == 1){      
+            layout.getChildren().addAll(textArea2, buttons); 
+        }
+        else{
+            layout.getChildren().addAll(textArea3, buttons);     
+        }          
+        layout.setAlignment(Pos.CENTER);           
+        Scene scene1= new Scene(layout, 300, 250);            
+        popupwindow.setScene(scene1);          
+        popupwindow.showAndWait();
+    }
+
+    
 }
