@@ -29,7 +29,12 @@ public abstract class Module {
     }
 
     public void tickTock() {
+        update();
         this.date.plusSeconds( PERIOD);
+    }
+
+    public void update() {
+        // module update logic for every clock tick
     }
 
     public void setTrainModule( TrainModule trainModule) {this.trainModule= trainModule;};

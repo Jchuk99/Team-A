@@ -1,13 +1,17 @@
 package src;
 
 import src.track_controller.TrackControllerModule;
+import src.track_controller.WaysideUI;
 import src.track_module.TrackModule;
 import src.train_controller.TrainControllerModule;
 import src.train_module.TrainModule;
 
 import java.util.HashSet;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
 import src.ctc.CTCModule;
+import src.ctc.CTCUI;
 
 class Main { 
     public static void main(String args[])
@@ -31,6 +35,16 @@ class Main {
             module.setTrackModule(trackModule);
             module.setTrainModule(trainModule);
         }
+        new Thread() {
+            @Override
+            public void run() {
+                Application.launch(ApplicationUI.class);
+            }
+        }.start();
+
+
+
+
         for( Module module : modules) {
             module.main();
         }

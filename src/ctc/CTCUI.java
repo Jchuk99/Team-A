@@ -1,6 +1,7 @@
 package src.ctc;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -39,17 +40,102 @@ import javafx.util.Pair;
 import java.text.DecimalFormat;
 import java.util.concurrent.CountDownLatch;
  
-public class CTCUI extends Application {
-    public static final CountDownLatch latch = new CountDownLatch(1);
-    public static CTCUI ctcUI = null;  
+public class CTCUI extends Stage {
     public static CTCModule ctcOffice;
     static int trainID = 0;
 
-    /*public static void main(String[] args) {
-        //launch(args);
-    }*/
-    
     public CTCUI(){
+        setTitle("CTC UI");
+
+        int length = 900;
+        int height = 800;
+
+        /******top half******/
+
+        Text timeText = new Text("Time");
+        Label timeLabel = new Label("11:00:23 am");
+        timeLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+ 
+        HBox timeBox = new HBox(10, timeText, timeLabel);
+        timeBox.setAlignment(Pos.CENTER);
+
+
+        Text ticketText = new Text("Ticket Sales");
+        Label ticketLabel = new Label("205/h");
+        ticketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+ 
+        HBox ticketBox = new HBox(10, ticketText , ticketLabel);
+        timeBox.setAlignment(Pos.CENTER);
+
+        Text totalTicketText = new Text("Total Ticket Sales");
+        Label totalTicketLabel = new Label("1000");
+        totalTicketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+ 
+        HBox totalTicketBox = new HBox(10, totalTicketText, totalTicketLabel);
+        timeBox.setAlignment(Pos.CENTER);
+ 
+        Button manualMode = new Button();
+        manualMode.setText("Manual Input/Schedule");
+        manualMode.setPrefWidth(300);
+        manualMode.setPrefHeight(50);
+        //scheduleButton.setMaxSize(800, 800);
+        manualMode.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
+                               "-fx-font-size:20;" + "-fx-text-fill: black;");
+
+        manualMode.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                getManualDisplay();
+            }
+         });
+                            
+
+        HBox topHalf1 = new HBox(10, ticketBox, createSpacer(), totalTicketBox, createSpacer(), manualMode, createSpacer(), timeBox);
+
+        /******bottom half******/
+        TableView trainTable = new TableView();
+        trainTable.setPlaceholder(new Label("No trains available"));
+        trainTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<String, Person> trains = new TableColumn<>("Train");
+        trains.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+
+        TableColumn<String, Person> currPos = new TableColumn<>("Current Position");
+        currPos.setCellValueFactory(new PropertyValueFactory<>("currPos"));
+
+        TableColumn<String, Person> destination= new TableColumn<>("Current Destination");
+        destination.setCellValueFactory(new PropertyValueFactory<>("destination"));
+
+        TableColumn<String, Person> speed = new TableColumn<>("Suggested Speed(mph)");
+        speed.setCellValueFactory(new PropertyValueFactory<>("destination"));
+
+        trainTable.getColumns().add(trains);
+        trainTable.getColumns().add(currPos);
+        trainTable.getColumns().add(destination);
+        trainTable.getColumns().add(speed);
+
+        ObservableList<Person> trainData = FXCollections.observableArrayList(
+            new Person("Train 1","EDGEBROOK","SOUTH BANK", "25"),
+            new Person("Train 2","Block 12", "BLOCK 4","25"),
+            new Person("Train 3","Block 15", "BLOCK 5","25"),
+            new Person("Train 4","Block 39", "Block 6","25"),
+            new Person("Train 5","Block 44", "Block 7","25")
+        );
+        
+        trainTable.setItems(trainData);
+
+        VBox topHalf = new VBox(10,topHalf1, trainTable);
+        TableView mapTable = new TableView();
+
+        topHalf.setPrefHeight(height/2);
+        mapTable.setPrefHeight(height/2);
+
+        VBox fullScreen = new VBox(10, topHalf, mapTable);
+
+        fullScreen.setPadding(new Insets(10));
+
+        setScene(new Scene(fullScreen, length, height));
+ 
 
     }
     
@@ -216,101 +302,7 @@ public class CTCUI extends Application {
         popupwindow.show();
     }
     
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("CTC UI");
-
-        int length = 900;
-        int height = 800;
-
-        /******top half******/
-
-        Text timeText = new Text("Time");
-        Label timeLabel = new Label("11:00:23 am");
-        timeLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
- 
-        HBox timeBox = new HBox(10, timeText, timeLabel);
-        timeBox.setAlignment(Pos.CENTER);
-
-
-        Text ticketText = new Text("Ticket Sales");
-        Label ticketLabel = new Label("205/h");
-        ticketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
- 
-        HBox ticketBox = new HBox(10, ticketText , ticketLabel);
-        timeBox.setAlignment(Pos.CENTER);
-
-        Text totalTicketText = new Text("Total Ticket Sales");
-        Label totalTicketLabel = new Label("1000");
-        totalTicketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
- 
-        HBox totalTicketBox = new HBox(10, totalTicketText, totalTicketLabel);
-        timeBox.setAlignment(Pos.CENTER);
- 
-        Button manualMode = new Button();
-        manualMode.setText("Manual Input/Schedule");
-        manualMode.setPrefWidth(300);
-        manualMode.setPrefHeight(50);
-        //scheduleButton.setMaxSize(800, 800);
-        manualMode.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
-                               "-fx-font-size:20;" + "-fx-text-fill: black;");
-
-        manualMode.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                getManualDisplay();
-            }
-         });
-                            
-
-        HBox topHalf1 = new HBox(10, ticketBox, createSpacer(), totalTicketBox, createSpacer(), manualMode, createSpacer(), timeBox);
-
-        /******bottom half******/
-        TableView trainTable = new TableView();
-        trainTable.setPlaceholder(new Label("No trains available"));
-        trainTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        TableColumn<String, Person> trains = new TableColumn<>("Train");
-        trains.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-
-        TableColumn<String, Person> currPos = new TableColumn<>("Current Position");
-        currPos.setCellValueFactory(new PropertyValueFactory<>("currPos"));
-
-        TableColumn<String, Person> destination= new TableColumn<>("Current Destination");
-        destination.setCellValueFactory(new PropertyValueFactory<>("destination"));
-
-        TableColumn<String, Person> speed = new TableColumn<>("Suggested Speed(mph)");
-        speed.setCellValueFactory(new PropertyValueFactory<>("destination"));
-
-        trainTable.getColumns().add(trains);
-        trainTable.getColumns().add(currPos);
-        trainTable.getColumns().add(destination);
-        trainTable.getColumns().add(speed);
-
-        ObservableList<Person> trainData = FXCollections.observableArrayList(
-            new Person("Train 1","EDGEBROOK","SOUTH BANK", "25"),
-            new Person("Train 2","Block 12", "BLOCK 4","25"),
-            new Person("Train 3","Block 15", "BLOCK 5","25"),
-            new Person("Train 4","Block 39", "Block 6","25"),
-            new Person("Train 5","Block 44", "Block 7","25")
-        );
-        
-        trainTable.setItems(trainData);
-
-        VBox topHalf = new VBox(10,topHalf1, trainTable);
-        TableView mapTable = new TableView();
-
-        topHalf.setPrefHeight(height/2);
-        mapTable.setPrefHeight(height/2);
-
-        VBox fullScreen = new VBox(10, topHalf, mapTable);
-
-        fullScreen.setPadding(new Insets(10));
-
-        primaryStage.setScene(new Scene(fullScreen, length, height));
-        primaryStage.show();
- 
-    }
+    
     private static Pair<VBox, TableView<Person>> createTrainBox(int length, int height){
         
         TableView<Person> trainTable = new TableView<Person>();
@@ -464,6 +456,15 @@ public class CTCUI extends Application {
        }); 
         return speedSlider;
     }
+
+   /* @Override
+    public void update(Observable o, Object arg) {
+        Platform.runLater(new Runnable() {
+        public void run() {             
+           new WaysideUI().start(new Stage());
+        }
+    });
+}*/
 
     private static Node createSpacer() {
         final Region spacer = new Region();

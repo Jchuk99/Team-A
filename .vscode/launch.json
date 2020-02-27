@@ -3,6 +3,24 @@
     "configurations": [
         {
             "type": "java",
+<<<<<<< HEAD
+=======
+            "name": "CodeLens (Launch) - TrainModuleUI",
+            "request": "launch",
+            "mainClass": "src.train_module.TrainModuleUI",
+            "vmArgs": "--module-path \"${workspaceFolder}/deps/javafx-sdk-13.0.2/lib\" --add-modules javafx.controls,javafx.fxml",
+            "projectName": "Team-A_dec165c8"
+        },
+        {
+            "type": "java",
+>>>>>>> b13831d26234a4b33b05c61d2342dc16c231c2e5
+            "name": "CodeLens (Launch) - CTCMain",
+            "request": "launch",
+            "mainClass": "src.ctc.CTCMain",
+            "projectName": "Team-A_c3c51f1c"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - Main",
             "request": "launch",
             "mainClass": "src.Main",
