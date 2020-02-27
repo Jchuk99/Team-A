@@ -2,6 +2,7 @@ package src.train_module;
 
 import src.Module;
 import src.track_module.Block;
+import src.train_controller.TrainControllerModule.TrainController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -27,7 +28,10 @@ public class TrainModule extends Module {
     }
 
     public void createTrain(int id, Block block) {
-        Train train = new Train(id, block);
+        //create controller
+        TrainController controller = new TrainController();
+        Train train = new Train(id, block, controller);
+        controller.attachedTrain(train);
         trainList.add(train);
     }
 

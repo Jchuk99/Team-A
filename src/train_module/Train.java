@@ -1,12 +1,14 @@
 package src.train_module;
 
 import src.track_module.Block;
+import src.train_controller.TrainController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class Train {
 
     int UUID;
+    TrainController controller;
     Block currentBlock;
     Boolean goForward = true;
     float currentSpeed = 0;
@@ -42,13 +44,12 @@ public class Train {
     private StringProperty currentGradeString = new SimpleStringProperty("");
     private StringProperty temperatureInsideString = new SimpleStringProperty("");
 
-    public Train(int id, Block block) {
+    public Train(int id, Block block, TrainController trainController) {
         UUID = id;
         currentBlock = block;
+        controller = trainController;
         // TODO: check direction
 
-        // TODO: create train controller with UUID
-        // trainControllerModule.createTrainController(id, this);
     }
 
     public void update() {
@@ -95,6 +96,7 @@ public class Train {
 
     public void destroyTrain() {
         // TODO: destroy train controller
+        //controller.destroy();
     }
 
     // for GUI
