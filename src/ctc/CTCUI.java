@@ -65,10 +65,6 @@ public class CTCUI extends Application {
     public CTCUI(){
         setStartUpTest(this);
     }
-
-    public void printSomething(){
-        System.out.println(ctcOffice.getTest());
-    }
     
     public void setCTCModule(CTCModule ctcOffice0){
         ctcOffice = ctcOffice0;

@@ -19,7 +19,6 @@ public class CTCMain{
        
         CTCModule ctcOffice = new CTCModule();
         ctcUI.setCTCModule(ctcOffice);
-
-
-}
-}
+   
+    }  
+} 
