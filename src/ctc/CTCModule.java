@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import src.Module;
 import src.track_controller.TrackControllerModule;
@@ -13,9 +14,9 @@ import src.track_module.Block;
 import src.track_module.BlockConstructor.*;
 
 public class CTCModule extends Module{
-    private HashMap<String, Integer> stationMap;
-    private HashMap<Integer, Block> blockMap;
-    private ArrayList<Integer> switchList;
+    public static Map<String, Integer> stationMap = new HashMap<String, Integer>();
+    public static Map<Integer, Block> blockMap = new HashMap<Integer, Block>();
+    public static List<Integer> switchList = new ArrayList<Integer>();
     private Schedule schedule = null;
     public int speed;
 
@@ -28,12 +29,11 @@ public class CTCModule extends Module{
     public void getMap(){
        //length, number, edges
        //hashmap of blocks with they're UUID so that I can access any one.
-       HashSet<WaysideController> waysides = trackControllerModule.getWaysideControllers();
+       List<WaysideController> waysides = trackControllerModule.getWaysideControllers();
        for (WaysideController wayside : waysides) { 
                List<Block> blockList = wayside.getBlocks();
                for(Block block : blockList){
-                    //TODO: don't use block  number in case of multiple blocks.
-                    //TODO: get all needed fields from the blocks
+                    //TODO: don't use block  number in case of multiple blocks on same line.
                     String line = block.getLine();
                     char section = block.getSection();
                     int blockNumber = block.getBlockNumber();
@@ -63,20 +63,19 @@ public class CTCModule extends Module{
         }
         // need an extra for loop to put in edges now that I have all the blocks
         for(WaysideController wayside: waysides){
-
+            List<Block> blockList = wayside.getBlocks();
+            for(Block block : blockList){
+               Block myBlock = blockMap.get(Integer.valueOf(block.getBlockNumber()));
+               myBlock.setEdges(block.getEdges());
+            }
         }
-       //for each wayside controller, get list of block UUID's and set to list object
-       //go through list of UUID's and do the following:
-       //first, check what type of instance it is (station, shift, normal, crossing, yard)
-       //then give the UUID to the wayside and get an instance of the block corresponding to UUID
-       //depending on what instance it is create that type of block and give it current block
-       //
     }
 
     public void dispatch(String trainID, double suggestedSpeed, String destination){
         if (schedule == null){
            schedule = new Schedule();
         }
+        // need to give speed in meters per second, authority, train ID, and route
 
         System.out.println(trainID);
         System.out.println(destination);

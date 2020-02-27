@@ -1,7 +1,7 @@
 package src.ctc;
 public class Schedule{
 
-    // list of trains
+    // hash map of trains
     // data structure to hold schedule file
     private int trainCount = 0;
     

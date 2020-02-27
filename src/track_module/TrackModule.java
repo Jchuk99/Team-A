@@ -53,9 +53,11 @@ public class TrackModule extends Module {
 
     public void createTrain( float suggestedSpeed, float authority, Route route) {
         Path path= route.getCurrPath();
+       
+        /* let's talk about this one.
         UUID uuid= path.getStartBlock();
         Block block= trackModule.getBlockByUUID(uuid);
-        yard.createTrain( suggestedSpeed, authority, block);
+        yard.createTrain( suggestedSpeed, authority, block);*/
     }
     public Yard getYard() {return yard;};
 
