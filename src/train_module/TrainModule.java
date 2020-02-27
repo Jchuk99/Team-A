@@ -10,6 +10,8 @@ public class TrainModule extends Module {
    ObservableList<Train> trainList;
 
    public TrainModule() {
+      super();
+      TrainModuleUI.setModule(this);
       trainList = FXCollections.observableArrayList();
    }
 

@@ -50,8 +50,16 @@ public class ApplicationUI extends Application {
     public void start(Stage primaryStage) {
 
         CTCUI ctcUI = new CTCUI();
+        WaysideUI trackControllerUI = new WaysideUI();
+        TrackModuleUI trackModuleUI = new TrackModuleUI();
+        TrainModuleUI trainModuleUI = new TrainModuleUI();
+        TrainControllerUI trainControllerUI = new TrainControllerUI();
+
         ctcUI.show();
-        
+        //trackControllerUI.show();
+        trackModuleUI.show();
+        trainModuleUI.show();
+        //trainControllerUI.show();
     }
 
     private HBox createTrackInfoBox() {

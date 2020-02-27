@@ -1,4 +1,5 @@
 package src.track_controller;
+import src.track_module.Block;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -32,7 +33,7 @@ public class WaysideUI extends Application {
     public static TrackControllerModule trackControllerModule;
 
     public WaysideUI(){
-
+        setStartUpTest(this);
     }
 
     public static WaysideUI waitForStartUpTest(){
@@ -53,7 +54,7 @@ public class WaysideUI extends Application {
         trackControllerModule = trackControllerModule0;
     }
 
-    public static void getPLCTextBox(int option){
+    public static void getPLCTextBox(int option, WaysideController waysideController){
         Stage popupwindow = new Stage();   
         popupwindow.initModality(Modality.APPLICATION_MODAL);
         final TextArea textArea3 = new TextArea();
@@ -85,7 +86,7 @@ public class WaysideUI extends Application {
                 catch(IOException e) {
                 System.out.println("Error processing file.");
                 }         
-                
+                waysideController.uploadPLC(plcText);
                 popupwindow.close();
             }
 
@@ -113,32 +114,52 @@ public class WaysideUI extends Application {
     public void start(Stage primaryStage) {
         
         primaryStage.setTitle("Wayside Controller UI");
+        ArrayList<WaysideController> waysideControllers = trackControllerModule.getWaysideControllers();
+        WaysideController waysideController = new WaysideController();
 
         int length = 1200;
         int height = 800;
-
         
-        ArrayList<WaysideController> waysideControllers = trackControllerModule.getWaysideControllers();
-
-        /******top half******/
-        //box1
+        /*******************************top half***************************************/
+        /*******************************box1*******************************************/
         
         TableView plcTable = new TableView();
         TableColumn<String, WaysideController> plcs = new TableColumn<>("Select PLC");
         plcs.setCellValueFactory(new PropertyValueFactory<>("id"));
         plcTable.getColumns().add(plcs);
-        int plcCount = 0;
+        plcTable.setPrefWidth(length/6);
 
-        for(WaysideController x : waysideControllers){
-            x.setID("PLC" + ++plcCount);
-            plcTable.getItems().add(x);
+        int plcCount = 0;
+        for(WaysideController controller : waysideControllers){
+            controller.setId("PLC " + ++plcCount);
+            //System.out.println(controller.getID());
+            plcTable.getItems().add(controller);
         }
         
+        TableView blockTable = new TableView();
+        TableColumn<String, Block> blockID = new TableColumn<>("Block ID");
+        blockID.setCellValueFactory(new PropertyValueFactory<>("blockNumber"));
+        TableColumn<String, Block> blockStatus = new TableColumn<>("Block Status");
+        blockStatus.setCellValueFactory(new PropertyValueFactory<>("occupied"));
+        TableColumn<String, Block> blockOpenClose= new TableColumn<>("Block Open/Close");
+        blockOpenClose.setCellValueFactory(new PropertyValueFactory<>("blockOpenClose"));
+        TableColumn<String, Block> suggestedSpeed = new TableColumn<>("Suggested Speed (mph)");
+        suggestedSpeed.setCellValueFactory(new PropertyValueFactory<>("suggestedSpeed"));
+        TableColumn<String, Block> authority = new TableColumn<>("Authority (ft)");
+        authority.setCellValueFactory(new PropertyValueFactory<>("authority"));
+        blockTable.setPrefWidth(length/3);
+        
         if(!plcTable.getSelectionModel().isEmpty()){
-            WaysideController waysideController = (WaysideController) plcTable.getSelectionModel().getSelectedItem();
+            waysideController = (WaysideController) plcTable.getSelectionModel().getSelectedItem();
+            System.out.println("test");
+            for(Block block : waysideController.getBlocks()){
+                blockTable.getItems().add(block);
+            }        
         }
+
+        final WaysideController newWaysideController = waysideController;
  
-        plcTable.setPrefWidth(length/6);
+        
 
         HBox spacer = new HBox();
         spacer.setPrefHeight(height/6);
@@ -148,7 +169,7 @@ public class WaysideUI extends Application {
  
             @Override
             public void handle(ActionEvent event) {
-                getPLCTextBox(1);
+                getPLCTextBox(1, newWaysideController);
             }
         });
         Button plcUpload = new Button();
@@ -157,7 +178,7 @@ public class WaysideUI extends Application {
  
             @Override
             public void handle(ActionEvent event) {
-                getPLCTextBox(2);
+               getPLCTextBox(2, newWaysideController);
             }
         });
         VBox buttonGrouper = new VBox(10, spacer, plcInput, plcUpload);
@@ -168,9 +189,10 @@ public class WaysideUI extends Application {
         box1.setPrefWidth(length/3);
         box1.setPrefHeight(height/2);  
         box1.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;"); 
-        
+        /******************************************************************************/
 
-        //box2
+        
+        /*******************************box2*******************************************/
         Label signalLight = new Label("Signal Light:");
         Circle greenCircle = new Circle(); 
         Circle yellowCircle = new Circle(); 
@@ -209,8 +231,11 @@ public class WaysideUI extends Application {
         box2.setPrefHeight(height/2);
         box2.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
 
-        //box3
-        TableView blockTable = new TableView();
+        /******************************************************************************/
+
+
+        /*******************************box3*******************************************/
+        /*TableView blockTable = new TableView();
         TableColumn<String, Person> blockID = new TableColumn<>("Block ID");
         blockID.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         TableColumn<String, Person> blockStatus = new TableColumn<>("Block Status");
@@ -230,14 +255,15 @@ public class WaysideUI extends Application {
         blockTable.getItems().add(new Person("2", "Occupied", "Closed", 25, 0));
         blockTable.getItems().add(new Person("3", "Occupied", "Closed", 25, 300));
         blockTable.getItems().add(new Person("4", "Empty", "Closed", 0, 0));
-        blockTable.getItems().add(new Person("5", "Occupied", "Open", 25, 1000));
-        blockTable.setPrefWidth(length/3);
+        blockTable.getItems().add(new Person("5", "Occupied", "Open", 25, 1000));*/
         VBox box3 = new VBox(blockTable);
         box3.setPrefWidth(length/3);
         box3.setPrefHeight(height/2);
         box3.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
         //textArea.setMaxWidth(TextArea.USE_PREF_SIZE);
         //textArea.setMinWidth(TextArea.USE_PREF_SIZE);
+
+        /******************************************************************************/
 
         /******bottom half******/
         TextArea textArea3 = new TextArea("Test");
@@ -248,12 +274,12 @@ public class WaysideUI extends Application {
         //textArea2.setMaxWidth(TextArea.USE_PREF_SIZE);
         //textArea2.setMinWidth(TextArea.USE_PREF_SIZE);
         
-        //HBox topHalf = new HBox(10, box1, box2, box3);
-        //VBox fullScreen = new VBox(10, topHalf, bottomHalf);
+        HBox topHalf = new HBox(10, box1, box2, box3);
+        VBox fullScreen = new VBox(10, topHalf, bottomHalf);
 
-        //fullScreen.setPadding(new Insets(10));
+        fullScreen.setPadding(new Insets(10));
 
-        //primaryStage.setScene(new Scene(fullScreen, length, height));
-        //primaryStage.show();
+        primaryStage.setScene(new Scene(fullScreen, length, height));
+        primaryStage.show();
     }
 }
