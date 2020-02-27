@@ -40,7 +40,7 @@ public class TrainControllerModule extends Module {
 
 	public Vector<TrainController> controllerList = new Vector<TrainController>();
 	
-	public TrainControllerModule(Train train){
+	public TrainControllerModule(){
 		TrainControllerUI.setTC(this);
 		
 		TrainController tc=createTrainController();
