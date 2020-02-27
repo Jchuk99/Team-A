@@ -8,17 +8,34 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
+import java.util.UUID;
 
+import javafx.application.Application;
 import src.Module;
 import src.track_controller.WaysideController;
 import src.track_module.BlockConstructor.*;
+import src.track_module.TrackModuleUI;
+import src.ctc.Path;
+import src.ctc.Route;
 
 public class TrackModule extends Module {
-    HashMap<Integer, Block> blocks;
-    
+    HashMap<UUID, Block> blocks;
+    Yard yard;
 
     public TrackModule() {
         super();
+        blocks= new HashMap<UUID, Block>();
+        TrackModuleUI.setTrackModule(this);
+        new Thread() {
+            @Override
+            public void run() {
+            Application.launch(TrackModuleUI.class);
+            }
+            }.start();
+    }
+
+    public void main() {
+        
     }
 
     public void userInterface() throws IOException {
@@ -31,14 +48,30 @@ public class TrackModule extends Module {
         }
         buildTrack( filepath);
     }
+
+    public void createTrain( float suggestedSpeed, float authority, Route route) {
+        Path path= route.getCurrPath();
+       
+        /* let's talk about this one.
+        UUID uuid= path.getStartBlock();
+        Block block= trackModule.getBlockByUUID(uuid);
+        yard.createTrain( suggestedSpeed, authority, block);*/
+    }
+    public Yard getYard() {return yard;};
+
+    public Block getBlockByUUID( UUID uuid) {
+        return blocks.get( uuid);
+    }
+
     private boolean errorCheck( String filePath) throws IOException {
         //Check for any parsing errors
         return true;
     }
 
     private void buildTrack( String filePath) throws IOException {
+        // TODO deal with my blocks being a separate class than blocks
+        HashMap<Integer, Block> myBlocks= new HashMap<Integer, Block>();
         HashSet<int[]> edges= new HashSet<int[]>();
-        blocks= new HashMap<Integer, Block>();
         HashMap<Character, WaysideController> waysides= new HashMap<Character, WaysideController>();
         
         File csvFile = new File(filePath);
@@ -104,7 +137,7 @@ public class TrackModule extends Module {
                     grade, elevation, cummElevation, underground);
             }
             
-            blocks.put( blockNumber, block);
+            myBlocks.put( blockNumber, block);
             
             if( !waysides.containsKey( section)) {
                 WaysideController asdf= this.trackControllerModule.createWayside();
@@ -116,12 +149,12 @@ public class TrackModule extends Module {
         }
         csvReader.close();
 
-        Block yard= new Yard();
-        blocks.put( 0, yard);
+        yard= new Yard();
+        myBlocks.put( 0, yard);
         
         for( int[] edge : edges) {
-            Block source= blocks.get( edge[0]);
-            Block destination= blocks.get( edge[1]);
+            Block source= myBlocks.get( edge[0]);
+            Block destination= myBlocks.get( edge[1]);
             source.addEdge( destination, edge[2] != 0);
         }
     }

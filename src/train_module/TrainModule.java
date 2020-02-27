@@ -13,6 +13,10 @@ public class TrainModule extends Module {
       trainList = FXCollections.observableArrayList();
    }
 
+   public void main() {
+
+   }
+
    public void update() {
       for (Train train : trainList) {
          train.update();

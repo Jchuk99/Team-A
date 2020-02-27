@@ -2,23 +2,29 @@ package src.track_controller;
 
 import java.util.*;
 import src.track_controller.WaysideController;
+import src.Module;
 
-public class TrackControllerModule{
+public class TrackControllerModule extends Module {
 	
 	//LinkedList<Train> trains;
-	HashSet<WaysideController> waysideControllers;
+	ArrayList<WaysideController> waysideControllers;
 
 	public TrackControllerModule(){
-		waysideControllers= new HashSet<WaysideController>();
+		waysideControllers= new ArrayList<WaysideController>();
 	}
 
 	public WaysideController createWayside(){
-		WaysideController waysideController = new WaysideController();
-		waysideControllers.add( waysideController);
+		WaysideController waysideController = new WaysideController("PLC");
+		waysideControllers.add(waysideController);
 		return waysideController;
 	}
-	public HashSet<WaysideController> getWaysideControllers(){
+
+	public ArrayList<WaysideController> getWaysideControllers(){
 		return waysideControllers;
+	}
+	
+	public void main() {
+
 	}
 
 	/*private getTrackStatus(){

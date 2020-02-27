@@ -1,4 +1,5 @@
 package src.train_controller;
+
 import src.Module;
 /*
  * TrainController
@@ -23,6 +24,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
+import java.lang.Boolean;
+
 import src.train_module.TrainModule;
 
 public class TrainControllerModule extends Module {
@@ -30,6 +36,10 @@ public class TrainControllerModule extends Module {
 	
 	public HashSet<TrainController> getList(){
 		return controllerList;
+	}
+
+	public void main() {
+		
 	}
 
 	public TrainController createTrainController(TrainModule train){//
@@ -51,7 +61,8 @@ public class TrainControllerModule extends Module {
 	public boolean emergencyBrakeControlOn;
 	public boolean serviceBrakeControlOn;
 	//public int UUID;
-	
+	//public BooleanProperty leftDoorStateTest=new SimpleBooleanProperty(false);
+	public StringBuilder testerman=new StringBuilder("100");
 	/**
 	
 	*/
@@ -200,7 +211,9 @@ public class TrainControllerModule extends Module {
 			serviceBrakeControlOn=x;
 		}
 	
-	
+		public StringBuilder getError(){
+			return testerman;
+		}
 	
 	
 	// /**
@@ -282,5 +295,19 @@ public class TrainControllerModule extends Module {
 			// }
 		// }
 	// }
+	}
+	public static void main(String[] args){
+		new Thread(){
+			@Override
+			public void run(){
+				javafx.application.Application.launch(TrainControllerUI.class);
+			}
+		}.start();
+		TrainModule t=new TrainModule();
+		TrainControllerModule TCM=new TrainControllerModule();
+		TrainControllerUI tcUI=TrainControllerUI.waitForStartUpTest();
+		TrainController tc=TCM.createTrainController(t);
+		tcUI.setTC(tc);
+		
 	}
 }

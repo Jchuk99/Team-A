@@ -55,7 +55,7 @@ public class Train {
 
    }
 
-   public void setTrainProperties(float suggestedSpeed, float authority) {
+   public void setTrain(float suggestedSpeed, float authority) {
       // setTrain called by track model only
       // TODO: pass data to train controller
       // trainController.setTrain(UUID, suggestedSpeed, authority);
