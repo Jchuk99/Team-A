@@ -17,7 +17,7 @@ public class WaysideController {
 		this.blocks= new LinkedList<Block>();
 	}
 
-	private void uploadPLC(){
+	public void uploadPLC(){
 		plc = new PLC("PLC 1");
 
 	}
@@ -26,7 +26,7 @@ public class WaysideController {
 		blocks.add(block);
 	}
 
-	private LinkedList<Block> getBlocks(){
+	public LinkedList<Block> getBlocks(){
 		return blocks;
 	}
 
