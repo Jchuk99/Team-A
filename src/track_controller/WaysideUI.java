@@ -32,10 +32,21 @@ public class WaysideUI extends Stage {
     public static WaysideUI waysideUI = null;
     public static TrackControllerModule trackControllerModule;
 
+    public void setTrackControllerModule(TrackControllerModule trackControllerModule0){
+        trackControllerModule = trackControllerModule0;
+    }
+
     public WaysideUI(){
-	setTitle("Wayside Controller UI");
+	    setTitle("Wayside Controller UI");
         ArrayList<WaysideController> waysideControllers = trackControllerModule.getWaysideControllers();
         WaysideController waysideController = new WaysideController();
+        float suggestedSpeed = trackControllerModule.getSuggestedSpeed();
+        int authority = trackControllerModule.getAuthority();
+        int trainId = trackControllerModule.getTrainId();
+
+        System.out.println(suggestedSpeed);
+        System.out.println(authority);
+        System.out.println(trainId);
 
         int length = 1200;
         int height = 800;
@@ -63,19 +74,13 @@ public class WaysideUI extends Stage {
         blockStatus.setCellValueFactory(new PropertyValueFactory<>("occupied"));
         TableColumn<String, Block> blockOpenClose= new TableColumn<>("Block Open/Close");
         blockOpenClose.setCellValueFactory(new PropertyValueFactory<>("blockOpenClose"));
-        TableColumn<String, Block> suggestedSpeed = new TableColumn<>("Suggested Speed (mph)");
+        /*TableColumn<String, Block> suggestedSpeed = new TableColumn<>("Suggested Speed (mph)");
         suggestedSpeed.setCellValueFactory(new PropertyValueFactory<>("suggestedSpeed"));
         TableColumn<String, Block> authority = new TableColumn<>("Authority (ft)");
-        authority.setCellValueFactory(new PropertyValueFactory<>("authority"));
+        authority.setCellValueFactory(new PropertyValueFactory<>("authority"));*/
         blockTable.setPrefWidth(length/3);
         
-        if(!plcTable.getSelectionModel().isEmpty()){
-            waysideController = (WaysideController) plcTable.getSelectionModel().getSelectedItem();
-            System.out.println("test");
-            for(Block block : waysideController.getBlocks()){
-                blockTable.getItems().add(block);
-            }        
-        }
+
 
         final WaysideController newWaysideController = waysideController;
  
@@ -83,6 +88,23 @@ public class WaysideUI extends Stage {
 
         HBox spacer = new HBox();
         spacer.setPrefHeight(height/6);
+        Button viewBlock= new Button();
+        viewBlock.setText("View Blocks");
+        viewBlock.setOnAction(new EventHandler<ActionEvent>() {
+ 
+            @Override
+            public void handle(ActionEvent event) {
+                if(!plcTable.getSelectionModel().isEmpty()){
+                    WaysideController waysideController = (WaysideController) plcTable.getSelectionModel().getSelectedItem();
+                    
+                    for(Block block : waysideController.getBlocks()){
+                        System.out.println("Block ID: " + block.getBlockNumber() + " Block Occupied: " + block.getOccupied());
+                        blockTable.getItems().add(block);
+                    }        
+                }
+            }
+        });
+        
         Button plcInput = new Button();
         plcInput.setText("PLC Input");
         plcInput.setOnAction(new EventHandler<ActionEvent>() {
@@ -218,9 +240,6 @@ public class WaysideUI extends Stage {
         latch.countDown();
     }*/
 
-    public void setTrackControllerModule(TrackControllerModule trackControllerModule0){
-        trackControllerModule = trackControllerModule0;
-    }
 
     public static void getPLCTextBox(int option, WaysideController waysideController){
         Stage popupwindow = new Stage();   
