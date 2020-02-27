@@ -15,7 +15,7 @@ public class Route {
         return null;
     }
 
-    public void addPath(int start, int end){
+    public void addPath(UUID start, UUID end){
         paths.add(new Path(start, end));
     }
 }

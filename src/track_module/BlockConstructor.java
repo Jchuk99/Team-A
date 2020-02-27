@@ -1,6 +1,8 @@
 package src.track_module;
 
 import src.track_module.Block;
+import src.ctc.Route;
+import src.ctc.Path;
 
 public class BlockConstructor {
     static class Normal extends Block {
@@ -54,8 +56,8 @@ public class BlockConstructor {
         Yard() {
             super( "yard", ' ', 0, 0, 0, 0, 0, 0, false);
         }
-        public void addBlock( Block b) {
-
+        public void createTrain( float suggestedSpeed, float authority, Block block) {
+            
         }
     }
 }
