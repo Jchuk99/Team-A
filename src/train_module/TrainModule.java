@@ -31,7 +31,7 @@ public class TrainModule extends Module {
         //create controller
         TrainController controller = trainControllerModule.createTrainController();
         Train train = new Train(id, block, controller);
-        controller.attachedTrain(train);
+        controller.attachTrain(train);
         trainList.add(train);
     }
 
