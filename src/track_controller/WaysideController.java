@@ -9,15 +9,23 @@ public class WaysideController {
 
 	private LinkedList<Block> blocks;
 	//private LinkedList<Train> trains;
-	private int id;
+	private String id;
 	private PLC plc;
 
 
-	public WaysideController(){
+	public WaysideController(String id){
 		this.blocks= new LinkedList<Block>();
 	}
 
-	private void uploadPLC(){
+	public void setID(String id){
+		this.id = id;
+	}
+
+	public String getID(){
+		return id;
+	}
+
+	public void uploadPLC(){
 		plc = new PLC("PLC 1");
 
 	}
@@ -26,9 +34,10 @@ public class WaysideController {
 		blocks.add(block);
 	}
 
-	private LinkedList<Block> getBlocks(){
+	public LinkedList<Block> getBlocks(){
 		return blocks;
 	}
+	
 
 }
 /*private void setTrains()
