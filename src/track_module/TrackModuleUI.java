@@ -43,22 +43,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-public class TrackModuleUI extends Application {
+public class TrackModuleUI extends Stage {
     final int width = 900;
     final int height = 800;
 
     VBox crossingBox;
     VBox stationBox;
 
-    public static TrackModule trackModule= null;
-    
-    public static void setTrackModule(TrackModule tm){
-        trackModule = tm;
-    }
-
-    @Override
-    public void start(final Stage primaryStage) {
-        primaryStage.setTitle("TrackModel UI");
+    public TrackModuleUI() {
+        setTitle("TrackModel UI");
 
         /****** temperature and track file ******/
         VBox temperatureLabel = createLabelBox("47 F");
@@ -72,7 +65,8 @@ public class TrackModuleUI extends Application {
             public void handle(ActionEvent event) {
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setTitle("Open Resource File");
-                File csvFile= fileChooser.showOpenDialog( primaryStage);
+                
+                File csvFile= fileChooser.showOpenDialog( null);
                 try {
                     trackModule.buildTrack(csvFile.getAbsolutePath());
                 }
@@ -125,9 +119,14 @@ public class TrackModuleUI extends Application {
 
         fullScreen.setPadding(new Insets(10));
 
-        primaryStage.setScene(new Scene(fullScreen, width, height));
-        primaryStage.show();
- 
+        setScene(new Scene(fullScreen, width, height));
+        showAndWait();
+    }
+
+    public static TrackModule trackModule= null;
+    
+    public static void setTrackModule(TrackModule tm){
+        trackModule = tm;
     }
 
     private HBox createTrackInfoBox() {
