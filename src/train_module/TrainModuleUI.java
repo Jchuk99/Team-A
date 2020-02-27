@@ -36,20 +36,16 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.beans.property.StringProperty;
 
-public class TrainModuleUI extends Application {
+public class TrainModuleUI extends Stage {
+    public static TrainModule trainModule;
+
+    TrainData trainData = new TrainData();
 
     final int width = 900;
     final int height = 800;
 
-    TrainModule trainModule = new TrainModule();
-    TrainData trainData = new TrainData();
-    public static void main(final String[] args) {
-        launch(args);
-    }
-
-    @Override
-    public void start(final Stage primaryStage) {
-        primaryStage.setTitle("TrainModel UI");
+    public TrainModuleUI() {
+        setTitle("TrainModel UI");
 
         /****** select train ******/
         final TableView<Train> trainTable = createTrainTable(trainModule.getTrainList());
@@ -99,9 +95,11 @@ public class TrainModuleUI extends Application {
 
         fullScreen.setPadding(new Insets(10));
 
-        primaryStage.setScene(new Scene(fullScreen, width, height));
-        primaryStage.show();
- 
+        setScene(new Scene(fullScreen, width, height));
+    }
+
+    public static void setModule(TrainModule module) {
+        trainModule = module;
     }
 
     private TableView<Train> createTrainTable(ObservableList<Train> item) {
