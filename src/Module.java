@@ -16,11 +16,11 @@ public abstract class Module {
     final int SECOND= 0;
     final int PERIOD= 1;
 
-    TrainModule trainModule;
-    TrainControllerModule trainController;
-    TrackModule trackModule;
-    TrackControllerModule trackControllerModule;
-    CTCModule ctcModule;
+    public TrainModule trainModule;
+    public TrainControllerModule trainController;
+    public TrackModule trackModule;
+    public TrackControllerModule trackControllerModule;
+    public CTCModule ctcModule;
     
     LocalDateTime date;
 

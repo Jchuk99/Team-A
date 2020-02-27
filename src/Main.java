@@ -1,5 +1,6 @@
 package src;
 
+import src.track_controller.TrackControllerModule;
 import src.track_module.TrackModule;
 
 class Main { 
@@ -7,11 +8,13 @@ class Main {
     { 
         try {
             TrackModule tm= new TrackModule();
+            TrackControllerModule tc= new TrackControllerModule();
+            tm.setTrackControllerModule( tc);
             tm.userInterface();
             int x=0;
         }
         catch( Exception e) {
-
+            System.out.println( e);
         }
     } 
 } 
