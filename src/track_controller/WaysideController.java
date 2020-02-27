@@ -26,7 +26,7 @@ public class WaysideController {
 		blocks.add(block);
 	}
 
-	private void getBlocks(){
+	private LinkedList<Block> getBlocks(){
 		return blocks;
 	}
 

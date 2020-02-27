@@ -17,7 +17,7 @@ public class CTCMain{
         }.start();
         CTCUI ctcUI = CTCUI.waitForStartUpTest();
        
-        CTCModule ctcOffice = new CTCModule(30);
+        CTCModule ctcOffice = new CTCModule();
         ctcUI.setCTCModule(ctcOffice);
 
 

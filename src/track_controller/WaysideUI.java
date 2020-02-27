@@ -49,12 +49,6 @@ public class WaysideUI extends Application {
         trackControllerModule = trackControllerModule0;
     }
 
-    }
-
-    public static void setTrackControllerModule(TrackControllerModule trackControllerModule0){
-        trackControllerModule = trackControllerModule0;
-    }
-
     public static void getPLCTextBox(int option){
         Stage popupwindow = new Stage();   
         popupwindow.initModality(Modality.APPLICATION_MODAL);
@@ -119,7 +113,7 @@ public class WaysideUI extends Application {
         int height = 800;
 
         
-        //HashMap<Character, WaysideController> waysideControllers = trackControllerModule.getWaysideControllers()
+       // HashMap<Character, WaysideController> waysideControllers = trackControllerModule.getWaysideControllers()
 
         /******top half******/
         //box1
@@ -127,9 +121,9 @@ public class WaysideUI extends Application {
         TableColumn<String, Person> plcs = new TableColumn<>("Select PLC");
         plcs.setCellValueFactory(new PropertyValueFactory<>("firstName"));
 
-        for(Map.Entry mapElement : waysideController.entrySet()){
-            plc.setCellValueFactory(waysideControllers.get(section)
-        }
+       // for(Map.Entry mapElement : waysideControllers.entrySet()){
+         //   plc.setCellValueFactory(waysideControllers.get(section)
+      //  }
         
         
 
