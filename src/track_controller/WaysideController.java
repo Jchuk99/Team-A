@@ -1,26 +1,35 @@
 package src.track_controller;
 
+import src.track_module.Block;
+import src.track_controller.PLC;
+import java.util.*;
+
+
 public class WaysideController {
 
-	//private LinkedList<Block> blocks;
+	private LinkedList<Block> blocks;
 	//private LinkedList<Train> trains;
 	private int id;
 	private PLC plc;
 
 
 	public WaysideController(){
-
+		this.blocks= new LinkedList<Block>();
 	}
-
-
-	/*public void addBlock(Block block){
-		
-	}*/
 
 	private void uploadPLC(){
 		plc = new PLC("PLC 1");
 
 	}
+
+	public void addBlock(Block block){
+		blocks.add(block);
+	}
+
+	private LinkedList<Block> getBlocks(){
+		return blocks;
+	}
+
 }
 /*private void setTrains()
 private LinkedList<Block> getBlockJurisdiction(){

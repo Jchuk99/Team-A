@@ -1,5 +1,4 @@
 package src.track_controller;
-
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -32,6 +31,10 @@ public class WaysideUI extends Application {
     public static WaysideUI waysideUI = null;
     public static TrackControllerModule trackControllerModule;
 
+    public WaysideUI(){
+
+    }
+
     public static WaysideUI waitForStartUpTest(){
         try{
             latch.await();
@@ -46,11 +49,9 @@ public class WaysideUI extends Application {
         latch.countDown();
     }
 
-    public static void setTrackControllerModule(TrackControllerModule trackControllerModule0){
+    public void setTrackControllerModule(TrackControllerModule trackControllerModule0){
         trackControllerModule = trackControllerModule0;
     }
-
-
 
     public static void getPLCTextBox(int option){
         Stage popupwindow = new Stage();   
@@ -110,6 +111,7 @@ public class WaysideUI extends Application {
     
     @Override
     public void start(Stage primaryStage) {
+        
         primaryStage.setTitle("Wayside Controller UI");
 
         int length = 1200;
@@ -120,16 +122,20 @@ public class WaysideUI extends Application {
 
         /******top half******/
         //box1
+        /*
         TableView plcTable = new TableView();
         TableColumn<String, Person> plcs = new TableColumn<>("Select PLC");
         plcs.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        /*for(Map.Entry mapElement : waysideController.entrySet()){
+
+       for(Map.Entry mapElement : waysideControllers.entrySet()){
             plc.setCellValueFactory(waysideControllers.get(section)
         }
         
+        
         */
-        plcTable.getColumns().add(plcs);
-        plcTable.getItems().add(new Person("3", "1"));
+        
+        //plcTable.getColumns().add(plcs);
+        //plcTable.getItems().add(new Person("3", "1"));
         /*plcTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
         @Override
         public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
@@ -144,7 +150,7 @@ public class WaysideUI extends Application {
              }
              }
          });*/
-        plcTable.setPrefWidth(length/6);
+        //plcTable.setPrefWidth(length/6);
 
         HBox spacer = new HBox();
         spacer.setPrefHeight(height/6);
@@ -169,11 +175,12 @@ public class WaysideUI extends Application {
         VBox buttonGrouper = new VBox(10, spacer, plcInput, plcUpload);
         buttonGrouper.setPrefHeight(height/6); 
 
+        /*
         HBox box1 = new HBox(10, plcTable, buttonGrouper);
         box1.setPrefWidth(length/3);
         box1.setPrefHeight(height/2);  
         box1.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;"); 
-
+        */
 
         //box2
         Label signalLight = new Label("Signal Light:");
@@ -253,12 +260,12 @@ public class WaysideUI extends Application {
         //textArea2.setMaxWidth(TextArea.USE_PREF_SIZE);
         //textArea2.setMinWidth(TextArea.USE_PREF_SIZE);
         
-        HBox topHalf = new HBox(10, box1, box2, box3);
-        VBox fullScreen = new VBox(10, topHalf, bottomHalf);
+        //HBox topHalf = new HBox(10, box1, box2, box3);
+        //VBox fullScreen = new VBox(10, topHalf, bottomHalf);
 
-        fullScreen.setPadding(new Insets(10));
+        //fullScreen.setPadding(new Insets(10));
 
-        primaryStage.setScene(new Scene(fullScreen, length, height));
-        primaryStage.show();
+        //primaryStage.setScene(new Scene(fullScreen, length, height));
+        //primaryStage.show();
     }
 }

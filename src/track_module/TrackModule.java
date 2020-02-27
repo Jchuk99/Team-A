@@ -10,13 +10,11 @@ import java.util.HashSet;
 import java.util.Scanner;
 
 import src.Module;
-import src.track_controller.TrackControllerModule;
 import src.track_controller.WaysideController;
 import src.track_module.BlockConstructor.*;
 
 public class TrackModule extends Module {
     HashMap<Integer, Block> blocks;
-    HashMap<Character, WaysideController> waysides;
     
 
     public TrackModule() {
@@ -41,10 +39,7 @@ public class TrackModule extends Module {
     private void buildTrack( String filePath) throws IOException {
         HashSet<int[]> edges= new HashSet<int[]>();
         blocks= new HashMap<Integer, Block>();
-        //waysides= new HashMap<Character, Wayside>();
-
-        //Path path = FileSystems.getDefault().getPath(".").toAbsolutePath();
-
+        HashMap<Character, WaysideController> waysides= new HashMap<Character, WaysideController>();
         
         File csvFile = new File(filePath);
         if (!csvFile.isFile()) {
@@ -90,7 +85,7 @@ public class TrackModule extends Module {
                 edges.add( edge3);
             }
 
-            Block block;                
+            Block block;
             if( crossing) {
                 block= new Crossing( line, section, blockNumber, length, speedLimit, 
                     grade, elevation, cummElevation, underground);
@@ -112,10 +107,11 @@ public class TrackModule extends Module {
             blocks.put( blockNumber, block);
             
             if( !waysides.containsKey( section)) {
-                //waysides.put( section, TrackControllerModule.createWayside());
+                WaysideController asdf= this.trackControllerModule.createWayside();
+                waysides.put( section, asdf);
             }
             WaysideController wayside= waysides.get( section);
-            //wayside.addBlock( block);
+            wayside.addBlock(block);
             
         }
         csvReader.close();
