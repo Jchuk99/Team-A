@@ -118,39 +118,27 @@ public class WaysideUI extends Application {
         int height = 800;
 
         
-        //HashMap<Character, WaysideController> waysideControllers = trackControllerModule.getWaysideControllers()
+        ArrayList<WaysideController> waysideControllers = trackControllerModule.getWaysideControllers();
 
         /******top half******/
         //box1
-        /*
+        
         TableView plcTable = new TableView();
-        TableColumn<String, Person> plcs = new TableColumn<>("Select PLC");
-        plcs.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        TableColumn<String, WaysideController> plcs = new TableColumn<>("Select PLC");
+        plcs.setCellValueFactory(new PropertyValueFactory<>("id"));
+        plcTable.getColumns().add(plcs);
+        int plcCount = 0;
 
-       for(Map.Entry mapElement : waysideControllers.entrySet()){
-            plc.setCellValueFactory(waysideControllers.get(section)
+        for(WaysideController x : waysideControllers){
+            x.setID("PLC" + ++plcCount);
+            plcTable.getItems().add(x);
         }
         
-        
-        */
-        
-        //plcTable.getColumns().add(plcs);
-        //plcTable.getItems().add(new Person("3", "1"));
-        /*plcTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-        @Override
-        public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
-            //Check whether item is selected and set value of selected item to Label
-            if(plcTable.getSelectionModel().getSelectedItem() != null) 
-            {    
-               TableViewSelectionModel selectionModel = plcTable.getSelectionModel();
-               ObservableList selectedCells = plcTable.getSelectedCells();
-               TablePosition tablePosition = (TablePosition) selectedCells.get(0);
-               Object val = tablePosition.getTableColumn().getCellData(newValue);
-               System.out.println("Selected Value" + val);
-             }
-             }
-         });*/
-        //plcTable.setPrefWidth(length/6);
+        if(!plcTable.getSelectionModel().isEmpty()){
+            WaysideController waysideController = (WaysideController) plcTable.getSelectionModel().getSelectedItem();
+        }
+ 
+        plcTable.setPrefWidth(length/6);
 
         HBox spacer = new HBox();
         spacer.setPrefHeight(height/6);
@@ -175,12 +163,12 @@ public class WaysideUI extends Application {
         VBox buttonGrouper = new VBox(10, spacer, plcInput, plcUpload);
         buttonGrouper.setPrefHeight(height/6); 
 
-        /*
+        
         HBox box1 = new HBox(10, plcTable, buttonGrouper);
         box1.setPrefWidth(length/3);
         box1.setPrefHeight(height/2);  
         box1.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;"); 
-        */
+        
 
         //box2
         Label signalLight = new Label("Signal Light:");

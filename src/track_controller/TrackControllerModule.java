@@ -6,20 +6,19 @@ import src.track_controller.WaysideController;
 public class TrackControllerModule{
 	
 	//LinkedList<Train> trains;
-	HashMap<Character, WaysideController> waysideControllers;
+	ArrayList<WaysideController> waysideControllers;
 
 	public TrackControllerModule(){
-		waysideControllers= new HashMap<Character, WaysideController>();
+		waysideControllers= new ArrayList<WaysideController>();
 	}
 
-	public void createWayside(){
-		WaysideController waysideController = new WaysideController();
+	public WaysideController createWayside(){
+		WaysideController waysideController = new WaysideController("PLC");
+		waysideControllers.add(waysideController);
+		return waysideController;
 	}
- 
-	public void setWaysideControllers(HashMap<Character, WaysideController> waysideControllers){
-		this.waysideControllers = waysideControllers;
-	}
-	public HashMap<Character, WaysideController> getWaysideControllers(){
+
+	public ArrayList<WaysideController> getWaysideControllers(){
 		return waysideControllers;
 	}
 
