@@ -26,7 +26,7 @@ public class TrackControllerMain{
 	}.start();
 
 	WaysideUI waysideUI = WaysideUI.waitForStartUpTest();
-	waysideUI.setTrackControllerModule(trackControllerModule);
+	waysideUI.setTrackControllerModule(trackControllerModule);*/
 	
 	}
 }

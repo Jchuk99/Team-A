@@ -17,21 +17,21 @@ class Main {
     public static void main(String args[])
     { 
         TrackModule trackModule= new TrackModule();
-        TrainControllerModule trainControllerModule= new TrainControllerModule();
+        //TrainControllerModule trainControllerModule= new TrainControllerModule();
         TrackControllerModule trackControllerModule= new TrackControllerModule();
-        TrainModule trainModule= new TrainModule();
+        //TrainModule trainModule= new TrainModule();
         CTCModule ctcModule= new CTCModule();
 
         HashSet<Module> modules= new HashSet<Module>();
         modules.add( trackModule);
-        modules.add( trainControllerModule);
+        //modules.add( trainControllerModule);
         modules.add( trackControllerModule);
-        modules.add( trainModule);
+        //modules.add( trainModule);
         modules.add( ctcModule);
         for( Module module : modules) {
             module.setCTCModule(ctcModule);
             module.setTrackControllerModule(trackControllerModule);
-            module.setTrainControllerModule(trainControllerModule);
+            //module.setTrainControllerModule(trainControllerModule);
             module.setTrackModule(trackModule);
             module.setTrainModule(trainModule);
         }

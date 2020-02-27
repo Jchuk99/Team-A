@@ -59,7 +59,7 @@ public class ApplicationUI extends Application {
         //trackControllerUI.show();
         trackModuleUI.show();
         trainModuleUI.show();
-        trainControllerUI.show();
+        //trainControllerUI.show();
     }
 
     private HBox createTrackInfoBox() {
