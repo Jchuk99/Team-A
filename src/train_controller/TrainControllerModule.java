@@ -23,33 +23,48 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Vector;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 
 import java.lang.Boolean;
 
+import src.train_module.Train;
 import src.train_module.TrainModule;
 
 public class TrainControllerModule extends Module {
-	public HashSet<TrainController> controllerList=new HashSet<TrainController>();
+
+	public Vector<TrainController> controllerList = new Vector<TrainController>();
 	
-	public HashSet<TrainController> getList(){
+	public TrainControllerModule(Train train){
+		TrainControllerUI.setTC(this);
+		new Thread(){
+			@Override
+			public void run(){
+				javafx.application.Application.launch(TrainControllerUI.class);
+			}
+		}.start();
+	
+		
+		TrainController tc=createTrainController(train);
+	}
+
+	public Vector<TrainController> getList(){
 		return controllerList;
 	}
-
-	public void main() {
-		
-	}
-
-	public TrainController createTrainController(TrainModule train){//
+	
+	public TrainController createTrainController(Train train){//
 		TrainController tc=new TrainController(train);
 		controllerList.add(tc);
 		return tc;
 	}
 	
 	public class TrainController{
-	public TrainModule attachedTrain;
+	public Train attachedTrain;
 	public TrainControllerUI attachedUI;
 	public boolean leftDoorsControlClosed;
 	public boolean rightDoorsControlClosed;
@@ -60,16 +75,18 @@ public class TrainControllerModule extends Module {
 	public float driverSpeed;
 	public boolean emergencyBrakeControlOn;
 	public boolean serviceBrakeControlOn;
-	//public int UUID;
+	public int UUID;
 	//public BooleanProperty leftDoorStateTest=new SimpleBooleanProperty(false);
-	public StringBuilder testerman=new StringBuilder("100");
+	
+	
+
 	/**
 	
 	*/
-	public TrainController(TrainModule train){ //
+	public TrainController(Train train){ //
 		//attachedUI = new TrainControllerUI(this);
 		attachedTrain=train;
-		//UUID=id;
+		UUID=Integer.parseInt(train.getName().get().substring(6));
 		leftDoorsControlClosed=false;
 		rightDoorsControlClosed=false;
 		manualModeOn=false;
@@ -88,6 +105,10 @@ public class TrainControllerModule extends Module {
 		/**
 		
 		*/
+		public StringProperty getName(){
+			return new SimpleStringProperty("Train "+UUID);
+			 
+		}
 		public boolean getManualModeOn(){
 			return manualModeOn;
 		}
@@ -211,9 +232,6 @@ public class TrainControllerModule extends Module {
 			serviceBrakeControlOn=x;
 		}
 	
-		public StringBuilder getError(){
-			return testerman;
-		}
 	
 	
 	// /**
@@ -296,11 +314,19 @@ public class TrainControllerModule extends Module {
 		// }
 	// }
 	}
-	/*public static void main(String[] args){
-=
+	
+	public static void main(String[] args){
+		/*new Thread(){
+			@Override
+			public void run(){
+				javafx.application.Application.launch(TrainControllerUI.class);
+			}
+		}.start();*/
 		TrainModule t=new TrainModule();
-		TrainControllerModule TCM=new TrainControllerModule();
-		TrainController tc=TCM.createTrainController(t);
+		Train tr=new Train(1);
+		TrainControllerModule TCM=new TrainControllerModule(tr);
+		//TrainControllerUI tcUI=TrainControllerUI.waitForStartUpTest();
 		
-	}*/
+	}
+	
 }
