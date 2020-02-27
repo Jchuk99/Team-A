@@ -296,18 +296,11 @@ public class TrainControllerModule extends Module {
 		// }
 	// }
 	}
-	public static void main(String[] args){
-		new Thread(){
-			@Override
-			public void run(){
-				javafx.application.Application.launch(TrainControllerUI.class);
-			}
-		}.start();
+	/*public static void main(String[] args){
+=
 		TrainModule t=new TrainModule();
 		TrainControllerModule TCM=new TrainControllerModule();
-		TrainControllerUI tcUI=TrainControllerUI.waitForStartUpTest();
 		TrainController tc=TCM.createTrainController(t);
-		tcUI.setTC(tc);
 		
-	}
+	}*/
 }

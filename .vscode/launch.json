@@ -3,6 +3,8 @@
     "configurations": [
         {
             "type": "java",
+<<<<<<< HEAD
+=======
             "name": "CodeLens (Launch) - TrainModuleUI",
             "request": "launch",
             "mainClass": "src.train_module.TrainModuleUI",
@@ -11,6 +13,7 @@
         },
         {
             "type": "java",
+>>>>>>> b13831d26234a4b33b05c61d2342dc16c231c2e5
             "name": "CodeLens (Launch) - CTCMain",
             "request": "launch",
             "mainClass": "src.ctc.CTCMain",
