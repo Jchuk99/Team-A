@@ -11,14 +11,12 @@ public class Schedule{
     public void uploadSchedule(){
     }
 
-    public CTCTrain createTrain(String trainID, double suggestedSpeed, String destination){
+    public CTCTrain createTrain(String trainID, float suggestedSpeed, String destination){
         CTCTrain train = new CTCTrain();
         
-        
         train.setTrainID(Integer.parseInt(trainID.split(" ")[1]));
-        //train.setAuthority(authority);
-        //train.setDestination(destination);
-        //train.setSuggestedSpeed(suggestedSpeed);
+        train.setDestination(Integer.parseInt(destination));
+        train.setSuggestedSpeed(suggestedSpeed);
         //train.dispatchRoute(destination);
 
         return train;
