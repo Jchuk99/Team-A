@@ -121,6 +121,7 @@ public class TrackModuleUI extends Stage {
 
         setScene(new Scene(fullScreen, width, height));
         showAndWait();
+        int x= 0;
     }
 
     public static TrackModule trackModule= null;
