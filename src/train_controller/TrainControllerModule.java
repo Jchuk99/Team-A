@@ -42,18 +42,11 @@ public class TrainControllerModule extends Module {
 	
 	public TrainControllerModule(Train train){
 		TrainControllerUI.setTC(this);
-		new Thread(){
-			@Override
-			public void run(){
-				javafx.application.Application.launch(TrainControllerUI.class);
-			}
-		}.start();
-	
 		
 		TrainController tc=createTrainController();
 	}
 	public void main(){
-
+		
 	}
 
 	public Vector<TrainController> getList(){
@@ -88,6 +81,7 @@ public class TrainControllerModule extends Module {
 	*/
 	public TrainController(){ //
 		//attachedUI = new TrainControllerUI(this);
+		UUID=0;
 		leftDoorsControlClosed=false;
 		rightDoorsControlClosed=false;
 		manualModeOn=false;
@@ -320,19 +314,19 @@ public class TrainControllerModule extends Module {
 		// }
 	// }
 	}
-	
+	/*
 	public static void main(String[] args){
 		/*new Thread(){
 			@Override
 			public void run(){
 				javafx.application.Application.launch(TrainControllerUI.class);
 			}
-		}.start();*/
+		}.start();
 		TrainModule t=new TrainModule();
 		//Train tr = new Train();
 		//TrainControllerModule TCM=new TrainControllerModule(tr);
 		//TrainControllerUI tcUI=TrainControllerUI.waitForStartUpTest();
 		
 	}
-	
+	*/
 }
