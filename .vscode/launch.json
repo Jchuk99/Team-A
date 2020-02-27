@@ -6,6 +6,13 @@
             "name": "CodeLens (Launch) - CTCMain",
             "request": "launch",
             "mainClass": "src.ctc.CTCMain",
+            "projectName": "Team-A_43acfd66"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - CTCMain",
+            "request": "launch",
+            "mainClass": "src.ctc.CTCMain",
             "projectName": "Team-A_c3c51f1c"
         },
         {

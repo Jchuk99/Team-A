@@ -44,21 +44,13 @@ abstract public class Block {
     public float getElevation() {return elevation;};
     public float getCummElevation() {return cummElevation;};
     public float getGrade() {return grade;};
+    public Set<Edge> getEdges(){return edges;};
 
     public void setOccupied( boolean set) {occupied= set;};
     public void setFunctional( boolean set) {functional= set;};
     public void setHeater( boolean set) {heater= set;};
+    public void setEdges(Set<Edge>edges){this.edges = edges;};
     public void addEdge( Block block, Boolean connected) {
         this.edges.add( new Edge( block, connected));
-    }
-}
-
-class Edge {
-    Block block;
-    Boolean connected;
-
-    Edge( Block block, Boolean connected) {
-        this.block= block;
-        this.connected= connected;
     }
 }
