@@ -46,8 +46,10 @@ public class Train {
       currentPower = targetPower;
 
       // TODO: use the formula here
-      currentAcceleration = 1;
-      currentSpeed = 10;
+      // testing
+      currentAcceleration = UUID;
+      currentSpeed += currentAcceleration;
+      if (currentSpeed > 40) currentSpeed = 40;
 
       currentPosition += currentSpeed;
 
