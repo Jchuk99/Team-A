@@ -5,7 +5,9 @@ import src.track_controller.WaysideController;
 import src.Module;
 
 public class TrackControllerModule extends Module {
-	
+	private float suggestedSpeed;
+	private int trainId;
+	private int authority;
 	//LinkedList<Train> trains;
 	ArrayList<WaysideController> waysideControllers;
 
@@ -29,10 +31,25 @@ public class TrackControllerModule extends Module {
 
 	/*private getTrackStatus(){
 		//go through all the waysides 
-	}
-	private void setTrains(LinkedList<Train> trains){
-		this.trains = trains;
 	}*/
+	public void setTrainInfo(int trainId, float suggestedSpeed, int authority){
+		this.suggestedSpeed = suggestedSpeed;
+		this.trainId = trainId;
+		this.authority = authority;
+	}
+
+	public float getSuggestedSpeed(){
+		return suggestedSpeed;
+	}
+
+	public int getTrainId(){
+		return trainId;
+	}
+
+	public int getAuthority(){
+		return authority;
+	}
+
 
 
 

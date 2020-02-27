@@ -6,7 +6,7 @@ import javafx.application.Application;
 
 public class TrackControllerMain{
 	public static void main(String[] args){
-		TrackControllerModule trackControllerModule = new TrackControllerModule();
+		/*TrackControllerModule trackControllerModule = new TrackControllerModule();
 		try {
 			TrackModule tm= new TrackModule();
 			
@@ -27,7 +27,7 @@ public class TrackControllerMain{
 
 	WaysideUI waysideUI = WaysideUI.waitForStartUpTest();
 	waysideUI.setTrackControllerModule(trackControllerModule);
-
+	
 	}
 }
 
