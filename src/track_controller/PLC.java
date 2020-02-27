@@ -1,9 +1,10 @@
 package src.track_controller;
 
 public class PLC {
-	private String id = null;
-	public PLC(String[] plcTokens){
-
+    private String id = null;
+    private StringBuilder text;
+	public PLC(StringBuilder text){
+        this.text = text;
 	}
 	public PLC(String id){
 		this.id = id;

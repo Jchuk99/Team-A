@@ -13,7 +13,7 @@ public class TrackControllerModule{
 	}
 
 	public WaysideController createWayside(){
-		WaysideController waysideController = new WaysideController("PLC");
+		WaysideController waysideController = new WaysideController();
 		waysideControllers.add(waysideController);
 		return waysideController;
 	}
