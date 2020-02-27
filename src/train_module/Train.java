@@ -20,7 +20,7 @@ public class Train {
    float targetPower = 0;
 
    int passengerCount = 10;
-   float weight = (float)52.2;
+   float currentWeight = (float)52.2;
 
    Boolean leftDoorWorking = true;
    Boolean rightDoorWorking = true;
@@ -41,10 +41,6 @@ public class Train {
       // trainControllerModule.createTrainController(id, this);
    }
 
-   public StringProperty getName() {
-      return new SimpleStringProperty("Train " + UUID);
-   }
-
    public void update() {
       // TODO: put train id in correct block
    }
@@ -62,6 +58,12 @@ public class Train {
 
    public void destroyTrain() {
       // TODO: destroy train controller
+   }
+
+   // for GUI
+
+   public StringProperty getName() {
+      return new SimpleStringProperty("Train " + UUID);
    }
 
    // private methods

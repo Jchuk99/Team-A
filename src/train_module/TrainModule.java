@@ -19,10 +19,9 @@ public class TrainModule extends Module {
       }
    }
 
-   public int createTrain(int id, Block block) {
+   public void createTrain(int id, Block block) {
       Train train = new Train(id, block);
       trainList.add(train);
-      return train.UUID;
    }
 
    public void destroyTrain(int id) {
