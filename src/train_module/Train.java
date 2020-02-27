@@ -6,86 +6,147 @@ import javafx.beans.property.StringProperty;
 
 public class Train {
 
-   int UUID;
-   Block currentBlock;
-   Boolean goForward = true;
-   float currentSpeed = 0;
-   float currentPower = 0;
-   float currentPosition = 0;
-   float currentAcceleration = 0;
-   float temperatureInside = 70;
+    int UUID;
+    Block currentBlock;
+    Boolean goForward = true;
+    float currentSpeed = 0;
+    float currentPower = 0;
+    float currentPosition = 0;
+    float currentAcceleration = 0;
+    float temperatureInside = 70;
 
-   float suggestedSpeed = 0;
-   float authority = 0;
-   float targetPower = 0;
+    float suggestedSpeed = 0;
+    float authority = 0;
+    float targetPower = 0;
 
-   int passengerCount = 10;
-   float currentWeight = (float)52.2;
+    int passengerCount = 10;
+    float currentWeight = (float)52.2;
 
-   Boolean leftDoorWorking = true;
-   Boolean rightDoorWorking = true;
-   Boolean lightWorking = true;
-   Boolean serviceBrakeWorking = true;
-   Boolean emergencyBrakeWorking = true;
-   Boolean engineWorking = true;
+    Boolean leftDoorWorking = true;
+    Boolean rightDoorWorking = true;
+    Boolean lightWorking = true;
+    Boolean serviceBrakeWorking = true;
+    Boolean emergencyBrakeWorking = true;
+    Boolean engineWorking = true;
 
-   final static float emptyWeight = 47;
-   final static float length = 100;
+    final static float emptyWeight = 47;
+    final static float length = 100;
 
-   public Train(int id, Block block) {
-      UUID = id;
-      currentBlock = block;
-      // TODO: check direction
+    private StringProperty suggestedSpeedString = new SimpleStringProperty("");
+    private StringProperty currentSpeedString = new SimpleStringProperty("");
+    private StringProperty authorityString = new SimpleStringProperty("");
+    private StringProperty currentPowerString = new SimpleStringProperty("");
+    private StringProperty passengerCountString = new SimpleStringProperty("");
+    private StringProperty currentWeightString = new SimpleStringProperty("");
+    private StringProperty currentAccelerationString = new SimpleStringProperty("");
+    private StringProperty currentGradeString = new SimpleStringProperty("");
+    private StringProperty temperatureInsideString = new SimpleStringProperty("");
 
-      // TODO: create train controller with UUID
-      // trainControllerModule.createTrainController(id, this);
-   }
+    public Train(int id, Block block) {
+        UUID = id;
+        currentBlock = block;
+        // TODO: check direction
 
-   public void update() {
-      // TODO: use the formula here
-      currentPower = targetPower;
+        // TODO: create train controller with UUID
+        // trainControllerModule.createTrainController(id, this);
+    }
 
-      // TODO: use the formula here
-      // testing
-      currentAcceleration = UUID;
-      currentSpeed += currentAcceleration;
-      if (currentSpeed > 40) currentSpeed = 40;
+    public void update() {
+        // TODO: use the formula here
+        currentPower = targetPower;
 
-      currentPosition += currentSpeed;
+        // TODO: use the formula here
+        // testing
+        currentAcceleration = UUID;
+        currentSpeed += currentAcceleration;
+        if (currentSpeed > 40) currentSpeed = 40;
 
-      // TODO: put train id in correct block
+        currentPosition += currentSpeed;
 
-   }
+        // TODO: put train id in correct block
 
-   public void setTrain(float suggestedSpeed, float authority) {
-      // setTrain called by track model only
-      // TODO: pass data to train controller
-      // trainController.setTrain(UUID, suggestedSpeed, authority);
-   }
 
-   public void setPower(float power) {
-      // TODO: check max power
-      targetPower = power;
-   }
+        updateString();
+    }
 
-   public void destroyTrain() {
-      // TODO: destroy train controller
-   }
+    private void updateString() {
+        suggestedSpeedString.setValue(suggestedSpeed + " mph");
+        currentSpeedString.setValue(currentSpeed + " mph");
+        authorityString.setValue(authority + " ft");
+        currentPowerString.setValue(currentPower + " kW");
+        passengerCountString.setValue(passengerCount + "");
+        currentWeightString.setValue(currentWeight + " tons");
+        currentAccelerationString.setValue(currentAcceleration + " ft/s^2");
+        // TODO: get grade from block
+        currentGradeString.setValue("0.5" + " %");
+        temperatureInsideString.setValue(temperatureInside + " F");
+    }
 
-   // for GUI
+    public void setTrain(float suggestedSpeed, float authority) {
+        // setTrain called by track model only
+        // TODO: pass data to train controller
+        // trainController.setTrain(UUID, suggestedSpeed, authority);
+    }
 
-   public StringProperty getName() {
-      return new SimpleStringProperty("Train " + UUID);
-   }
+    public void setPower(float power) {
+        // TODO: check max power
+        targetPower = power;
+    }
 
-   // private methods
+    public void destroyTrain() {
+        // TODO: destroy train controller
+    }
 
-   private void setBlock(Boolean occupied) {
-      if (occupied) {
-         // set block occupied
-      } else {
-         // set block empty
-      }
-   }
+    // for GUI
+
+    public StringProperty getName() {
+        return new SimpleStringProperty("Train " + UUID);
+    }
+
+    public StringProperty getSuggestedSpeed() {
+        return suggestedSpeedString;
+    }
+
+    public StringProperty getCurrentSpeed() {
+        return currentSpeedString;
+    }
+
+    public StringProperty getAuthority() {
+        return authorityString;
+    }
+
+    public StringProperty getCurrentPower() {
+        return currentPowerString;
+    }
+
+    public StringProperty getPassengetCount() {
+        return passengerCountString;
+    }
+
+    public StringProperty getCurrentWeight() {
+        return currentWeightString;
+    }
+
+    public StringProperty getCurrentAcceleration() {
+        return currentAccelerationString;
+    }
+
+    public StringProperty getCurrentGrade() {
+        return currentGradeString;
+    }
+
+    public StringProperty getTemperature() {
+        return temperatureInsideString;
+    }
+
+    // private methods
+
+    private void setBlock(Boolean occupied) {
+        if (occupied) {
+            // set block occupied
+        } else {
+            // set block empty
+        }
+    }
 
 }
