@@ -46,7 +46,7 @@ public class TrackModule extends Module {
         if (!errorCheck( filepath)) {
             System.out.println( "Parsing errors.");
         }
-        buildTrack( filepath);
+        //this.buildTrack( filepath);
     }
 
     public void createTrain( float suggestedSpeed, float authority, Route route) {
@@ -68,18 +68,13 @@ public class TrackModule extends Module {
         return true;
     }
 
-    private void buildTrack( String filePath) throws IOException {
+    public void buildTrack( String csvFile) throws IOException {
         // TODO deal with my blocks being a separate class than blocks
         HashMap<Integer, Block> myBlocks= new HashMap<Integer, Block>();
         HashSet<int[]> edges= new HashSet<int[]>();
         HashMap<Character, WaysideController> waysides= new HashMap<Character, WaysideController>();
         
-        File csvFile = new File(filePath);
-        if (!csvFile.isFile()) {
-            // TODO THIS
-            throw new FileNotFoundException();
-        }
-        BufferedReader csvReader = new BufferedReader( new FileReader( filePath));
+        BufferedReader csvReader = new BufferedReader( new FileReader( csvFile));
         
         String row= csvReader.readLine();
         while ((row = csvReader.readLine()) != null) {
