@@ -6,10 +6,10 @@ import src.track_controller.WaysideController;
 public class TrackControllerModule{
 	
 	//LinkedList<Train> trains;
-	ArrayList<WaysideController> waysideControllers;
+	HashSet<WaysideController> waysideControllers;
 
 	public TrackControllerModule(){
-		waysideControllers= new ArrayList<WaysideController>();
+		waysideControllers= new HashSet<WaysideController>();
 	}
 
 	public WaysideController createWayside(){
@@ -18,7 +18,7 @@ public class TrackControllerModule{
 		return waysideController;
 	}
 
-	public ArrayList<WaysideController> getWaysideControllers(){
+	public HashSet<WaysideController> getWaysideControllers(){
 		return waysideControllers;
 	}
 

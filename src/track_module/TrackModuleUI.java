@@ -1,5 +1,7 @@
 package src.track_module;
 
+import java.util.concurrent.CountDownLatch;
+
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -40,8 +42,35 @@ public class TrackModuleUI extends Application {
 
     VBox crossingBox;
     VBox stationBox;
+
+    public static final CountDownLatch latch = new CountDownLatch(1);
+    public static TrackModuleUI trackModuleUI = null;
+    public static TrackModule trackModule= null;
+
     public static void main(final String[] args) {
         launch(args);
+    }
+
+    public static TrackModuleUI waitForStartUpTest() {
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return trackModuleUI;
+    }
+            
+    public static void setStartUpTest(TrackModuleUI trackModuleUI0) {
+        trackModuleUI = trackModuleUI0;
+        latch.countDown();
+    }
+    
+    public TrackModuleUI(){
+        setStartUpTest(this);
+    }
+    
+    public void setCTCModule(TrackModule trackModule0){
+        trackModule = trackModule0;
     }
 
     @Override

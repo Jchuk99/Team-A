@@ -11,7 +11,8 @@ class Main {
             TrackModule tm= new TrackModule();
             TrackControllerModule tc= new TrackControllerModule();
             tm.setTrackControllerModule( tc);
-            tm.userInterface();
+            //tm.userInterface();
+            tm.main();
             int x=0;
         }
         catch( Exception e) {

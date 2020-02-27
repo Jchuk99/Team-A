@@ -10,9 +10,11 @@ import java.util.HashSet;
 import java.util.Scanner;
 import java.util.UUID;
 
+import javafx.application.Application;
 import src.Module;
 import src.track_controller.WaysideController;
 import src.track_module.BlockConstructor.*;
+import src.track_module.TrackModuleUI;
 import src.ctc.Path;
 import src.ctc.Route;
 
@@ -26,7 +28,16 @@ public class TrackModule extends Module {
     }
 
     public void main() {
-
+        new Thread() {
+            @Override
+            public void run() {
+            Application.launch(TrackModuleUI.class);
+            }
+            }.start();
+            TrackModuleUI trackModuleUI = TrackModuleUI.waitForStartUpTest();
+            
+            TrackModule trackModule = new TrackModule();
+            trackModuleUI.setCTCModule( trackModule);
     }
 
     public void userInterface() throws IOException {
