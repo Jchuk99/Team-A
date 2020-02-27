@@ -9,24 +9,24 @@ public class WaysideController {
 
 	private LinkedList<Block> blocks;
 	//private LinkedList<Train> trains;
-	private String id;
+	private String id = null;
 	private PLC plc;
 
 
-	public WaysideController(String id){
+	public WaysideController(){
 		this.blocks= new LinkedList<Block>();
 	}
 
-	public void setID(String id){
+	public void setId(String id){
 		this.id = id;
 	}
 
-	public String getID(){
+	public String getId(){
 		return id;
 	}
 
-	public void uploadPLC(){
-		plc = new PLC("PLC 1");
+	public void uploadPLC(StringBuilder plcText){
+		plc = new PLC(plcText);
 
 	}
 

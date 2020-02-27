@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
+import javafx.application.Application;
 import src.Module;
 import src.track_controller.TrackControllerModule;
 import src.track_controller.WaysideController;
@@ -26,14 +26,20 @@ public class CTCModule extends Module{
 
     public CTCModule(){
         super();
-        speed = 20;
+        CTCUI.setCTCModule(this);
+        /*new Thread() {
+            @Override
+            public void run() {
+                Application.launch(CTCUI.class);
+            }
+        }.start();*/
     }
     public int getSpeed(){return speed;}
 
     public void getMap(){
        //length, number, edges
        //hashmap of blocks with they're UUID so that I can access any one.
-       List<WaysideController> waysides = trackControllerModule.getWaysideControllers();
+       ArrayList<WaysideController> waysides = trackControllerModule.getWaysideControllers();
        for (WaysideController wayside : waysides) { 
                List<Block> blockList = wayside.getBlocks();
                for(Block block : blockList){
@@ -81,11 +87,13 @@ public class CTCModule extends Module{
         }
         // need to give speed in meters per second, authority, train ID, and route
         suggestedSpeed = suggestedSpeed/(float)2.237;
+
+        // need to parse destination into block
         System.out.println(trainID);
         System.out.println(destination);
         System.out.println(suggestedSpeed);
         CTCTrain train = schedule.createTrain(trainID, suggestedSpeed, destination);
-        //waysideModule.sendTrainInfo(train.getTrainID(), train.getSuggestedSpeed(), train.getAuthority(), train.getRoute());
+        //trackControllerModule.sendTrainInfo(train.getTrainID(), train.getSuggestedSpeed(), train.getAuthority(), train.getRoute());
 
     }
 }

@@ -14,7 +14,7 @@ public class TrackControllerModule extends Module {
 	}
 
 	public WaysideController createWayside(){
-		WaysideController waysideController = new WaysideController("PLC");
+		WaysideController waysideController = new WaysideController();
 		waysideControllers.add(waysideController);
 		return waysideController;
 	}
