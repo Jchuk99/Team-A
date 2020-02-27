@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - TrackModuleUI",
+            "request": "launch",
+            "mainClass": "src.track_module.TrackModuleUI",
+            "projectName": "Team-A_cb89eef6"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - CTCMain",
             "request": "launch",
             "mainClass": "src.ctc.CTCMain",

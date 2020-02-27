@@ -1,5 +1,6 @@
 package src.train_module;
 
+import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,9 +36,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class TrainModuleUI extends Application {
+
     final int width = 900;
     final int height = 800;
 
+    // testing
+    TrainModule trainModule = new TrainModule();
     public static void main(final String[] args) {
         launch(args);
     }
@@ -47,15 +51,8 @@ public class TrainModuleUI extends Application {
         primaryStage.setTitle("TrainModel UI");
 
         /****** select train ******/
-        // TODO: get train data from module
-        ObservableList<Person> trainData;
-        trainData = FXCollections.observableArrayList();
-
-        final TableView trainTable = createTrainTable(trainData);
+        final TableView<Train> trainTable = createTrainTable(trainModule.getTrainList());
         trainTable.setPrefWidth(width / 8);
-
-        // testing: add a train to test
-        trainData.add(new Person("Train 1"));
         /****** select train ******/
 
         /****** beacon ******/
@@ -84,6 +81,7 @@ public class TrainModuleUI extends Application {
         final VBox box3 = new VBox(10, box2, beaconBox);
 
         final HBox topHalf = new HBox(10, box3, statusBox);
+        // TODO: map
         final TableView mapTable = new TableView();
 
         topHalf.setPrefHeight(height / 2);
@@ -98,13 +96,13 @@ public class TrainModuleUI extends Application {
  
     }
 
-    private TableView createTrainTable(ObservableList<Person> item) {
-        final TableView trainTable = new TableView();
+    private TableView<Train> createTrainTable(ObservableList<Train> item) {
+        final TableView<Train> trainTable = new TableView<Train>();
         trainTable.setPlaceholder(new Label("No trains available"));
 
-        final TableColumn<String, Person> trainTable_col = new TableColumn<>("Select Train");
-        trainTable_col.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        trainTable.getColumns().add(trainTable_col);
+        final TableColumn<Train, String> trainTableCol = new TableColumn<Train, String>("Select Train");
+        trainTableCol.setCellValueFactory(cellData -> cellData.getValue().getName());
+        trainTable.getColumns().add(trainTableCol);
 
         trainTable.setItems(item);
 

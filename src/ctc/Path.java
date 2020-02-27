@@ -3,6 +3,8 @@ package src.ctc;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
+import java.time.LocalDateTime;
 
 import src.track_module.Block;
 import src.track_module.Edge;
@@ -10,16 +12,23 @@ import src.track_module.Edge;
 public class Path {
 
     //private static Map;
-    private int startTime;
-    private int endTIme;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private int startBlock;
     private int endBlock;
+    //private UUID startBlock;
+    //private UUID endBlock;
     //need a list of blocks
     //List<Integer> course;
     
     public Path(){
     }
  
+   /* public Path(UUID startBlock, UUID endBlock){
+        this.startBlock = startBlock;
+        this.endBlock = endBlock;
+    }*/
+
     public Path(int startBlock, int endBlock){
         this.startBlock = startBlock;
         this.endBlock = endBlock;
@@ -30,6 +39,7 @@ public class Path {
         LinkedList<Integer> course = search(startBlock, endBlock);
         return course;    
     }
+    
     //TODO: Make algorithim account for distance of blocks
     private LinkedList<Integer> search(int start, int destination) {
 		Block block = CTCModule.blockMap.get(start);
@@ -67,5 +77,15 @@ public class Path {
 		course.add(0, curr);
 		return course;
     }
+
+    public LocalDateTime getStartTime() {return startTime;};
+    public LocalDateTime getEndTime() {return endTime;};
+    public int getStartBlock() {return startBlock;};
+    public int getEndBlock() {return endBlock;};
+
+    
+    // public UUID getStartBlock() {return startBlock;};
+    // public UUID getEndBlock() {return endBlock;};
+
 
 }
