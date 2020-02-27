@@ -49,48 +49,15 @@ import javafx.stage.Modality;
 
 import java.lang.Boolean;
  
-public class TrainControllerUI extends Application {
+public class TrainControllerUI extends Stage {
 
     final int width = 900;
     final int height = 800;
 
-    
-	public static final CountDownLatch latch=new CountDownLatch(1);
-	private static TrainControllerUI tcUI;
 	private static TrainController attachedTrainController;
 	
-	public static TrainControllerUI waitForStartUpTest(){
-		try{
-			latch.await();
-		} catch (InterruptedException e){
-			e.printStackTrace();
-		}
-		return tcUI;
-	}
-	public static void setStartUpTest(TrainControllerUI tcUI0){
-		tcUI=tcUI0;
-		latch.countDown();
-	}
 	public TrainControllerUI(){
-		setStartUpTest(this);
-	}
-	
-	public void setTC(TrainController tc){
-		attachedTrainController=tc;
-	}
-	
-	//public TrainControllerUI(TrainController x){
-	//	attachedTrainController=x;
-	//}
-	 //commented out to deal with UI creation
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    @Override
-    public void start(final Stage primaryStage) {
-        primaryStage.setTitle("TrainModel UI");
+        setTitle("TrainModel UI");
 
         /****** select train ******/
         // TODO: get train data from module
@@ -101,7 +68,7 @@ public class TrainControllerUI extends Application {
         trainTable.setPrefWidth(width / 8);
 
         // testing: add a train to test
-        trainData.add(new Train(1));
+        trainData.add(new Train(1, null));
         /****** select train ******/
 
         /****** beacon ******/
@@ -139,10 +106,15 @@ public class TrainControllerUI extends Application {
 
         fullScreen.setPadding(new Insets(10));
 
-        primaryStage.setScene(new Scene(fullScreen, width, height));
-        primaryStage.show();
- 
-    }
+        setScene(new Scene(fullScreen, width, height));
+        show();
+		
+	}
+	
+	public void setTC(TrainController tc){
+		attachedTrainController=tc;
+	}
+
 
     private TableView<Train> createTrainTable(ObservableList<Train> item) {
         final TableView<Train> trainTable = new TableView<Train>();

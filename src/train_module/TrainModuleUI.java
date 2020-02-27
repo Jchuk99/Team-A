@@ -34,25 +34,29 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.beans.property.StringProperty;
 
-public class TrainModuleUI extends Application {
+public class TrainModuleUI extends Stage {
+    public static TrainModule trainModule;
+
+    TrainData trainData = new TrainData();
 
     final int width = 900;
     final int height = 800;
 
-    // testing
-    TrainModule trainModule = new TrainModule();
-    public static void main(final String[] args) {
-        launch(args);
-    }
-
-    @Override
-    public void start(final Stage primaryStage) {
-        primaryStage.setTitle("TrainModel UI");
+    public TrainModuleUI() {
+        setTitle("TrainModel UI");
 
         /****** select train ******/
         final TableView<Train> trainTable = createTrainTable(trainModule.getTrainList());
         trainTable.setPrefWidth(width / 8);
+
+        // testing displaying info for selected train
+        trainModule.createTrain(1, null);
+        trainData.setTrain(trainModule.trainList.get(0));
+
+        // TODO: set trainData to selected train
+
         /****** select train ******/
 
         /****** beacon ******/
@@ -91,9 +95,11 @@ public class TrainModuleUI extends Application {
 
         fullScreen.setPadding(new Insets(10));
 
-        primaryStage.setScene(new Scene(fullScreen, width, height));
-        primaryStage.show();
- 
+        setScene(new Scene(fullScreen, width, height));
+    }
+
+    public static void setModule(TrainModule module) {
+        trainModule = module;
     }
 
     private TableView<Train> createTrainTable(ObservableList<Train> item) {
@@ -141,17 +147,17 @@ public class TrainModuleUI extends Application {
         VBox name9 = createTextBox("Temperature Inside");
         VBox nameBox2 = new VBox(10, name5, name6, name7, name8, name9);
 
-        VBox label1 = createLabelBox("30 mph");
-        VBox label2 = createLabelBox("30 mph");
-        VBox label3 = createLabelBox("1000 ft");
-        VBox label4 = createLabelBox("100 kW");
+        VBox label1 = createLabelBox("", trainData.getSuggestedSpeed());
+        VBox label2 = createLabelBox("", trainData.getCurrentSpeed());
+        VBox label3 = createLabelBox("", trainData.getAuthority());
+        VBox label4 = createLabelBox("", trainData.getCurrentPower());
         VBox labelBox1 = new VBox(10, label1, label2, label3, label4);
 
-        VBox label5 = createLabelBox("150");
-        VBox label6 = createLabelBox("52.2 tons");
-        VBox label7 = createLabelBox("0.44 ft/s^2");
-        VBox label8 = createLabelBox("0.5 %");
-        VBox label9 = createLabelBox("70 F");
+        VBox label5 = createLabelBox("", trainData.getPassengetCount());
+        VBox label6 = createLabelBox("", trainData.getCurrentWeight());
+        VBox label7 = createLabelBox("", trainData.getCurrentAcceleration());
+        VBox label8 = createLabelBox("", trainData.getCurrentGrade());
+        VBox label9 = createLabelBox("", trainData.getTemperature());
         VBox labelBox2 = new VBox(10, label5, label6, label7, label8, label9);
         
         final HBox infoBox = new HBox(10, createHSpacer(), nameBox1, labelBox1, createHSpacer(), nameBox2, labelBox2, createHSpacer());
@@ -266,6 +272,16 @@ public class TrainModuleUI extends Application {
         return labelBox;
     }
 
+    private VBox createLabelBox(String text, StringProperty valueProperty) {
+        // all VBox create function are unified to 40px height
+        Label label = createLabel(text);
+        label.textProperty().bind(valueProperty);
+        VBox labelBox = new VBox(0, label);
+        labelBox.setPrefHeight(40);
+        labelBox.setAlignment(Pos.CENTER_LEFT);
+        return labelBox;
+    }
+
     private Circle createCircle(int radius, Color color) {
         Circle circle = new Circle();
         circle.setRadius(radius);
@@ -294,5 +310,5 @@ public class TrainModuleUI extends Application {
         HBox.setHgrow(spacer, Priority.ALWAYS);
         return spacer;
     }
-
+    
 }

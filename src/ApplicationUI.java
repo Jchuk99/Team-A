@@ -1,6 +1,4 @@
-package src.track_module;
-
-import java.util.concurrent.CountDownLatch;
+package src;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -35,86 +33,35 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import src.ctc.CTCUI;
+import src.train_controller.*;
+import src.track_controller.*;
+import src.train_module.*;
+import src.track_module.*;
 
-public class TrackModuleUI extends Stage {
+public class ApplicationUI extends Application {
     final int width = 900;
     final int height = 800;
 
     VBox crossingBox;
     VBox stationBox;
 
-    public static TrackModule trackModule= null;
+    @Override
+    public void start(Stage primaryStage) {
 
-    public TrackModuleUI(){
-        setTitle("TrackModel UI");
+        CTCUI ctcUI = new CTCUI();
+        WaysideUI trackControllerUI = new WaysideUI();
+        TrackModuleUI trackModuleUI = new TrackModuleUI();
+        TrainModuleUI trainModuleUI = new TrainModuleUI();
+        TrainControllerUI trainControllerUI = new TrainControllerUI();
 
-        /****** temperature and track file ******/
-        VBox temperatureLabel = createLabelBox("47 F");
-        final HBox temperatureBox = new HBox(10, createTextBox("Temperature"), temperatureLabel);
-
-        // select track file button
-        VBox buttonBox = createButtonBox("Select Track File", 150, 30);
-        Button button = (Button)buttonBox.getChildren().get(0);
-        button.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                // TODO: button handle
-            }
-        });
-        final HBox topBox = new HBox(10, temperatureBox, createHSpacer(), buttonBox, createHSpacer());
-        /****** temperature and track file ******/
-
-        /****** Track Information ******/
-        final HBox trackInfoBox = createTrackInfoBox();
-        trackInfoBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
-        /****** Track Information ******/
-
-        /****** signal light ******/
-        final HBox signalLightBox = createSignalLightBox();
-        signalLightBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
-        /****** signal light ******/
-        
-        /****** block ID ******/
-        final HBox blockIDBox = createBlockIDBox();
-        blockIDBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
-        /****** block ID ******/
-
-        /****** infrastructure ******/
-        final HBox infrastructureBox = createInfrastructureBox();
-        infrastructureBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
-        /****** infrastructure ******/
-
-        /****** beacon ******/
-        final HBox beaconBox = new HBox(10, createTextBox("Beacon"), createLabelBox("STATION; CASTLE SHANNON; BLOCK 96;"));
-        beaconBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
-        /****** beacon ******/
-        
-        // combining boxes
-        final VBox box1 = new VBox(10, signalLightBox, blockIDBox);
-        final HBox box2 = new HBox(10, box1, infrastructureBox);
-        final VBox box3 = new VBox(10, box2, beaconBox);
-        final HBox box4 = new HBox(10, trackInfoBox, box3);
-
-        final VBox topHalf = new VBox(10, topBox, box4);
-        final TableView mapTable = new TableView();
-
-        topHalf.setPrefHeight(height / 2);
-        mapTable.setPrefHeight(height / 2);
-
-        final VBox fullScreen = new VBox(10, topHalf, mapTable);
-
-        fullScreen.setPadding(new Insets(10));
-
-        setScene(new Scene(fullScreen, width, height));
-        show();
- 
+        ctcUI.show();
+        //trackControllerUI.show();
+        trackModuleUI.show();
+        trainModuleUI.show();
+        trainControllerUI.show();
     }
 
-    public static void setTrackModule(TrackModule tm){
-        trackModule = tm;
-    }
-
-   
     private HBox createTrackInfoBox() {
         // TODO: pull data from module
         VBox name1 = createTextBox("Length");
