@@ -39,8 +39,12 @@ public class CTCModule extends Module{
     public void getMap(){
        //length, number, edges
        //hashmap of blocks with they're UUID so that I can access any one.
+<<<<<<< HEAD
+       ArrayList<WaysideController> waysides = trackControllerModule.getWaysideControllers();
+=======
        //TODO: Change to hashMap
        List<WaysideController> waysides = trackControllerModule.getWaysideControllers();
+>>>>>>> 3b68f84b7458438533819ece0eaf98e82d12d956
        for (WaysideController wayside : waysides) { 
                List<Block> blockList = wayside.getBlocks();
                for(Block block : blockList){
