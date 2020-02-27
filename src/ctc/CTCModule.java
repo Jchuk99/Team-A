@@ -27,12 +27,12 @@ public class CTCModule extends Module{
     public CTCModule(){
         super();
         CTCUI.setCTCModule(this);
-        new Thread() {
+        /*new Thread() {
             @Override
             public void run() {
                 Application.launch(CTCUI.class);
             }
-        }.start();
+        }.start();*/
     }
     public int getSpeed(){return speed;}
 
@@ -88,6 +88,8 @@ public class CTCModule extends Module{
         }
         // need to give speed in meters per second, authority, train ID, and route
         suggestedSpeed = suggestedSpeed/(float)2.237;
+
+        // need to parse destination into block
         System.out.println(trainID);
         System.out.println(destination);
         System.out.println(suggestedSpeed);
