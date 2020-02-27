@@ -50,7 +50,7 @@ public class TrainControllerUI extends Application {
     final int width = 900;
     final int height = 800;
 
-    /*
+    
 	public static final CountDownLatch latch=new CountDownLatch(1);
 	private static TrainControllerUI tcUI;
 	private static TrainControllerModule attachedTrainController;
@@ -78,7 +78,7 @@ public class TrainControllerUI extends Application {
 	//public TrainControllerUI(TrainController x){
 	//	attachedTrainController=x;
 	//}
-	*/ //commented out to deal with UI creation
+	 //commented out to deal with UI creation
 
     public static void main(String[] args) {
         launch(args);

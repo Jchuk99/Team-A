@@ -1,5 +1,5 @@
 package src.train_controller;
-
+import src.Module;
 /*
  * TrainController
  * Primary Author: Jacob Heilman
@@ -9,6 +9,10 @@ package src.train_controller;
  * Copyright notice
  * This program provies functionality for a train controller. 
  */
+//package trainGame;
+
+//import trainGame.Module;
+//import trainGame.Graph;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,9 +24,8 @@ import java.util.HashSet;
 import java.util.Scanner;
 
 import src.train_module.TrainModule;
-import src.Module;
 
-public class TrainControllerModule extends Module {//extends Module {
+public class TrainControllerModule extends Module {
 	public TrainModule attachedTrain;
 	public TrainControllerUI attachedUI;
 	public boolean leftDoorsControlClosed;

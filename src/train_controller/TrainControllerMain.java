@@ -1,6 +1,6 @@
+package src.train_controller;
 
-
-public class Main{
+public class TrainControllerMain{
 	public static void main(String[] args){
 		new Thread(){
 			@Override
@@ -9,7 +9,7 @@ public class Main{
 			}
 		}.start();
 		TrainControllerUI tcUI=TrainControllerUI.waitForStartUpTest();
-		TrainController tc=new TrainController();
+		TrainControllerModule tc=new TrainControllerModule();
 		tcUI.setTC(tc);
 		
 	}
