@@ -49,12 +49,7 @@ public class WaysideUI extends Application {
         trackControllerModule = trackControllerModule0;
     }
 
-    }
-
-    public static void setTrackControllerModule(TrackControllerModule trackControllerModule0){
-        trackControllerModule = trackControllerModule0;
-    }
-
+    
     public static void getPLCTextBox(int option){
         Stage popupwindow = new Stage();   
         popupwindow.initModality(Modality.APPLICATION_MODAL);
