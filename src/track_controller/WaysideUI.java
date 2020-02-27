@@ -117,7 +117,7 @@ public class WaysideUI extends Application {
         int height = 800;
 
         
-       // HashMap<Character, WaysideController> waysideControllers = trackControllerModule.getWaysideControllers()
+        HashMap<Character, WaysideController> waysideControllers = trackControllerModule.getWaysideControllers()
 
         /******top half******/
         //box1
@@ -125,9 +125,9 @@ public class WaysideUI extends Application {
         TableColumn<String, Person> plcs = new TableColumn<>("Select PLC");
         plcs.setCellValueFactory(new PropertyValueFactory<>("firstName"));
 
-       // for(Map.Entry mapElement : waysideControllers.entrySet()){
-         //   plc.setCellValueFactory(waysideControllers.get(section)
-      //  }
+       for(Map.Entry mapElement : waysideControllers.entrySet()){
+            plc.setCellValueFactory(waysideControllers.get(section)
+        }
         
         
 
