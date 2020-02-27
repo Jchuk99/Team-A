@@ -1,14 +1,15 @@
 package src.train_module;
 
 import src.track_module.Block;
-import src.train_controller.TrainController;
+import src.train_controller.TrainControllerModule;
+import src.train_controller.TrainControllerModule;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class Train {
 
     int UUID;
-    TrainController controller;
+    TrainControllerModule controller;
     Block currentBlock;
     Boolean goForward = true;
     float currentSpeed = 0;
@@ -22,7 +23,7 @@ public class Train {
     float targetPower = 0;
 
     int passengerCount = 10;
-    float currentWeight = (float)52.2;
+    float currentWeight = (float) 52.2;
 
     Boolean leftDoorWorking = true;
     Boolean rightDoorWorking = true;
@@ -44,10 +45,10 @@ public class Train {
     private StringProperty currentGradeString = new SimpleStringProperty("");
     private StringProperty temperatureInsideString = new SimpleStringProperty("");
 
-    public Train(int id, Block block, TrainController trainController) {
+    public Train(int id, Block block, TrainControllerModule trainController) {
         UUID = id;
         currentBlock = block;
-        controller = trainController;
+        //controller = trainController;
         // TODO: check direction
 
     }

@@ -40,18 +40,10 @@ public class TrainControllerModule extends Module {
 
 	public Vector<TrainController> controllerList = new Vector<TrainController>();
 	
-	public TrainControllerModule(Train train){
+	public TrainControllerModule(){
 		TrainControllerUI.setTC(this);
-		new Thread(){
-			@Override
-			public void run(){
-				javafx.application.Application.launch(TrainControllerUI.class);
-			}
-		}.start();
-	
-		
-		TrainController tc=createTrainController(train);
 	}
+
 	public void main(){
 
 	}

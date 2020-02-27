@@ -29,10 +29,10 @@ public class TrainModule extends Module {
 
     public void createTrain(int id, Block block) {
         //create controller
-        TrainController controller = new TrainController();
-        Train train = new Train(id, block, controller);
-        controller.attachedTrain(train);
-        trainList.add(train);
+       // TrainController controller = new TrainController();
+       // Train train = new Train(id, block, controller);
+       // controller.attachedTrain(train);
+        //trainList.add(train);
     }
 
     public void destroyTrain(int id) {

@@ -54,7 +54,7 @@ import java.lang.Boolean;
 import java.lang.Integer;
 
  
-public class TrainControllerUI extends Application {
+public class TrainControllerUI extends Stage{
 
     final int width = 900;
     final int height = 800;
@@ -65,24 +65,10 @@ public class TrainControllerUI extends Application {
 	private static TrainControllerModule attachedTrainControllerModule;
 	private TrainController tc;
 	
-	
-	public static void setTC(TrainControllerModule tcm){
-		attachedTrainControllerModule=tcm;
-    }
     
-	
-	//public TrainControllerUI(TrainController x){
-	//	attachedTrainController=x;
-	//}
-	 //commented out to deal with UI creation
+    public TrainControllerUI(){
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    @Override
-    public void start(final Stage primaryStage) {
-        primaryStage.setTitle("TrainModel UI");
+        setTitle("TrainModel UI");
 
         /****** select train ******/
         // TODO: get train data from module
@@ -157,10 +143,19 @@ public class TrainControllerUI extends Application {
 
         fullScreen.setPadding(new Insets(10));
 
-        primaryStage.setScene(new Scene(fullScreen, width, height));
-        primaryStage.show();
- 
+        setScene(new Scene(fullScreen, width, height));
+        show();
+
     }
+	public static void setTC(TrainControllerModule tcm){
+		attachedTrainControllerModule=tcm;
+    }
+    
+	
+	//public TrainControllerUI(TrainController x){
+	//	attachedTrainController=x;
+	//}
+	 //commented out to deal with UI creation
 
     /*private TableView<TrainController> createTrainTable(ObservableList<TrainController> trainData) {
         final TableView<TrainController> trainTable = new TableView<TrainController>();
