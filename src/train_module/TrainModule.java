@@ -1,15 +1,16 @@
 package src.train_module;
 
 import src.Module;
-import java.util.ArrayList;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class TrainModule extends Module {
 
    int nextID = 0;
-   ArrayList<Train> trainList;
+   ObservableList<Train> trainList;
 
    public TrainModule() {
-      
+      trainList = FXCollections.observableArrayList();
    }
 
    public void update() {
@@ -40,6 +41,11 @@ public class TrainModule extends Module {
    }
 
 
+   // for GUI
+
+   public ObservableList<Train> getTrainList() {
+      return trainList;
+   }
 
    // private methods
 
