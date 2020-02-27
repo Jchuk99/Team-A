@@ -50,6 +50,9 @@ public class TrackModule extends Module {
     }
 
     public void createTrain( float suggestedSpeed, float authority, Route route) {
+        System.out.println(suggestedSpeed);
+        System.out.println(authority);
+        
         Path path= route.getCurrPath();
        
         /* let's talk about this one.

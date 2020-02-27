@@ -90,11 +90,12 @@ public class CTCModule extends Module{
         suggestedSpeed = suggestedSpeed/(float)2.237;
 
         // need to parse destination into block
+        int destinationInt = Integer.parseInt(destination);
         System.out.println(trainID);
         System.out.println(destination);
         System.out.println(suggestedSpeed);
-        CTCTrain train = schedule.createTrain(trainID, suggestedSpeed, destination);
-        //trackControllerModule.sendTrainInfo(train.getTrainID(), train.getSuggestedSpeed(), train.getAuthority(), train.getRoute());
+        CTCTrain train = schedule.createTrain(trainID, suggestedSpeed, destinationInt);
+        this.trackModule.createTrain(train.getSuggestedSpeed(), (float) train.getAuthority(), train.getRoute());
 
     }
 }

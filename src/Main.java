@@ -6,6 +6,7 @@ import src.track_module.TrackModule;
 import src.train_controller.TrainControllerModule;
 import src.train_module.TrainModule;
 
+import java.io.IOException;
 import java.util.HashSet;
 
 import javafx.application.Application;
@@ -15,7 +16,8 @@ import src.ctc.CTCUI;
 
 class Main { 
     public static void main(String args[])
-    { 
+    {
+
         TrackModule trackModule= new TrackModule();
         TrainControllerModule trainControllerModule= new TrainControllerModule();
         TrackControllerModule trackControllerModule= new TrackControllerModule();
@@ -35,18 +37,26 @@ class Main {
             module.setTrackModule(trackModule);
             module.setTrainModule(trainModule);
         }
-        new Thread() {
+
+         new Thread() {
             @Override
             public void run() {
                 Application.launch(ApplicationUI.class);
             }
         }.start();
 
+        try{
+            trackModule.userInterface();
+        }
+        catch(IOException e){
 
+        }
 
+        ctcModule.getMap();
 
         for( Module module : modules) {
             module.main();
         }
+
     } 
 } 

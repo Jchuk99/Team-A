@@ -49,11 +49,8 @@ public class ApplicationUI extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        CTCUI ctcStage = new CTCUI();
-        ctcStage.show();
-
-        TrackModuleUI trackModuleUI = new TrackModuleUI();
-        trackModuleUI.show();
+        CTCUI ctcUI = new CTCUI();
+        ctcUI.show();
         
     }
 
