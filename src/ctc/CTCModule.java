@@ -39,7 +39,12 @@ public class CTCModule extends Module{
     public void getMap(){
        //length, number, edges
        //hashmap of blocks with they're UUID so that I can access any one.
+<<<<<<< HEAD
+       //TODO: Change to hashMap
+       List<WaysideController> waysides = trackControllerModule.getWaysideControllers();
+=======
        ArrayList<WaysideController> waysides = trackControllerModule.getWaysideControllers();
+>>>>>>> b7b80cef50b2e7ef068588e853adaf037e8e6285
        for (WaysideController wayside : waysides) { 
                List<Block> blockList = wayside.getBlocks();
                for(Block block : blockList){
@@ -89,11 +94,12 @@ public class CTCModule extends Module{
         suggestedSpeed = suggestedSpeed/(float)2.237;
 
         // need to parse destination into block
+        int destinationInt = Integer.parseInt(destination);
         System.out.println(trainID);
         System.out.println(destination);
         System.out.println(suggestedSpeed);
-        CTCTrain train = schedule.createTrain(trainID, suggestedSpeed, destination);
-        //trackControllerModule.sendTrainInfo(train.getTrainID(), train.getSuggestedSpeed(), train.getAuthority(), train.getRoute());
+        CTCTrain train = schedule.createTrain(trainID, suggestedSpeed, destinationInt);
+        this.trackModule.createTrain(train.getSuggestedSpeed(), (float) train.getAuthority(), train.getRoute());
 
     }
 }

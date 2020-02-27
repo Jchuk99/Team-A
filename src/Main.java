@@ -6,6 +6,7 @@ import src.track_module.TrackModule;
 import src.train_controller.TrainControllerModule;
 import src.train_module.TrainModule;
 
+import java.io.IOException;
 import java.util.HashSet;
 
 import javafx.application.Application;
@@ -13,9 +14,13 @@ import javafx.stage.Stage;
 import src.ctc.CTCModule;
 import src.ctc.CTCUI;
 
-class Main { 
+import java.util.Timer;
+import java.util.TimerTask;
+
+class Main {
     public static void main(String args[])
-    { 
+    {
+
         TrackModule trackModule= new TrackModule();
         TrainControllerModule trainControllerModule= new TrainControllerModule();
         TrackControllerModule trackControllerModule= new TrackControllerModule();
@@ -28,6 +33,7 @@ class Main {
         modules.add( trackControllerModule);
         modules.add( trainModule);
         modules.add( ctcModule);
+
         for( Module module : modules) {
             module.setCTCModule(ctcModule);
             module.setTrackControllerModule(trackControllerModule);
@@ -35,18 +41,32 @@ class Main {
             module.setTrackModule(trackModule);
             module.setTrainModule(trainModule);
         }
-        new Thread() {
+
+        Thread thread = new Thread() {
             @Override
             public void run() {
                 Application.launch(ApplicationUI.class);
             }
-        }.start();
-
-
-
+        };
+        thread.start();
 
         for( Module module : modules) {
             module.main();
         }
-    } 
+
+        // update modules
+        // TODO: variable timer speed
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run () {
+                if (!thread.isAlive()) timer.cancel();
+                for(Module module: modules) {
+                    module.tickTock();
+                }
+            }
+        }, 0, 1000);
+
+    }
+
 } 
