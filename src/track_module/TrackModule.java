@@ -25,19 +25,17 @@ public class TrackModule extends Module {
     public TrackModule() {
         super();
         blocks= new HashMap<UUID, Block>();
-    }
-
-    public void main() {
+        TrackModuleUI.setTrackModule(this);
         new Thread() {
             @Override
             public void run() {
             Application.launch(TrackModuleUI.class);
             }
             }.start();
-            TrackModuleUI trackModuleUI = TrackModuleUI.waitForStartUpTest();
-            
-            TrackModule trackModule = new TrackModule();
-            trackModuleUI.setCTCModule( trackModule);
+    }
+
+    public void main() {
+        
     }
 
     public void userInterface() throws IOException {

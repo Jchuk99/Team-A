@@ -32,6 +32,10 @@ public class TrainControllerModule extends Module {
 		return controllerList;
 	}
 
+	public void main() {
+		
+	}
+
 	public TrainController createTrainController(TrainModule train){//
 		TrainController tc=new TrainController(train);
 		controllerList.add(tc);

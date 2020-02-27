@@ -20,6 +20,10 @@ public class CTCModule extends Module{
     private Schedule schedule = null;
     public int speed;
 
+    public void main() {
+
+    }
+
     public CTCModule(){
         super();
         speed = 20;
