@@ -115,7 +115,7 @@ public class TrackModule extends Module {
                 //waysides.put( section, TrackControllerModule.createWayside());
             }
             WaysideController wayside= waysides.get( section);
-            //wayside.addBlock( block);
+            //wayside.addBlock(block);
             
         }
         csvReader.close();

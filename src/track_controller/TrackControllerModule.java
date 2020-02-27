@@ -9,17 +9,17 @@ public class TrackControllerModule{
 	HashMap<Character, WaysideController> waysideControllers;
 
 	public TrackControllerModule(){
-
+		waysideControllers= new HashMap<Character, WaysideController>();
 	}
 
-	private void createWayside(){
+	public void createWayside(){
 		WaysideController waysideController = new WaysideController();
 	}
 
-	private void setWaysideControllers(HashMap<Character, WaysideController> waysideControllers){
+	public void setWaysideControllers(HashMap<Character, WaysideController> waysideControllers){
 		this.waysideControllers = waysideControllers;
 	}
-	private HashMap<Character, WaysideController> getWaysideControllers(){
+	public HashMap<Character, WaysideController> getWaysideControllers(){
 		return waysideControllers;
 	}
 
