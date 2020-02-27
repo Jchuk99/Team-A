@@ -3,7 +3,7 @@ package src.ctc;
 public class CTCTrain{
 
     private int authority;
-    private int suggestedSpeed; // IN METERS PER SECOND INTERALLY
+    private float suggestedSpeed; // IN METERS PER SECOND INTERALLY
     private int trainID;
     private int destination;
     private int currPos;
@@ -20,12 +20,13 @@ public class CTCTrain{
         if (currPos != -1) start = currPos;
         route = new Route();
         route.addPath(start, blockDest);
+        authority = route.getCurrPath().getCourse().size() - 1;
     }
     
     public void setAuthority(int authority){
         this.authority = authority;
     }
-    public void setSuggestedSpeed(int suggestedSpeed){
+    public void setSuggestedSpeed(float suggestedSpeed){
         this.suggestedSpeed = suggestedSpeed;
     }
     public void setTrainID(int trainID){
@@ -34,10 +35,13 @@ public class CTCTrain{
     public void setDestination(int destination){
         this.destination = destination;
     }
+    public Route getRoute(){
+        return route;
+    }
     public int getAuthority(){
         return authority;
     }
-    public int getSuggestedSpeed(){
+    public float getSuggestedSpeed(){
         return suggestedSpeed;
     }
     public int getTrainID(){

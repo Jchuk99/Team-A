@@ -41,10 +41,10 @@ import java.util.concurrent.CountDownLatch;
  
 public class CTCUI extends Application {
     public static final CountDownLatch latch = new CountDownLatch(1);
-    public static CTCUI ctcUI = null;
-    
+    public static CTCUI ctcUI = null;  
     public static CTCModule ctcOffice;
     static int trainID = 0;
+    
     /*public static void main(String[] args) {
         //launch(args);
     }*/
@@ -385,7 +385,7 @@ public class CTCUI extends Application {
         blocks.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         blockTable.getColumns().add(blocks);
          
-        //TODO: Make it so that it gets map blocks from the CTC
+        //TODO: Make it so that it gets map blocks from the CTC module
         ObservableList<Person> blockData = FXCollections.observableArrayList(
             new Person("1"),
             new Person("2"),
@@ -443,7 +443,7 @@ public class CTCUI extends Application {
             public void handle(ActionEvent event) {
                 Person block;
                 Person train;
-                double speed;
+                float speed;
 
                 if (!blocksTable.getSelectionModel().isEmpty()){
                     block = blocksTable.getSelectionModel().getSelectedItem();
@@ -454,7 +454,7 @@ public class CTCUI extends Application {
                 }
 
                 train = trainTable.getSelectionModel().getSelectedItem();
-                speed = speedSlider.getValue();
+                speed = (float) speedSlider.getValue();
                 ctcOffice.dispatch(train.getFirstName(), speed, block.getFirstName());
             }
             });                                                    

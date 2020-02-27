@@ -71,17 +71,17 @@ public class CTCModule extends Module{
         }
     }
 
-    public void dispatch(String trainID, double suggestedSpeed, String destination){
+    public void dispatch(String trainID, float suggestedSpeed, String destination){
         if (schedule == null){
            schedule = new Schedule();
         }
         // need to give speed in meters per second, authority, train ID, and route
-
+        suggestedSpeed = suggestedSpeed/(float)2.237;
         System.out.println(trainID);
         System.out.println(destination);
         System.out.println(suggestedSpeed);
-        CTCTrain trainToDispatch = schedule.createTrain(trainID, suggestedSpeed, destination);
-        //waysideModule.addTrain(trainToDispatch);
+        CTCTrain train = schedule.createTrain(trainID, suggestedSpeed, destination);
+        //waysideModule.sendTrainInfo(train.getTrainID(), train.getSuggestedSpeed(), train.getAuthority(), train.getRoute());
 
     }
 }
