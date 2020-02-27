@@ -50,7 +50,7 @@ public class TrainControllerModule extends Module {
 		}.start();
 	
 		
-		TrainController tc=createTrainController(train);
+		TrainController tc=createTrainController();
 	}
 	public void main(){
 
@@ -60,8 +60,8 @@ public class TrainControllerModule extends Module {
 		return controllerList;
 	}
 	
-	public TrainController createTrainController(Train train){//
-		TrainController tc=new TrainController(train);
+	public TrainController createTrainController(){//
+		TrainController tc=new TrainController();
 		controllerList.add(tc);
 		return tc;
 	}
@@ -86,10 +86,8 @@ public class TrainControllerModule extends Module {
 	/**
 	
 	*/
-	public TrainController(Train train){ //
+	public TrainController(){ //
 		//attachedUI = new TrainControllerUI(this);
-		attachedTrain=train;
-		UUID=Integer.parseInt(train.getName().get().substring(6));
 		leftDoorsControlClosed=false;
 		rightDoorsControlClosed=false;
 		manualModeOn=false;
@@ -99,6 +97,11 @@ public class TrainControllerModule extends Module {
 		float driverSpeed=(float)0.0;
 		emergencyBrakeControlOn=true;
 		serviceBrakeControlOn=true;
+	}
+
+	public void attachTrain(Train train) {
+		attachedTrain=train;
+		UUID=Integer.parseInt(train.getName().get().substring(6));
 	}
 	
 	/**
