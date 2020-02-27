@@ -44,29 +44,16 @@ public class CTCUI extends Application {
     public static CTCUI ctcUI = null;  
     public static CTCModule ctcOffice;
     static int trainID = 0;
-    
+
     /*public static void main(String[] args) {
         //launch(args);
     }*/
-    public static CTCUI waitForStartUpTest() {
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return ctcUI;
-    }
-
-    public static void setStartUpTest(CTCUI ctcUI0) {
-        ctcUI = ctcUI0;
-        latch.countDown();
-    }
-
+    
     public CTCUI(){
-        setStartUpTest(this);
+
     }
     
-    public void setCTCModule(CTCModule ctcOffice0){
+    public static void setCTCModule(CTCModule ctcOffice0){
         ctcOffice = ctcOffice0;
     }
 
