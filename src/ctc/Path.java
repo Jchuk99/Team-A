@@ -42,16 +42,18 @@ public class Path {
     
     //TODO: Make algorithim account for distance of blocks
     private LinkedList<Integer> search(int start, int destination) {
-		Block block = CTCModule.blockMap.get(start);
+        start = 1;
+		Block block = CTCModule.blockMap.get(Integer.valueOf(start));
         LinkedList<Integer> course = new LinkedList<Integer>();
 		Deque<Block> q = new LinkedList<Block>();
-		boolean[] marked = new boolean[CTCModule.blockMap.size()];
-		int[] edgeTo = new int[CTCModule.blockMap.size()];      
-		int[] distTo = new int[CTCModule.blockMap.size()];
+		boolean[] marked = new boolean[CTCModule.blockMap.size() + 1];
+        int[] edgeTo = new int[CTCModule.blockMap.size() + 1];      
+		int[] distTo = new int[CTCModule.blockMap.size() + 1];
 		
-        for (int v = 0; v < CTCModule.blockMap.size() ; v++){
+        for (int v = 0; v < CTCModule.blockMap.size() + 1 ; v++){
             distTo[v] = Integer.MAX_VALUE;
-		}
+        }
+        
         distTo[block.getBlockNumber()] = 0;
         marked[block.getBlockNumber()] = true;
         q.add(block);

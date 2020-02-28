@@ -349,10 +349,7 @@ public class CTCUI extends Stage {
          
         //TODO: Make it so that it gets stations from CTC
         ObservableList<Person> stationData = FXCollections.observableArrayList(
-            new Person("YARD"),
-            new Person("WHITED"),
-            new Person("SOUTH BANK"),
-            new Person("CENTRAL"),
+            new Person("PIONEER"),
             new Person("EDGEBROOK")
         );
         stationTable.setItems(stationData);
@@ -372,7 +369,12 @@ public class CTCUI extends Stage {
             new Person("4"),
             new Person("5"),
             new Person("6"),
-            new Person("7")
+            new Person("7"),
+            new Person("8"),
+            new Person("9"),
+            new Person("10"),
+            new Person("11"),
+            new Person("12")
         );
         blockTable.setItems(blockData);
        
@@ -430,6 +432,14 @@ public class CTCUI extends Stage {
                 else{
                     // this is a station, so I'm going to need to transform station name into a block number... static hash table for now?
                     block = stationTable.getSelectionModel().getSelectedItem(); 
+                    if (block.getFirstName().equalsIgnoreCase("Pioneer"))
+                    {
+                        block.setFirstName("2");
+                    }
+                    else
+                    {
+                        block.setFirstName("9");
+                    }
                 }
 
                 train = trainTable.getSelectionModel().getSelectedItem();
