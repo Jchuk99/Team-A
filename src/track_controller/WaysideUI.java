@@ -27,7 +27,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
  
-public class WaysideUI extends Stage {
+public class WaysideUI extends Application{
     public static final CountDownLatch latch = new CountDownLatch(1);
     public static WaysideUI waysideUI = null;
     public static TrackControllerModule trackControllerModule;
@@ -37,7 +37,25 @@ public class WaysideUI extends Stage {
     }
 
     public WaysideUI(){
-	    setTitle("Wayside Controller UI");
+        setStartUpTest(this);
+    }
+
+    public static WaysideUI waitForStartUpTest(){
+        try{
+            latch.await();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+        return waysideUI;
+    }
+
+    public static void setStartUpTest(WaysideUI waysideUI0){
+        waysideUI = waysideUI0;
+        latch.countDown();
+    }
+
+    public void start(Stage primaryStage){
+        primaryStage.setTitle("Wayside Controller UI");
         ArrayList<WaysideController> waysideControllers = trackControllerModule.getWaysideControllers();
         WaysideController waysideController = new WaysideController();
         float suggestedSpeed = trackControllerModule.getSuggestedSpeed();
@@ -63,7 +81,7 @@ public class WaysideUI extends Stage {
         int plcCount = 0;
         for(WaysideController controller : waysideControllers){
             controller.setId("PLC " + ++plcCount);
-            //System.out.println(controller.getID());
+            System.out.println(controller.getId());
             plcTable.getItems().add(controller);
         }
         
@@ -98,7 +116,7 @@ public class WaysideUI extends Stage {
                     WaysideController waysideController = (WaysideController) plcTable.getSelectionModel().getSelectedItem();
                     
                     for(Block block : waysideController.getBlocks()){
-                        System.out.println("Block ID: " + block.getBlockNumber() + " Block Occupied: " + block.getOccupied());
+                        System.out.println("Block ID: " + block.getBlockNumber() + " Block Occupied: " + block.getOccupied() + " Suggested Speed: 50 Authority: 60");
                         blockTable.getItems().add(block);
                     }        
                 }
@@ -123,7 +141,7 @@ public class WaysideUI extends Stage {
                getPLCTextBox(2, newWaysideController);
             }
         });
-        VBox buttonGrouper = new VBox(10, spacer, plcInput, plcUpload);
+        VBox buttonGrouper = new VBox(10, spacer, viewBlock, plcInput, plcUpload);
         buttonGrouper.setPrefHeight(height/6); 
 
         
@@ -221,24 +239,9 @@ public class WaysideUI extends Stage {
 
         fullScreen.setPadding(new Insets(10));
 
-        setScene(new Scene(fullScreen, length, height));
-        show();
-        //setStartUpTest(this);
+        primaryStage.setScene(new Scene(fullScreen, length, height));
+        primaryStage.show();
     }
-
-    /*public static WaysideUI waitForStartUpTest(){
-        try{
-            latch.await();
-        }catch(InterruptedException e){
-            e.printStackTrace();
-        }
-        return waysideUI;
-    }
-
-    public static void setStartUpTest(WaysideUI waysideUI0){
-        waysideUI = waysideUI0;
-        latch.countDown();
-    }*/
 
 
     public static void getPLCTextBox(int option, WaysideController waysideController){

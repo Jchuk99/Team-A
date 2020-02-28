@@ -57,6 +57,10 @@ public class TrainControllerModule extends Module {
 		}
 	}
 
+	public void main(){
+
+	}
+
 	public Vector<TrainController> getList(){
 		return controllerList;
 	}
