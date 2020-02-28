@@ -53,6 +53,10 @@ public class TrainControllerModule extends Module {
 		TrainController tc=createTrainController(train);
 	}
 
+	public void main(){
+
+	}
+
 	public Vector<TrainController> getList(){
 		return controllerList;
 	}
@@ -322,9 +326,9 @@ public class TrainControllerModule extends Module {
 				javafx.application.Application.launch(TrainControllerUI.class);
 			}
 		}.start();*/
-		TrainModule t=new TrainModule();
-		Train tr=new Train(1);
-		TrainControllerModule TCM=new TrainControllerModule(tr);
+		//TrainModule t=new TrainModule();
+		//Train tr=new Train(1);
+		//TrainControllerModule TCM=new TrainControllerModule(tr);
 		//TrainControllerUI tcUI=TrainControllerUI.waitForStartUpTest();
 		
 	}
