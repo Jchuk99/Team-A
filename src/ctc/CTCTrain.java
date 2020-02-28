@@ -20,7 +20,7 @@ public class CTCTrain{
         if (currPos != -1) start = currPos;
         route = new Route();
         route.addPath(start, blockDest);
-        authority = route.getCurrPath().getCourse().size() - 1;
+        authority = route.getCurrPath().getCourse().size();
     }
     
     public void setAuthority(int authority){
