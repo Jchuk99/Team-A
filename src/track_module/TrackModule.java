@@ -66,6 +66,7 @@ public class TrackModule extends Module {
     }
 
     public void buildTrack( String csvFile) throws IOException {
+        System.out.println(csvFile);
         // TODO deal with my blocks being a separate class than blocks
         HashMap<Integer, Block> myBlocks= new HashMap<Integer, Block>();
         HashSet<int[]> edges= new HashSet<int[]>();

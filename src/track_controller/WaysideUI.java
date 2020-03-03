@@ -27,35 +27,17 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
  
-public class WaysideUI extends Application{
+public class WaysideUI extends Stage{
     public static final CountDownLatch latch = new CountDownLatch(1);
-    public static WaysideUI waysideUI = null;
     public static TrackControllerModule trackControllerModule;
 
-    public void setTrackControllerModule(TrackControllerModule trackControllerModule0){
+    public static void setTrackControllerModule(TrackControllerModule trackControllerModule0){
         trackControllerModule = trackControllerModule0;
     }
 
     public WaysideUI(){
-        setStartUpTest(this);
-    }
-
-    public static WaysideUI waitForStartUpTest(){
-        try{
-            latch.await();
-        }catch(InterruptedException e){
-            e.printStackTrace();
-        }
-        return waysideUI;
-    }
-
-    public static void setStartUpTest(WaysideUI waysideUI0){
-        waysideUI = waysideUI0;
-        latch.countDown();
-    }
-
-    public void start(Stage primaryStage){
-        primaryStage.setTitle("Wayside Controller UI");
+        setTitle("Wayside Controller UI");
+        System.out.println(trackControllerModule);
         ArrayList<WaysideController> waysideControllers = trackControllerModule.getWaysideControllers();
         WaysideController waysideController = new WaysideController();
         float suggestedSpeed = trackControllerModule.getSuggestedSpeed();
@@ -239,9 +221,23 @@ public class WaysideUI extends Application{
 
         fullScreen.setPadding(new Insets(10));
 
-        primaryStage.setScene(new Scene(fullScreen, length, height));
-        primaryStage.show();
+        setScene(new Scene(fullScreen, length, height));
+        //show();
     }
+
+    /*public static WaysideUI waitForStartUpTest(){
+        try{
+            latch.await();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+        return waysideUI;
+    }
+
+    public static void setStartUpTest(WaysideUI waysideUI0){
+        waysideUI = waysideUI0;
+        latch.countDown();
+    }*/
 
 
     public static void getPLCTextBox(int option, WaysideController waysideController){

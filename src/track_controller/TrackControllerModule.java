@@ -2,6 +2,7 @@ package src.track_controller;
 
 import java.util.*;
 import src.track_controller.WaysideController;
+import src.track_controller.WaysideUI;
 import src.Module;
 
 public class TrackControllerModule extends Module {
@@ -12,7 +13,9 @@ public class TrackControllerModule extends Module {
 	ArrayList<WaysideController> waysideControllers;
 
 	public TrackControllerModule(){
+		super();
 		waysideControllers= new ArrayList<WaysideController>();
+		WaysideUI.setTrackControllerModule(this);
 	}
 
 	public WaysideController createWayside(){

@@ -287,7 +287,7 @@ public class CTCUI extends Stage {
 
 
     }
-    private static TableView<
+    //private static TableView<
 
     private static TableView<SchedulerUI> createScheduleTable(){
 

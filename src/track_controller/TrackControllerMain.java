@@ -4,7 +4,7 @@ import src.track_module.TrackModule;
 
 import javafx.application.Application;
 
-public class TrackControllerMain{
+/*public class TrackControllerMain{
 	public static void main(String[] args){
 		TrackControllerModule trackControllerModule = new TrackControllerModule();
 		try {
@@ -28,5 +28,5 @@ public class TrackControllerMain{
 	waysideUI.setTrackControllerModule(trackControllerModule);
 	
 	}
-}
+}*/
 
