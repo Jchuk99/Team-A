@@ -46,7 +46,7 @@ public class TrackModule extends Module {
         if (!errorCheck( filepath)) {
             System.out.println( "Parsing errors.");
         }
-        //this.buildTrack( filepath);
+        this.buildTrack( filepath);
     }
 
     public void createTrain( float suggestedSpeed, float authority, Route route) {

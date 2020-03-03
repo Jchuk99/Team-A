@@ -22,7 +22,7 @@ public class Train {
     float targetPower = 0;
 
     int passengerCount = 10;
-    float currentWeight = (float)52.2;
+    float currentWeight = (float) 52.2;
 
     Boolean leftDoorWorking = true;
     Boolean rightDoorWorking = true;
@@ -47,7 +47,7 @@ public class Train {
     public Train(int id, Block block, TrainController trainController) {
         UUID = id;
         currentBlock = block;
-        controller = trainController;
+        //controller = trainController;
         // TODO: check direction
 
     }

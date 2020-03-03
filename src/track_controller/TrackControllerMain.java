@@ -10,7 +10,6 @@ public class TrackControllerMain{
 		try {
 			TrackModule tm= new TrackModule();
 			
-			
 			tm.setTrackControllerModule(trackControllerModule);
 			tm.userInterface();
 		}
@@ -27,7 +26,7 @@ public class TrackControllerMain{
 
 	WaysideUI waysideUI = WaysideUI.waitForStartUpTest();
 	waysideUI.setTrackControllerModule(trackControllerModule);
-
+	
 	}
 }
 

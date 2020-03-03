@@ -45,8 +45,16 @@ public class TrainControllerModule extends Module {
 		
 		TrainController tc=createTrainController();
 	}
+
 	public void main(){
 		
+	}
+
+	@Override
+	public void update() {
+		for (TrainController controller : controllerList) {
+			controller.update();
+		}
 	}
 
 	public Vector<TrainController> getList(){
@@ -60,7 +68,7 @@ public class TrainControllerModule extends Module {
 	}
 	
 	public class TrainController{
-	public Train attachedTrain;
+	public Train attachedTrain = null;
 	public TrainControllerUI attachedUI;
 	public boolean leftDoorsControlClosed;
 	public boolean rightDoorsControlClosed;
@@ -96,6 +104,11 @@ public class TrainControllerModule extends Module {
 	public void attachTrain(Train train) {
 		attachedTrain=train;
 		UUID=Integer.parseInt(train.getName().get().substring(6));
+	}
+
+	public void update() {
+		if (attachedTrain == null) return;
+		attachedTrain.setPower(10);
 	}
 	
 	/**
