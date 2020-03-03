@@ -51,13 +51,12 @@ public class ApplicationUI extends Application {
 
          // Nothing else works until it gets map information from the track Module.
         TrackModuleUI trackModuleUI = new TrackModuleUI();
-        
+
         CTCUI ctcUI = new CTCUI();
         TrainModuleUI trainModuleUI = new TrainModuleUI();
         WaysideUI trackControllerUI = new WaysideUI();
         TrainControllerUI trainControllerUI = new TrainControllerUI();
 
-        
         ctcUI.show();
         trackControllerUI.show();
         trainModuleUI.show();
