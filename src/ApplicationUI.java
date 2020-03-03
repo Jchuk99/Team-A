@@ -49,14 +49,14 @@ public class ApplicationUI extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        CTCUI ctcUI = new CTCUI();
-        WaysideUI trackControllerUI = new WaysideUI();
+         // Nothing else works until it gets map information from the track Module.
         TrackModuleUI trackModuleUI = new TrackModuleUI();
+        
+        CTCUI ctcUI = new CTCUI();
         TrainModuleUI trainModuleUI = new TrainModuleUI();
+        WaysideUI trackControllerUI = new WaysideUI();
         TrainControllerUI trainControllerUI = new TrainControllerUI();
 
-       // Nothing else works until it gets map information from the track Module.
-        trackModuleUI.showAndWait();
         
         ctcUI.show();
         trackControllerUI.show();

@@ -70,6 +70,7 @@ public class TrackModuleUI extends Stage {
                 File csvFile= fileChooser.showOpenDialog( null);
                 try {
                     trackModule.buildTrack(csvFile.getAbsolutePath());
+                    close();
                 }
                 catch( IOException e) {
 
@@ -121,6 +122,7 @@ public class TrackModuleUI extends Stage {
         fullScreen.setPadding(new Insets(10));
 
         setScene(new Scene(fullScreen, width, height));
+        showAndWait();
     }
     
     public static void setTrackModule(TrackModule tm){
