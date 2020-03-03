@@ -46,6 +46,7 @@ import java.nio.file.Paths;
 public class TrackModuleUI extends Stage {
     final int width = 900;
     final int height = 800;
+    public static TrackModule trackModule= null;
 
     VBox crossingBox;
     VBox stationBox;
@@ -120,10 +121,7 @@ public class TrackModuleUI extends Stage {
         fullScreen.setPadding(new Insets(10));
 
         setScene(new Scene(fullScreen, width, height));
-        showAndWait();
     }
-
-    public static TrackModule trackModule= null;
     
     public static void setTrackModule(TrackModule tm){
         trackModule = tm;

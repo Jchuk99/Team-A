@@ -26,12 +26,6 @@ public class TrackModule extends Module {
         super();
         blocks= new HashMap<UUID, Block>();
         TrackModuleUI.setTrackModule(this);
-        /*new Thread() {
-            @Override
-            public void run() {
-            Application.launch(TrackModuleUI.class);
-            }
-            }.start();*/
     }
 
     public void main() {

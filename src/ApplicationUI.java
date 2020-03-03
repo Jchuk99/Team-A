@@ -49,17 +49,21 @@ public class ApplicationUI extends Application {
     @Override
     public void start(Stage primaryStage) {
 
+
         CTCUI ctcUI = new CTCUI();
         WaysideUI trackControllerUI = new WaysideUI();
         TrackModuleUI trackModuleUI = new TrackModuleUI();
         TrainModuleUI trainModuleUI = new TrainModuleUI();
         TrainControllerUI trainControllerUI = new TrainControllerUI();
 
+       // Nothing else works until it gets map information from the track Module.
+        trackModuleUI.showAndWait();
+        
         ctcUI.show();
-        //trackControllerUI.show();
-        trackModuleUI.show();
+        trackControllerUI.show();
         trainModuleUI.show();
-        //trainControllerUI.show();
+        trackModuleUI.show();
+        trainControllerUI.show();
     }
 
     private HBox createTrackInfoBox() {
