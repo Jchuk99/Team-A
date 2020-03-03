@@ -46,6 +46,7 @@ import java.nio.file.Paths;
 public class TrackModuleUI extends Stage {
     final int width = 900;
     final int height = 800;
+    public static TrackModule trackModule= null;
 
     VBox crossingBox;
     VBox stationBox;
@@ -69,6 +70,7 @@ public class TrackModuleUI extends Stage {
                 File csvFile= fileChooser.showOpenDialog( null);
                 try {
                     trackModule.buildTrack(csvFile.getAbsolutePath());
+                    close();
                 }
                 catch( IOException e) {
 
@@ -122,8 +124,6 @@ public class TrackModuleUI extends Stage {
         setScene(new Scene(fullScreen, width, height));
         showAndWait();
     }
-
-    public static TrackModule trackModule= null;
     
     public static void setTrackModule(TrackModule tm){
         trackModule = tm;

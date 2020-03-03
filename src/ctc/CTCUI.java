@@ -214,6 +214,7 @@ public class CTCUI extends Stage {
         sliderBox.setAlignment(Pos.CENTER);
 
         Text timeText = new Text("Time");
+        //TODO: set time to track global time
         Label timeLabel = new Label("11:00:23 am");
         timeLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
 
@@ -230,74 +231,22 @@ public class CTCUI extends Stage {
         box3.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
         box3.setAlignment(Pos.CENTER);
 
+        HBox topHalf = new HBox(10, box1, box3);
+        topHalf.setAlignment(Pos.CENTER);
+        topHalf.setPrefHeight(height/2);
 
         /******bottom half******/
         
-        Button scheduleButton = new Button();
-        scheduleButton.setText("Select Schedule File");
-        scheduleButton.setPrefWidth(400);
-        scheduleButton.setPrefHeight(100);
-        //scheduleButton.setMaxSize(800, 800);
-        scheduleButton.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
-                            "-fx-font-size:20;" + "-fx-text-fill: black;");
-
-        //Adding the shadow when the mouse cursor is on
-        DropShadow shadow = new DropShadow();
-        scheduleButton.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
-            @Override 
-            public void handle(MouseEvent e) {
-                scheduleButton.setEffect(shadow);
-            }
-        });
-        //Removing the shadow when the mouse cursor is off
-        scheduleButton.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
-            @Override 
-            public void handle(MouseEvent e) {
-                scheduleButton.setEffect(null);
-            }
-        });
-
-        TableView scheduleTable = new TableView();
-        scheduleTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        
-        TableColumn<String, SchedulerUI> blockID = new TableColumn<>("Block ID");
-        blockID.setCellValueFactory(new PropertyValueFactory<>("blockID"));
-
-        TableColumn<String, SchedulerUI> station = new TableColumn<>("Station");
-        station.setCellValueFactory(new PropertyValueFactory<>("station"));
-
-        TableColumn<String, SchedulerUI> trainOne = new TableColumn<>("Train 1 Arrival Time");
-        trainOne.setCellValueFactory(new PropertyValueFactory<>("trainOne"));
-
-        TableColumn<String, SchedulerUI> trainTwo = new TableColumn<>("Train 2 Arrival Time");
-        trainTwo.setCellValueFactory(new PropertyValueFactory<>("trainTwo"));
-
-        TableColumn<String, SchedulerUI> trainThree = new TableColumn<>("Train 3 Arrival Time");
-        trainThree.setCellValueFactory(new PropertyValueFactory<>("trainThree"));
-
-        scheduleTable.getColumns().add(blockID);
-        scheduleTable.getColumns().add(station);
-        scheduleTable.getColumns().add(trainOne);
-        scheduleTable.getColumns().add(trainTwo);
-        scheduleTable.getColumns().add(trainThree);
-
-        scheduleTable.getItems().add(new SchedulerUI("5", "WHITED", "7:30am", "8:00am", "8:30am"));
-        scheduleTable.getItems().add(new SchedulerUI("9", "SOUTH BANK", "8:00am", "8:30am", "9:00am"));
-        scheduleTable.getItems().add(new SchedulerUI("11", "CENTRAL", "8:30am", "9:00am", "9:30am"));
-        scheduleTable.getItems().add(new SchedulerUI("15", "EDGEBROOK", "9:00am", "9:30am", "10:00am"));
-        
-        scheduleTable.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+        Button scheduleButton = createScheduleButton();
+        TableView<SchedulerUI> scheduleTable = createScheduleTable();
 
         VBox bottomHalf = new VBox(10, scheduleButton, scheduleTable);
         bottomHalf.setAlignment(Pos.CENTER);
+        bottomHalf.setPrefHeight(height/2);
 
-        HBox topHalf = new HBox(10, box1, box3);
-        topHalf.setPrefHeight(height/2);
-        scheduleTable.setPrefHeight(height/2);
+        /***** FULL SCREEN ****/
         VBox fullScreen = new VBox(10, topHalf, bottomHalf);
-
         fullScreen.setPadding(new Insets(10));
-
         popupwindow.setScene(new Scene(fullScreen, length, height));
         popupwindow.show();
     }
@@ -338,9 +287,46 @@ public class CTCUI extends Stage {
 
 
     }
+    //private static TableView<
+
+    private static TableView<SchedulerUI> createScheduleTable(){
+
+        TableView<SchedulerUI> scheduleTable = new TableView<SchedulerUI>();
+        scheduleTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        
+        TableColumn<SchedulerUI, String> blockID = new TableColumn<>("Block ID");
+        blockID.setCellValueFactory(new PropertyValueFactory<>("blockID"));
+
+        TableColumn<SchedulerUI, String>  station = new TableColumn<>("Station");
+        station.setCellValueFactory(new PropertyValueFactory<>("station"));
+
+        TableColumn<SchedulerUI, String>  trainOne = new TableColumn<>("Train 1 Arrival Time");
+        trainOne.setCellValueFactory(new PropertyValueFactory<>("trainOne"));
+
+        TableColumn<SchedulerUI, String> trainTwo = new TableColumn<>("Train 2 Arrival Time");
+        trainTwo.setCellValueFactory(new PropertyValueFactory<>("trainTwo"));
+
+        TableColumn<SchedulerUI, String>  trainThree = new TableColumn<>("Train 3 Arrival Time");
+        trainThree.setCellValueFactory(new PropertyValueFactory<>("trainThree"));
+
+        scheduleTable.getColumns().add(blockID);
+        scheduleTable.getColumns().add(station);
+        scheduleTable.getColumns().add(trainOne);
+        scheduleTable.getColumns().add(trainTwo);
+        scheduleTable.getColumns().add(trainThree);
+
+        scheduleTable.getItems().add(new SchedulerUI("5", "WHITED", "7:30am", "8:00am", "8:30am"));
+        scheduleTable.getItems().add(new SchedulerUI("9", "SOUTH BANK", "8:00am", "8:30am", "9:00am"));
+        scheduleTable.getItems().add(new SchedulerUI("11", "CENTRAL", "8:30am", "9:00am", "9:30am"));
+        scheduleTable.getItems().add(new SchedulerUI("15", "EDGEBROOK", "9:00am", "9:30am", "10:00am"));
+        
+        scheduleTable.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+
+        return scheduleTable;
+    }
 
     private static Pair<TableView<Person>, TableView<Person>> createBlockTables(){
-        TableView<Person> stationTable = new TableView();
+        TableView<Person> stationTable = new TableView<Person>();
         stationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<Person, String> stations = new TableColumn<>("Select Destination");
@@ -354,7 +340,7 @@ public class CTCUI extends Stage {
         );
         stationTable.setItems(stationData);
 
-        TableView<Person> blockTable = new TableView();
+        TableView<Person> blockTable = new TableView<Person>();
         blockTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<Person, String> blocks = new TableColumn<>("Select Block");
@@ -467,14 +453,35 @@ public class CTCUI extends Stage {
         return speedSlider;
     }
 
-   /* @Override
-    public void update(Observable o, Object arg) {
-        Platform.runLater(new Runnable() {
-        public void run() {             
-           new WaysideUI().start(new Stage());
-        }
-    });
-}*/
+    private static Button createScheduleButton(){
+
+         
+        Button scheduleButton = new Button();
+        scheduleButton.setText("Select Schedule File");
+        scheduleButton.setPrefWidth(400);
+        scheduleButton.setPrefHeight(100);
+        //scheduleButton.setMaxSize(800, 800);
+        scheduleButton.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
+                            "-fx-font-size:20;" + "-fx-text-fill: black;");
+
+        //Adding the shadow when the mouse cursor is on
+        DropShadow shadow = new DropShadow();
+        scheduleButton.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+            @Override 
+            public void handle(MouseEvent e) {
+                scheduleButton.setEffect(shadow);
+            }
+        });
+        //Removing the shadow when the mouse cursor is off
+        scheduleButton.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
+            @Override 
+            public void handle(MouseEvent e) {
+                scheduleButton.setEffect(null);
+            }
+        });
+
+        return scheduleButton;
+    }
 
     private static Node createSpacer() {
         final Region spacer = new Region();

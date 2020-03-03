@@ -144,8 +144,7 @@ public class TrainControllerUI extends Stage{
         fullScreen.setPadding(new Insets(10));
 
         setScene(new Scene(fullScreen, width, height));
-        show();
-
+        
     }
 	public static void setTC(TrainControllerModule tcm){
 		attachedTrainControllerModule=tcm;
