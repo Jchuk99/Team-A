@@ -1,8 +1,6 @@
 package src.track_module;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,11 +8,9 @@ import java.util.HashSet;
 import java.util.Scanner;
 import java.util.UUID;
 
-import javafx.application.Application;
 import src.Module;
 import src.track_controller.WaysideController;
 import src.track_module.BlockConstructor.*;
-import src.track_module.TrackModuleUI;
 import src.ctc.Path;
 import src.ctc.Route;
 

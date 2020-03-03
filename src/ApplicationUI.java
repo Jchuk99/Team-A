@@ -39,6 +39,9 @@ import src.track_controller.*;
 import src.train_module.*;
 import src.track_module.*;
 
+import src.track_module.Map;
+
+
 public class ApplicationUI extends Application {
     final int width = 900;
     final int height = 800;
@@ -48,6 +51,10 @@ public class ApplicationUI extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
+        Map map= new Map();
+
+
 
         CTCUI ctcUI = new CTCUI();
         WaysideUI trackControllerUI = new WaysideUI();
@@ -60,6 +67,8 @@ public class ApplicationUI extends Application {
         trackModuleUI.show();
         trainModuleUI.show();
         //trainControllerUI.show();
+
+        
     }
 
     private HBox createTrackInfoBox() {

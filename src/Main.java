@@ -17,10 +17,10 @@ import src.ctc.CTCUI;
 import java.util.Timer;
 import java.util.TimerTask;
 
-class Main {
-    public static void main(String args[])
-    {
 
+class Main {
+    public static void main(String args[]) 
+    {
         TrackModule trackModule= new TrackModule();
         TrainControllerModule trainControllerModule= new TrainControllerModule();
         TrackControllerModule trackControllerModule= new TrackControllerModule();
