@@ -39,60 +39,66 @@ import javafx.util.Pair;
 
 import java.text.DecimalFormat;
 import java.util.concurrent.CountDownLatch;
- 
+
+import com.brunomnsilva.smartgraph.graph.Graph;
+import com.brunomnsilva.smartgraph.graph.GraphEdgeList;
+import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
+import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
+import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
+import com.brunomnsilva.smartgraph.graphview.SmartRandomPlacementStrategy;
+
 public class CTCUI extends Stage {
     public static CTCModule ctcOffice;
     static int trainID = 0;
 
-    public CTCUI(){
+    public CTCUI() {
         setTitle("CTC UI");
 
         int length = 900;
         int height = 800;
 
-        /******top half******/
+        /****** top half ******/
 
         Text timeText = new Text("Time");
         Label timeLabel = new Label("11:00:23 am");
         timeLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
- 
+
         HBox timeBox = new HBox(10, timeText, timeLabel);
         timeBox.setAlignment(Pos.CENTER);
-
 
         Text ticketText = new Text("Ticket Sales");
         Label ticketLabel = new Label("205/h");
         ticketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
- 
-        HBox ticketBox = new HBox(10, ticketText , ticketLabel);
+
+        HBox ticketBox = new HBox(10, ticketText, ticketLabel);
         timeBox.setAlignment(Pos.CENTER);
 
         Text totalTicketText = new Text("Total Ticket Sales");
         Label totalTicketLabel = new Label("1000");
         totalTicketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
- 
+
         HBox totalTicketBox = new HBox(10, totalTicketText, totalTicketLabel);
         timeBox.setAlignment(Pos.CENTER);
- 
+
         Button manualMode = new Button();
         manualMode.setText("Manual Input/Schedule");
         manualMode.setPrefWidth(300);
         manualMode.setPrefHeight(50);
-        //scheduleButton.setMaxSize(800, 800);
-        manualMode.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
-                               "-fx-font-size:20;" + "-fx-text-fill: black;");
+        // scheduleButton.setMaxSize(800, 800);
+        manualMode.setStyle(
+                "-fx-border-color: black;" + "-fx-border-width: 2;" + "-fx-font-size:20;" + "-fx-text-fill: black;");
 
         manualMode.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 getManualDisplay();
             }
-         });
-                            
+        });
 
-        HBox topHalf1 = new HBox(10, ticketBox, createSpacer(), totalTicketBox, createSpacer(), manualMode, createSpacer(), timeBox);
+        HBox topHalf1 = new HBox(10, ticketBox, createSpacer(), totalTicketBox, createSpacer(), manualMode,
+                createSpacer(), timeBox);
 
-        /******bottom half******/
+        /****** bottom half ******/
         TableView trainTable = new TableView();
         trainTable.setPlaceholder(new Label("No trains available"));
         trainTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -103,7 +109,7 @@ public class CTCUI extends Stage {
         TableColumn<String, Person> currPos = new TableColumn<>("Current Position");
         currPos.setCellValueFactory(new PropertyValueFactory<>("currPos"));
 
-        TableColumn<String, Person> destination= new TableColumn<>("Current Destination");
+        TableColumn<String, Person> destination = new TableColumn<>("Current Destination");
         destination.setCellValueFactory(new PropertyValueFactory<>("destination"));
 
         TableColumn<String, Person> speed = new TableColumn<>("Suggested Speed(mph)");
@@ -115,27 +121,62 @@ public class CTCUI extends Stage {
         trainTable.getColumns().add(speed);
 
         ObservableList<Person> trainData = FXCollections.observableArrayList(
-            new Person("Train 1","EDGEBROOK","SOUTH BANK", "25"),
-            new Person("Train 2","Block 12", "BLOCK 4","25"),
-            new Person("Train 3","Block 15", "BLOCK 5","25"),
-            new Person("Train 4","Block 39", "Block 6","25"),
-            new Person("Train 5","Block 44", "Block 7","25")
-        );
-        
+                new Person("Train 1", "EDGEBROOK", "SOUTH BANK", "25"),
+                new Person("Train 2", "Block 12", "BLOCK 4", "25"), new Person("Train 3", "Block 15", "BLOCK 5", "25"),
+                new Person("Train 4", "Block 39", "Block 6", "25"), new Person("Train 5", "Block 44", "Block 7", "25"));
+
         trainTable.setItems(trainData);
 
-        VBox topHalf = new VBox(10,topHalf1, trainTable);
+        VBox topHalf = new VBox(10, topHalf1, trainTable);
         TableView mapTable = new TableView();
 
-        topHalf.setPrefHeight(height/2);
-        mapTable.setPrefHeight(height/2);
+        Graph<String, String> g = new GraphEdgeList<>();
+        g.insertVertex("A");
+        g.insertVertex("B");
+        g.insertVertex("C");
+        g.insertVertex("D");
+        g.insertVertex("E");
+        g.insertVertex("F");
+        g.insertVertex("G");
 
-        VBox fullScreen = new VBox(10, topHalf, mapTable);
+        g.insertEdge("A", "B", "1");
+        g.insertEdge("A", "C", "2");
+        g.insertEdge("A", "D", "3");
+        g.insertEdge("A", "E", "4");
+        g.insertEdge("A", "F", "5");
+        g.insertEdge("A", "G", "6");
+
+        g.insertVertex("H");
+        g.insertVertex("I");
+        g.insertVertex("J");
+        g.insertVertex("K");
+        g.insertVertex("L");
+        g.insertVertex("M");
+        g.insertVertex("N");
+
+        g.insertEdge("H", "I", "7");
+        g.insertEdge("H", "J", "8");
+        g.insertEdge("H", "K", "9");
+        g.insertEdge("H", "L", "10");
+        g.insertEdge("H", "M", "11");
+        g.insertEdge("H", "N", "12");
+
+        g.insertEdge("A", "H", "0");
+        SmartPlacementStrategy strategy = new SmartCircularSortedPlacementStrategy();
+        SmartGraphPanel<String, String> graphView = new SmartGraphPanel<String, String>(g, strategy);
+
+        topHalf.setPrefHeight(height/2);
+        //graphView.setAlignment(Pos.CENTER);
+        graphView.setPrefHeight(height/2);
+        
+
+        VBox fullScreen = new VBox(10, topHalf, graphView);
 
         fullScreen.setPadding(new Insets(10));
 
         setScene(new Scene(fullScreen, length, height));
- 
+        graphView.init();
+
 
     }
     
