@@ -10,12 +10,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.text.Text;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import src.track_module.BlockConstructor.Shift;
@@ -23,14 +26,6 @@ import src.track_module.BlockConstructor.Shift;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
-
-import com.brunomnsilva.smartgraph.graph.DigraphEdgeList;
-import com.brunomnsilva.smartgraph.graph.Graph;
-import com.brunomnsilva.smartgraph.graph.GraphEdgeList;
-import com.brunomnsilva.smartgraph.graph.Vertex;
-import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
-import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
-import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
 
 public class TrackModuleUI extends Stage {
     final int width = 900;
@@ -40,8 +35,6 @@ public class TrackModuleUI extends Stage {
     VBox stationBox;
 
     public static TrackModule trackModule= null;
-    SmartGraphPanel<Block, Edge> graphView;
-    Graph<Block, Edge> graph;
 
     public static void setTrackModule(TrackModule tm){
         trackModule = tm;
@@ -72,15 +65,6 @@ public class TrackModuleUI extends Stage {
                 catch( IOException e) {
                     // TODO THIS
                 }
-                for( Block block: trackModule.blocks.values()){
-                    Vertex<Block> v= graph.insertVertex(block);
-                }
-                for( Block block: trackModule.blocks.values()){
-                    for( Edge edge: block.edges){
-                        graph.insertEdge(block, edge.getBlock(), edge);
-                    }
-                }
-                graphView.update();
             }
         });
         final HBox topBox = new HBox(10, temperatureBox, createHSpacer(), buttonBox, createHSpacer());
@@ -119,23 +103,28 @@ public class TrackModuleUI extends Stage {
 
         final VBox topHalf = new VBox(10, topBox, box4);
 
-        graph = new DigraphEdgeList<>();
         
-        
-        SmartPlacementStrategy strategy = new SmartCircularSortedPlacementStrategy();
-        graphView = new SmartGraphPanel<Block, Edge>(graph, strategy);
-        graphView.setAutomaticLayout(true);
-        
-        
-        topHalf.setPrefHeight(height/2);
-        graphView.setPrefHeight(height/2);
 
-        VBox fullScreen = new VBox(10, topHalf, graphView);
+        Pane root = new Pane();
+        
+        Rectangle rect = new Rectangle(25, 25, 50, 50);
+        rect.setFill(Color.CADETBLUE);
+        
+        Line line = new Line(90, 40, 230, 40);
+        line.setStroke(Color.BLACK);
+        
+        Circle circle = new Circle(1200, 300, 30);
+        circle.setFill(Color.CHOCOLATE);
+        
+        root.getChildren().addAll(rect, line, circle);
+
+        //Scene scene = new Scene(root, 250, 220, Color.WHITESMOKE);
+
+        VBox fullScreen = new VBox(10, topHalf, root);
         fullScreen.setPadding(new Insets(10));
         setScene(new Scene(fullScreen, width, height));
 
         show();
-        graphView.init(); // This must be called after show()
     }
 
     private HBox createTrackInfoBox() {
