@@ -55,7 +55,10 @@ public class Train {
     }
 
     public void update() {
-        if (currentBlock == null) return;
+        // testing
+        //if (currentBlock == null) return;
+
+        
         // TODO: use the formula here
         currentPower = targetPower;
 
