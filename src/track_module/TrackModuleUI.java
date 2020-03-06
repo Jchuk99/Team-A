@@ -18,8 +18,19 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import src.track_module.BlockConstructor.Shift;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
+
+import com.brunomnsilva.smartgraph.graph.DigraphEdgeList;
+import com.brunomnsilva.smartgraph.graph.Graph;
+import com.brunomnsilva.smartgraph.graph.GraphEdgeList;
+import com.brunomnsilva.smartgraph.graph.Vertex;
+import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
+import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
+import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
 
 public class TrackModuleUI extends Stage {
     final int width = 900;
@@ -29,13 +40,17 @@ public class TrackModuleUI extends Stage {
     VBox stationBox;
 
     public static TrackModule trackModule= null;
-    
+    SmartGraphPanel<Block, Edge> graphView;
+    Graph<Block, Edge> graph;
+
     public static void setTrackModule(TrackModule tm){
         trackModule = tm;
     }
 
     public TrackModuleUI() {
         setTitle("TrackModel UI");
+        int width = 900;
+        int height = 800;
 
         /****** temperature and track file ******/
         VBox temperatureLabel = createLabelBox("47 F");
@@ -55,8 +70,17 @@ public class TrackModuleUI extends Stage {
                     trackModule.buildTrack(csvFile.getAbsolutePath());
                 }
                 catch( IOException e) {
-
+                    // TODO THIS
                 }
+                for( Block block: trackModule.blocks.values()){
+                    Vertex<Block> v= graph.insertVertex(block);
+                }
+                for( Block block: trackModule.blocks.values()){
+                    for( Edge edge: block.edges){
+                        graph.insertEdge(block, edge.getBlock(), edge);
+                    }
+                }
+                graphView.update();
             }
         });
         final HBox topBox = new HBox(10, temperatureBox, createHSpacer(), buttonBox, createHSpacer());
@@ -94,17 +118,24 @@ public class TrackModuleUI extends Stage {
         final HBox box4 = new HBox(10, trackInfoBox, box3);
 
         final VBox topHalf = new VBox(10, topBox, box4);
-        final TableView mapTable = new TableView();
 
-        topHalf.setPrefHeight(height / 2);
-        mapTable.setPrefHeight(height / 2);
+        graph = new DigraphEdgeList<>();
+        
+        
+        SmartPlacementStrategy strategy = new SmartCircularSortedPlacementStrategy();
+        graphView = new SmartGraphPanel<Block, Edge>(graph, strategy);
+        graphView.setAutomaticLayout(true);
+        
+        
+        topHalf.setPrefHeight(height/2);
+        graphView.setPrefHeight(height/2);
 
-        final VBox fullScreen = new VBox(10, topHalf, mapTable);
-
+        VBox fullScreen = new VBox(10, topHalf, graphView);
         fullScreen.setPadding(new Insets(10));
-
         setScene(new Scene(fullScreen, width, height));
-        showAndWait();
+
+        show();
+        graphView.init(); // This must be called after show()
     }
 
     private HBox createTrackInfoBox() {

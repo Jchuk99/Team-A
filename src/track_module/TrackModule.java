@@ -22,12 +22,6 @@ public class TrackModule extends Module {
         super();
         blocks= new HashMap<UUID, Block>();
         TrackModuleUI.setTrackModule(this);
-        /*new Thread() {
-            @Override
-            public void run() {
-            Application.launch(TrackModuleUI.class);
-            }
-            }.start();*/
     }
 
     public void main() {
@@ -100,17 +94,6 @@ public class TrackModule extends Module {
             String[] _directions= data[14].trim().concat( " ").split( " ");
             HashSet<Integer> directions= new HashSet<Integer>();
             for(String s : _directions) directions.add( Integer.valueOf(s));
-            
-            int[] edge1= {blockNumber, connection1, (directions.contains( connection1)) ? 1 : 0};
-            edges.add( edge1);
-            int[] edge2= {blockNumber, connection2, (directions.contains( connection2)) ? 1 : 0};
-            edges.add( edge2);
-
-            if( shift) {
-                int connection3= Integer.parseInt( data[13]);
-                int[] edge3= {blockNumber, connection3, (directions.contains( connection3)) ? 1 : 0};
-                edges.add( edge3);
-            }
 
             Block block;
             if( crossing) {
@@ -129,6 +112,17 @@ public class TrackModule extends Module {
             else {
                 block= new Normal( line, section, blockNumber, length, speedLimit, 
                     grade, elevation, cummElevation, underground);
+            }
+
+            int[] edge1= {blockNumber, connection1, (directions.contains( connection1)) ? 1 : 0};
+            edges.add( edge1);
+            int[] edge2= {blockNumber, connection2, (directions.contains( connection2)) ? 1 : 0};
+            edges.add( edge2);
+
+            if( shift) {
+                int connection3= Integer.parseInt( data[13]);
+                int[] edge3= {blockNumber, connection3, (directions.contains( connection3)) ? 1 : 0};
+                edges.add( edge3);
             }
             
             myBlocks.put( blockNumber, block);
@@ -150,6 +144,9 @@ public class TrackModule extends Module {
             Block source= myBlocks.get( edge[0]);
             Block destination= myBlocks.get( edge[1]);
             source.addEdge( destination, edge[2] != 0);
+        }
+        for( Block block : myBlocks.values()) {
+            blocks.put( block.id, block);
         }
     }
 }

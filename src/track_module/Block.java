@@ -71,4 +71,9 @@ abstract public class Block {
         if( this.train != null)
             this.train.setTrain( suggestedSpeed, authority);
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(this.blockNumber);
+    }
 }

@@ -175,7 +175,8 @@ public class CTCUI extends Stage {
         fullScreen.setPadding(new Insets(10));
 
         setScene(new Scene(fullScreen, length, height));
-        graphView.init();
+
+        //graphView.init();
 
 
     }
