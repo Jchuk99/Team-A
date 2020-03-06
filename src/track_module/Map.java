@@ -1,66 +1,26 @@
 package src.track_module;
 
-import com.brunomnsilva.smartgraph.graph.Graph;
-import com.brunomnsilva.smartgraph.graph.GraphEdgeList;
-import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
-import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
-import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
+import java.util.HashMap;
+import java.util.UUID;
 
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 
 public class Map {
-    public Map() {
-        // https://github.com/brunomnsilva/JavaFXSmartGraph
-        
-        //create the graph
-        Graph<String, String> g = new GraphEdgeList<>();
-        
-        
-
-        SmartPlacementStrategy strategy = new SmartCircularSortedPlacementStrategy();
-        SmartGraphPanel<String, String> graphView = new SmartGraphPanel<>(g, strategy);
-        Scene scene = new Scene(graphView, 1024, 768);
-
-        Stage stage = new Stage(StageStyle.DECORATED);
-        stage.setTitle("JavaFXGraph Visualization");
-        stage.setScene(scene);
-        stage.show();
-
-        //IMPORTANT - Called after scene is displayed so we can have width and height values
-        graphView.init();
-
-        g.insertVertex("A");
-        g.insertVertex("B");
-        g.insertVertex("C");
-        g.insertVertex("D");
-        g.insertVertex("E");
-        g.insertVertex("F");
-        g.insertVertex("G");
-
-        g.insertEdge("A", "B", "1");
-        g.insertEdge("A", "C", "2");
-        g.insertEdge("A", "D", "3");
-        g.insertEdge("A", "E", "4");
-        g.insertEdge("A", "F", "5");
-        g.insertEdge("A", "G", "6");
-
-        g.insertVertex("H");
-        g.insertVertex("I");
-        g.insertVertex("J");
-        g.insertVertex("K");
-        g.insertVertex("L");
-        g.insertVertex("M");
-        g.insertVertex("N");
-
-        g.insertEdge("H", "I", "7");
-        g.insertEdge("H", "J", "8");
-        g.insertEdge("H", "K", "9");
-        g.insertEdge("H", "L", "10");
-        g.insertEdge("H", "M", "11");
-        g.insertEdge("H", "N", "12");
-
-        g.insertEdge("A", "H", "0");
+    static final String BLOCKSTYLE = "-fx-fill: rgba(54,215,68,0.8)";
+    static final String LINESTYLE = "-fx-stroke-width: 2; -fx-stroke: rgba(160,160,160,0.4); -fx-stroke-dash-array: 10 5;";
+    
+    static public void buildMap( HashMap<UUID, Block> blocks, Pane pane) {
+        for(Block block : blocks.values()) {
+            Circle circle = new Circle(block.getX(), block.getY(), 20);
+            circle.setStyle(BLOCKSTYLE);
+            pane.getChildren().add( circle);
+            for(Edge edge: block.edges) {
+                Line line= new Line( block.getX(), block.getY(), edge.getBlock().getX(), edge.getBlock().getY());
+                line.setStyle(LINESTYLE);
+                pane.getChildren().add(line);
+            }
+        }
     }
 }

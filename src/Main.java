@@ -56,6 +56,7 @@ class Main {
 
         // update modules
         // TODO: variable timer speed
+        /*
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -66,7 +67,7 @@ class Main {
                 }
             }
         }, 0, 1000);
-
+        */
     }
 
 } 

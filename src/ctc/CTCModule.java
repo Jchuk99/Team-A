@@ -27,13 +27,8 @@ public class CTCModule extends Module{
     public CTCModule(){
         super();
         CTCUI.setCTCModule(this);
-        /*new Thread() {
-            @Override
-            public void run() {
-                Application.launch(CTCUI.class);
-            }
-        }.start();*/
     }
+    
     public int getSpeed(){return speed;}
 
     public void getMap(){

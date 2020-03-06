@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.UUID;
 
 import src.Module;
@@ -20,8 +19,8 @@ public class TrackModule extends Module {
 
     public TrackModule() {
         super();
-        blocks= new HashMap<UUID, Block>();
         TrackModuleUI.setTrackModule(this);
+        blocks= new HashMap<UUID, Block>();
     }
 
     public void main() {

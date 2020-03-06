@@ -30,14 +30,12 @@ import java.util.UUID;
 public class TrackModuleUI extends Stage {
     static final int WIDTH = 900;
     static final int HEIGHT = 800;
-    static final String BLOCKSTYLE = "-fx-fill: rgba(54,215,68,0.8)";
-    static final String LINESTYLE = "-fx-stroke-width: 2; -fx-stroke: rgba(160,160,160,0.4); -fx-stroke-dash-array: 10 5;";
+    Pane graphPane;
 
     VBox crossingBox;
     VBox stationBox;
-    Pane graphPane;
 
-    public static TrackModule trackModule= null;
+    public static TrackModule trackModule;
 
     public static void setTrackModule(TrackModule tm){
         trackModule = tm;
@@ -45,6 +43,7 @@ public class TrackModuleUI extends Stage {
 
     public TrackModuleUI() {
         setTitle("TrackModel UI");
+        
 
         /****** temperature and track file ******/
         VBox temperatureLabel = createLabelBox("47 F");
@@ -57,7 +56,7 @@ public class TrackModuleUI extends Stage {
             @Override
             public void handle(ActionEvent event) {
                 FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Open Resource File");
+                fileChooser.setTitle("Open File");
                 
                 File csvFile= fileChooser.showOpenDialog( null);
                 try {
@@ -66,28 +65,7 @@ public class TrackModuleUI extends Stage {
                 catch( IOException e) {
                     // TODO THIS
                 }
-                
-                for(Block block : trackModule.blocks.values()) {
-                    Circle circle = new Circle(block.getX(), block.getY(), 20);
-                    circle.setStyle(BLOCKSTYLE);
-                    graphPane.getChildren().add( circle);
-                    for(Edge edge: block.edges) {
-                        Line line= new Line( block.getX(), block.getY(), edge.getBlock().getX(), edge.getBlock().getY());
-                        line.setStyle(LINESTYLE);
-                        graphPane.getChildren().add(line);
-                    }
-                }
-
-                int x=0;
-                
-                /*
-                Rectangle rect = new Rectangle(25, 25, 50, 50);
-                rect.setFill(Color.CADETBLUE);
-                
-                Line line = new Line(90, 40, 230, 40);
-                line.setStroke(Color.BLACK);
-                */
-                //graphPane.getChildren().addAll(rect, line, circle);
+                Map.buildMap(trackModule.blocks, graphPane);
             }
         });
         final HBox topBox = new HBox(10, temperatureBox, createHSpacer(), buttonBox, createHSpacer());
@@ -126,13 +104,10 @@ public class TrackModuleUI extends Stage {
 
         final VBox topHalf = new VBox(10, topBox, box4);
 
-        
-
         graphPane = new Pane();
         VBox fullScreen = new VBox(10, topHalf, graphPane);
         fullScreen.setPadding(new Insets(10));
         setScene(new Scene(fullScreen, WIDTH, HEIGHT));
-        show();
     }
 
     private HBox createTrackInfoBox() {
