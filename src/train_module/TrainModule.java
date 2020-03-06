@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 
 public class TrainModule extends Module {
 
+    int nextID = 1;
     ObservableList<Train> trainList;
 
     public TrainModule() {
@@ -27,12 +28,13 @@ public class TrainModule extends Module {
         }
     }
 
-    public void createTrain(int id, Block block) {
+    public Train createTrain() {
         //create controller
         TrainController controller = trainControllerModule.createTrainController();
-        Train train = new Train(id, block, controller);
+        Train train = new Train(nextID++, controller);
         controller.attachTrain(train);
         trainList.add(train);
+        return train;
     }
 
     public void destroyTrain(int id) {
