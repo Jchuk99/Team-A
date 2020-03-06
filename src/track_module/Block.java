@@ -22,9 +22,11 @@ abstract public class Block {
     final float elevation;
     final float cummElevation;
     final boolean underground;
+    final int xCorrdinate;
+    final int yCorrdinate;
 
     Block( String line, char section, int blockNumber, int length, float speedLimit, float grade, 
-        float elevation, float cummElevation, boolean underground) {
+        float elevation, float cummElevation, boolean underground, int xCorrdinate, int yCorrdinate) {
             id= UUID.randomUUID();
             this.line= line;
             this.section= section;
@@ -35,6 +37,8 @@ abstract public class Block {
             this.elevation= elevation;
             this.cummElevation= cummElevation;
             this.underground= underground;
+            this.xCorrdinate= xCorrdinate;
+            this.yCorrdinate= yCorrdinate;
         }
 
     public String getLine() {return line;};
@@ -50,6 +54,8 @@ abstract public class Block {
     public float getCummElevation() {return cummElevation;};
     public float getGrade() {return grade;};
     public Set<Edge> getEdges(){return edges;};
+    public int getX() {return xCorrdinate;};
+    public int getY() {return yCorrdinate;};
 
     public void setFunctional( boolean set) {functional= set;};
     public void setHeater( boolean set) {heater= set;};

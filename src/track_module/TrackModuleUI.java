@@ -28,11 +28,14 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class TrackModuleUI extends Stage {
-    final int width = 900;
-    final int height = 800;
+    static final int WIDTH = 900;
+    static final int HEIGHT = 800;
+    static final String BLOCKSTYLE = "-fx-fill: rgba(54,215,68,0.8)";
+    static final String LINESTYLE = "-fx-stroke-width: 2; -fx-stroke: rgba(160,160,160,0.4); -fx-stroke-dash-array: 10 5;";
 
     VBox crossingBox;
     VBox stationBox;
+    Pane graphPane;
 
     public static TrackModule trackModule= null;
 
@@ -42,8 +45,6 @@ public class TrackModuleUI extends Stage {
 
     public TrackModuleUI() {
         setTitle("TrackModel UI");
-        int width = 900;
-        int height = 800;
 
         /****** temperature and track file ******/
         VBox temperatureLabel = createLabelBox("47 F");
@@ -65,6 +66,28 @@ public class TrackModuleUI extends Stage {
                 catch( IOException e) {
                     // TODO THIS
                 }
+                
+                for(Block block : trackModule.blocks.values()) {
+                    Circle circle = new Circle(block.getX(), block.getY(), 20);
+                    circle.setStyle(BLOCKSTYLE);
+                    graphPane.getChildren().add( circle);
+                    for(Edge edge: block.edges) {
+                        Line line= new Line( block.getX(), block.getY(), edge.getBlock().getX(), edge.getBlock().getY());
+                        line.setStyle(LINESTYLE);
+                        graphPane.getChildren().add(line);
+                    }
+                }
+
+                int x=0;
+                
+                /*
+                Rectangle rect = new Rectangle(25, 25, 50, 50);
+                rect.setFill(Color.CADETBLUE);
+                
+                Line line = new Line(90, 40, 230, 40);
+                line.setStroke(Color.BLACK);
+                */
+                //graphPane.getChildren().addAll(rect, line, circle);
             }
         });
         final HBox topBox = new HBox(10, temperatureBox, createHSpacer(), buttonBox, createHSpacer());
@@ -105,25 +128,10 @@ public class TrackModuleUI extends Stage {
 
         
 
-        Pane root = new Pane();
-        
-        Rectangle rect = new Rectangle(25, 25, 50, 50);
-        rect.setFill(Color.CADETBLUE);
-        
-        Line line = new Line(90, 40, 230, 40);
-        line.setStroke(Color.BLACK);
-        
-        Circle circle = new Circle(1200, 300, 30);
-        circle.setFill(Color.CHOCOLATE);
-        
-        root.getChildren().addAll(rect, line, circle);
-
-        //Scene scene = new Scene(root, 250, 220, Color.WHITESMOKE);
-
-        VBox fullScreen = new VBox(10, topHalf, root);
+        graphPane = new Pane();
+        VBox fullScreen = new VBox(10, topHalf, graphPane);
         fullScreen.setPadding(new Insets(10));
-        setScene(new Scene(fullScreen, width, height));
-
+        setScene(new Scene(fullScreen, WIDTH, HEIGHT));
         show();
     }
 

@@ -28,17 +28,6 @@ public class TrackModule extends Module {
         
     }
 
-    public void userInterface() throws IOException {
-        Scanner scan = new Scanner(System.in);
-        System.out.println("Enter track filepath: ");
-        String filepath = scan.nextLine();
-        scan.close();
-        if (!errorCheck( filepath)) {
-            System.out.println( "Parsing errors.");
-        }
-        this.buildTrack( filepath);
-    }
-
     public void createTrain( float suggestedSpeed, float authority, Route route) {
         System.out.println(suggestedSpeed);
         System.out.println(authority);
@@ -54,11 +43,6 @@ public class TrackModule extends Module {
 
     public Block getBlockByUUID( UUID uuid) {
         return blocks.get( uuid);
-    }
-
-    private boolean errorCheck( String filePath) throws IOException {
-        //Check for any parsing errors
-        return true;
     }
 
     public void buildTrack( String csvFile) throws IOException {
@@ -88,30 +72,32 @@ public class TrackModule extends Module {
             int connection1= Integer.parseInt( data[11]);
             int connection2= Integer.parseInt( data[12]);
             boolean shift= !data[13].trim().equals("");
-            
 
             // TODO this will need error checking
             String[] _directions= data[14].trim().concat( " ").split( " ");
             HashSet<Integer> directions= new HashSet<Integer>();
             for(String s : _directions) directions.add( Integer.valueOf(s));
 
+            int xCoordinate= Integer.parseInt( data[15].trim());
+            int yCoordinate= Integer.parseInt( data[16].trim());
+
             Block block;
             if( crossing) {
                 block= new Crossing( line, section, blockNumber, length, speedLimit, 
-                    grade, elevation, cummElevation, underground);
+                    grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
             }
             else if( station) {
                 String name= data[8].trim();
                 block= new Station( line, section, blockNumber, length, speedLimit, 
-                grade, elevation, cummElevation, underground, name);
+                grade, elevation, cummElevation, underground, name, xCoordinate, yCoordinate);
             }
             else if( shift) {
                 block= new Shift( line, section, blockNumber, length, speedLimit, 
-                grade, elevation, cummElevation, underground);
+                grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
             }
             else {
                 block= new Normal( line, section, blockNumber, length, speedLimit, 
-                    grade, elevation, cummElevation, underground);
+                    grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
             }
 
             int[] edge1= {blockNumber, connection1, (directions.contains( connection1)) ? 1 : 0};
