@@ -22,6 +22,8 @@ public class CTCMap{
         this.trackControllerModule = trackControllerModule;
     }
 
+    public Block getBlock(int block){return blockMap.get(block);}
+    public int size(){return blockMap.size();}
     public Map<Integer, Block> getBlockMap(){ return blockMap;}
     public Map<String, Integer> getStationMap(){ return stationMap;}
     public List<Integer> getSwitchList(){ return switchList;}
@@ -34,7 +36,7 @@ public class CTCMap{
          for (WaysideController wayside : waysides) { 
                 List<Block> blockList = wayside.getBlocks();
                  for(Block block : blockList){
-                    //TODO: don't use block  number in case of multiple blocks on same line.
+                    //TODO: don't use block number in case of multiple blocks on same line.
                     String line = block.getLine();
                     char section = block.getSection();
                     int blockNumber = block.getBlockNumber();

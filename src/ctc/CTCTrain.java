@@ -10,14 +10,14 @@ public class CTCTrain{
     private Route route;
 
     public CTCTrain(){
-        // to show that train is in the yard
-        currPos = -1;
-        route = new Route();
+        // We use 0 for the yard.
+        currPos = 0;
     }
 
     public void dispatchRoute(int blockDest){
-        int start = 0;
-        if (currPos != -1) start = currPos;
+        int start = 1;
+        if (currPos != 0) start = currPos;
+        //If the train already has a route, do i just want to add this to the end of the route?
         route = new Route();
         route.addPath(start, blockDest);
         authority = route.getCurrPath().getCourse().size();

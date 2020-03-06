@@ -139,8 +139,7 @@ public class CTCUI extends Stage {
         speed.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
                            "-fx-font-size:12;" + "-fx-text-fill: black;" + "-fx-padding: 5;");
         Slider speedSlider = createSpeedSlider(speed);
-        
-
+    
         VBox sliderBox = new VBox(10, speedSlider, speed);
         sliderBox.setAlignment(Pos.CENTER);
 
