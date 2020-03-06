@@ -9,7 +9,7 @@ public class Train {
 
     int UUID;
     TrainController controller;
-    Block currentBlock;
+    Block currentBlock = null;
     Boolean goForward = true;
     float currentSpeed = 0;
     float currentPower = 0;
@@ -44,15 +44,18 @@ public class Train {
     private StringProperty currentGradeString = new SimpleStringProperty("");
     private StringProperty temperatureInsideString = new SimpleStringProperty("");
 
-    public Train(int id, Block block, TrainController trainController) {
+    public Train(int id, TrainController trainController) {
         UUID = id;
-        currentBlock = block;
-        //controller = trainController;
-        // TODO: check direction
+        controller = trainController;
+    }
 
+    public void setBlock(Block block) {
+        currentBlock = block;
+        // TODO: check direction
     }
 
     public void update() {
+        if (currentBlock == null) return;
         // TODO: use the formula here
         currentPower = targetPower;
 
@@ -83,10 +86,13 @@ public class Train {
         temperatureInsideString.setValue(temperatureInside + " F");
     }
 
+    public int getUUID() {
+        return UUID;
+    }
+
     public void setTrain(float suggestedSpeed, float authority) {
         // setTrain called by track model only
-        // TODO: pass data to train controller
-        // trainController.setTrain(UUID, suggestedSpeed, authority);
+        controller.setTrain(suggestedSpeed, authority);
     }
 
     public void setPower(float power) {

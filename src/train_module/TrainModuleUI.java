@@ -52,8 +52,8 @@ public class TrainModuleUI extends Stage {
         trainTable.setPrefWidth(width / 8);
 
         // testing displaying info for selected train
-        trainModule.createTrain(1, null);
-        trainModule.createTrain(2, null);
+        trainModule.createTrain();
+        trainModule.createTrain();
 
         trainTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Train>() {
             @Override

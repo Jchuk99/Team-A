@@ -103,12 +103,17 @@ public class TrainControllerModule extends Module {
 
 	public void attachTrain(Train train) {
 		attachedTrain=train;
-		UUID=Integer.parseInt(train.getName().get().substring(6));
+		UUID=train.getUUID();
 	}
 
 	public void update() {
 		if (attachedTrain == null) return;
 		attachedTrain.setPower(10);
+	}
+
+	public void setTrain(float suggestedSpeed, float authority) {
+		// get set train information from train model
+		
 	}
 	
 	/**
