@@ -44,7 +44,6 @@ public class TrackModuleUI extends Stage {
     public TrackModuleUI() {
         setTitle("TrackModel UI");
         
-
         /****** temperature and track file ******/
         VBox temperatureLabel = createLabelBox("47 F");
         final HBox temperatureBox = new HBox(10, createTextBox("Temperature"), temperatureLabel);
