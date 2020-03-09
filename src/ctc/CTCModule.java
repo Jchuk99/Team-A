@@ -48,20 +48,22 @@ public class CTCModule extends Module{
                     float elevation = block.getElevation();
                     float cummElevation = block.getCummElevation();
                     boolean underground = block.getUndeground();
+                    int xCorrdinate = block.getX();
+                    int yCorrdinate = block.getY();
 
                     if (block instanceof Station){
                         Station blockStation = (Station) block;
                         stationMap.put(blockStation.getName(), Integer.valueOf(block.getBlockNumber()));
-                        Station myBlock = new Station(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, blockStation.getName());
+                        Station myBlock = new Station(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, blockStation.getName(), xCorrdinate, yCorrdinate);
                         blockMap.put(Integer.valueOf(block.getBlockNumber()), myBlock);
                     }
                     else if (block instanceof Shift){
                         switchList.add(Integer.valueOf(block.getBlockNumber()));
-                        Shift myBlock = new Shift(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground);
+                        Shift myBlock = new Shift(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCorrdinate, yCorrdinate);
                         blockMap.put(Integer.valueOf(block.getBlockNumber()), myBlock);
                     }
                     else{
-                        Normal myBlock = new Normal(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground );
+                        Normal myBlock = new Normal(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCorrdinate, yCorrdinate);
                         blockMap.put(Integer.valueOf(block.getBlockNumber()), myBlock);
                     }
                 }   

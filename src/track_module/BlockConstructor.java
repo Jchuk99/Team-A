@@ -1,14 +1,12 @@
 package src.track_module;
 
 import src.track_module.Block;
-import src.ctc.Route;
-import src.ctc.Path;
 
 public class BlockConstructor {
     public static class Normal extends Block {
         public Normal( String line, char section, int blockNumber, int length, float speedLimit, float grade, 
-            float elevation, float cummElevation, boolean underground) {
-            super( line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground);
+            float elevation, float cummElevation, boolean underground, int xCoordinate, int yCoordinate) {
+            super( line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
         }
     }
 
@@ -17,8 +15,8 @@ public class BlockConstructor {
         String name;
 
         public Station( String line, char section, int blockNumber, int length,float speedLimit, float grade, 
-            float elevation, float cummElevation, boolean underground, String name) {
-            super( line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground);
+            float elevation, float cummElevation, boolean underground, String name, int xCoordinate, int yCoordinate) {
+            super( line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
             this.name= name;
         }
        public void addTicketsSold( int tickets) {this.tickets+= tickets;};
@@ -30,8 +28,8 @@ public class BlockConstructor {
         Block position= null;
 
         public Shift( String line, char section, int blockNumber, int length, float speedLimit, float grade,
-            float elevation, float cummElevation, boolean underground) {
-            super( line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground);
+            float elevation, float cummElevation, boolean underground, int xCoordinate, int yCoordinate) {
+            super( line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
         }
         public void setPosition( Block block) {
             position= block;
@@ -44,8 +42,8 @@ public class BlockConstructor {
         private boolean closed= false;
 
         public Crossing( String line, char section, int blockNumber,int length, float speedLimit, float grade, 
-            float elevation, float cummElevation, boolean underground) {
-            super( line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground);
+            float elevation, float cummElevation, boolean underground, int xCoordinate, int yCoordinate) {
+            super( line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
         }
         public boolean getLights() {return lights;};
         public boolean getClosesd() {return closed;};
@@ -54,7 +52,7 @@ public class BlockConstructor {
     }
     public static class Yard extends Block {
         public Yard() {
-            super( "yard", ' ', 0, 0, 0, 0, 0, 0, false);
+            super( "yard", ' ', 0, 0, 0, 0, 0, 0, false, 0, 0);
         }
         public void createTrain( float suggestedSpeed, float authority, Block block) {
             
