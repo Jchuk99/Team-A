@@ -8,7 +8,9 @@ import java.util.Map;
 import src.track_controller.TrackControllerModule;
 import src.track_controller.WaysideController;
 import src.track_module.Block;
-import src.track_module.BlockConstructor.*;
+import src.track_module.BlockConstructor.Station;
+import src.track_module.BlockConstructor.Shift;
+import src.track_module.BlockConstructor.Normal;
 
 public class CTCMap{
 
@@ -46,24 +48,26 @@ public class CTCMap{
                     float elevation = block.getElevation();
                     float cummElevation = block.getCummElevation();
                     boolean underground = block.getUndeground();
+                    int xCoordinate = block.getX();
+                    int yCoordinate = block.getY();
 
                     if (block instanceof Station){
                         Station blockStation = (Station) block;
                         if (init){
                             stationMap.put(blockStation.getName(), Integer.valueOf(block.getBlockNumber()));
                         }
-                        Station myBlock = new Station(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, blockStation.getName());
+                        Station myBlock = new Station(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, blockStation.getName(), xCoordinate, yCoordinate);
                         blockMap.put(Integer.valueOf(block.getBlockNumber()), myBlock);
                     }
                     else if (block instanceof Shift){
                         if (init){
                             switchList.add(Integer.valueOf(block.getBlockNumber()));
                         }
-                        Shift myBlock = new Shift(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground);
+                        Shift myBlock = new Shift(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
                         blockMap.put(Integer.valueOf(block.getBlockNumber()), myBlock);
                     }
                     else{
-                        Normal myBlock = new Normal(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground );
+                        Normal myBlock = new Normal(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
                         blockMap.put(Integer.valueOf(block.getBlockNumber()), myBlock);
                     }
                 }   
