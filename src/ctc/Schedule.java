@@ -1,9 +1,11 @@
 package src.ctc;
+import java.util.*;
+
 public class Schedule{
 
-    // hash map of trains
+    // data strucuture to hold trains, could just be a set
+    private List<CTCTrain> trains = new ArrayList<CTCTrain>();
     // data structure to hold schedule file
-    private int trainCount = 0;
     
     public Schedule(){
     }
@@ -13,6 +15,8 @@ public class Schedule{
 
     public CTCTrain createTrain(String trainID, float suggestedSpeed, int destination){
         CTCTrain train = new CTCTrain();
+        trains.add(train);
+
         
         train.setTrainID(Integer.parseInt(trainID.split(" ")[1]));
         train.setDestination(destination);
@@ -22,7 +26,8 @@ public class Schedule{
         return train;
     }
     
-    public  void getTrains(){
+    public List<CTCTrain> getTrains(){
+        return trains;
     }
 
 }

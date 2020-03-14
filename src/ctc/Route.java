@@ -3,6 +3,7 @@ import java.util.*;
 
 public class Route {
 
+    // Instead of list maybe the paths should be a queue.
     private List<Path> paths = new ArrayList<Path>();
 
     public Route(){
