@@ -1,20 +1,15 @@
 package src.track_module;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.UUID;
 
-import javafx.application.Application;
 import src.Module;
 import src.track_controller.WaysideController;
 import src.track_module.BlockConstructor.*;
-import src.track_module.TrackModuleUI;
 import src.ctc.Path;
 import src.ctc.Route;
 
@@ -24,23 +19,12 @@ public class TrackModule extends Module {
 
     public TrackModule() {
         super();
-        blocks= new HashMap<UUID, Block>();
         TrackModuleUI.setTrackModule(this);
+        blocks= new HashMap<UUID, Block>();
     }
 
     public void main() {
         
-    }
-
-    public void userInterface() throws IOException {
-        Scanner scan = new Scanner(System.in);
-        System.out.println("Enter track filepath: ");
-        String filepath = scan.nextLine();
-        scan.close();
-        if (!errorCheck( filepath)) {
-            System.out.println( "Parsing errors.");
-        }
-        this.buildTrack( filepath);
     }
 
     public void createTrain( float suggestedSpeed, float authority, Route route) {
@@ -60,13 +44,7 @@ public class TrackModule extends Module {
         return blocks.get( uuid);
     }
 
-    private boolean errorCheck( String filePath) throws IOException {
-        //Check for any parsing errors
-        return true;
-    }
-
     public void buildTrack( String csvFile) throws IOException {
-        System.out.println(csvFile);
         // TODO deal with my blocks being a separate class than blocks
         HashMap<Integer, Block> myBlocks= new HashMap<Integer, Block>();
         HashSet<int[]> edges= new HashSet<int[]>();
@@ -93,13 +71,34 @@ public class TrackModule extends Module {
             int connection1= Integer.parseInt( data[11]);
             int connection2= Integer.parseInt( data[12]);
             boolean shift= !data[13].trim().equals("");
-            
 
             // TODO this will need error checking
             String[] _directions= data[14].trim().concat( " ").split( " ");
             HashSet<Integer> directions= new HashSet<Integer>();
             for(String s : _directions) directions.add( Integer.valueOf(s));
-            
+
+            int xCoordinate= Integer.parseInt( data[15].trim());
+            int yCoordinate= Integer.parseInt( data[16].trim());
+
+            Block block;
+            if( crossing) {
+                block= new Crossing( line, section, blockNumber, length, speedLimit, 
+                    grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
+            }
+            else if( station) {
+                String name= data[8].trim();
+                block= new Station( line, section, blockNumber, length, speedLimit, 
+                grade, elevation, cummElevation, underground, name, xCoordinate, yCoordinate);
+            }
+            else if( shift) {
+                block= new Shift( line, section, blockNumber, length, speedLimit, 
+                grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
+            }
+            else {
+                block= new Normal( line, section, blockNumber, length, speedLimit, 
+                    grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
+            }
+
             int[] edge1= {blockNumber, connection1, (directions.contains( connection1)) ? 1 : 0};
             edges.add( edge1);
             int[] edge2= {blockNumber, connection2, (directions.contains( connection2)) ? 1 : 0};
@@ -109,25 +108,6 @@ public class TrackModule extends Module {
                 int connection3= Integer.parseInt( data[13]);
                 int[] edge3= {blockNumber, connection3, (directions.contains( connection3)) ? 1 : 0};
                 edges.add( edge3);
-            }
-
-            Block block;
-            if( crossing) {
-                block= new Crossing( line, section, blockNumber, length, speedLimit, 
-                    grade, elevation, cummElevation, underground);
-            }
-            else if( station) {
-                String name= data[8].trim();
-                block= new Station( line, section, blockNumber, length, speedLimit, 
-                grade, elevation, cummElevation, underground, name);
-            }
-            else if( shift) {
-                block= new Shift( line, section, blockNumber, length, speedLimit, 
-                grade, elevation, cummElevation, underground);
-            }
-            else {
-                block= new Normal( line, section, blockNumber, length, speedLimit, 
-                    grade, elevation, cummElevation, underground);
             }
             
             myBlocks.put( blockNumber, block);
@@ -149,6 +129,9 @@ public class TrackModule extends Module {
             Block source= myBlocks.get( edge[0]);
             Block destination= myBlocks.get( edge[1]);
             source.addEdge( destination, edge[2] != 0);
+        }
+        for( Block block : myBlocks.values()) {
+            blocks.put( block.id, block);
         }
     }
 }

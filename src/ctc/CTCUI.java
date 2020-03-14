@@ -28,44 +28,46 @@ import javafx.util.Pair;
 
 import java.text.DecimalFormat;
 
- 
+
+
 public class CTCUI extends Stage {
     public static CTCModule ctcOffice;
     static int trainID = 0;
 
-    public CTCUI(){
+    public CTCUI() {
         setTitle("CTC UI");
 
         int length = 900;
         int height = 800;
 
-        /******top half******/
+        /****** top half ******/
 
         Text timeText = new Text("Time");
         Label timeLabel = new Label("11:00:23 am");
         timeLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
- 
+
         HBox timeBox = new HBox(10, timeText, timeLabel);
         timeBox.setAlignment(Pos.CENTER);
 
         Text ticketText = new Text("Ticket Sales");
         Label ticketLabel = new Label("205/h");
         ticketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
- 
-        HBox ticketBox = new HBox(10, ticketText , ticketLabel);
+
+        HBox ticketBox = new HBox(10, ticketText, ticketLabel);
         timeBox.setAlignment(Pos.CENTER);
 
         Text totalTicketText = new Text("Total Ticket Sales");
         Label totalTicketLabel = new Label("1000");
         totalTicketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
- 
+
         HBox totalTicketBox = new HBox(10, totalTicketText, totalTicketLabel);
         timeBox.setAlignment(Pos.CENTER);
- 
+
         Button manualMode = new Button();
         manualMode.setText("Manual Input/Schedule");
         manualMode.setPrefWidth(300);
         manualMode.setPrefHeight(50);
+
         manualMode.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
                                "-fx-font-size:20;" + "-fx-text-fill: black;");
 
@@ -74,8 +76,7 @@ public class CTCUI extends Stage {
             public void handle(ActionEvent event) {
                 getManualDisplay();
             }
-         });
-                            
+        });
 
         HBox topLine = new HBox(10, ticketBox, createSpacer(), totalTicketBox, createSpacer(), manualMode, createSpacer(), timeBox);
         TableView<Person> trainTable = createTrainTable();
@@ -92,7 +93,9 @@ public class CTCUI extends Stage {
         VBox fullScreen = new VBox(10, topHalf, mapTable);
         fullScreen.setPadding(new Insets(10));
         setScene(new Scene(fullScreen, length, height));
- 
+
+        //graphView.init();
+
 
     }
     

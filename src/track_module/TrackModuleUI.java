@@ -1,58 +1,49 @@
 package src.track_module;
 
-import java.util.concurrent.CountDownLatch;
-
-import javax.swing.JFileChooser;
-
-import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import java.awt.Desktop;
+import src.track_module.BlockConstructor.Shift;
+
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
+import java.util.UUID;
 
 public class TrackModuleUI extends Stage {
-    final int width = 900;
-    final int height = 800;
-    public static TrackModule trackModule= null;
+    static final int WIDTH = 900;
+    static final int HEIGHT = 800;
+    Pane graphPane;
 
     VBox crossingBox;
     VBox stationBox;
 
+    public static TrackModule trackModule;
+
+    public static void setTrackModule(TrackModule tm){
+        trackModule = tm;
+    }
+
     public TrackModuleUI() {
         setTitle("TrackModel UI");
+        
 
         /****** temperature and track file ******/
         VBox temperatureLabel = createLabelBox("47 F");
@@ -65,16 +56,16 @@ public class TrackModuleUI extends Stage {
             @Override
             public void handle(ActionEvent event) {
                 FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Open Resource File");
+                fileChooser.setTitle("Open File");
                 
                 File csvFile= fileChooser.showOpenDialog( null);
                 try {
                     trackModule.buildTrack(csvFile.getAbsolutePath());
-                    close();
                 }
                 catch( IOException e) {
-
+                    // TODO THIS
                 }
+                Map.buildMap(trackModule.blocks, graphPane);
             }
         });
         final HBox topBox = new HBox(10, temperatureBox, createHSpacer(), buttonBox, createHSpacer());
@@ -112,21 +103,11 @@ public class TrackModuleUI extends Stage {
         final HBox box4 = new HBox(10, trackInfoBox, box3);
 
         final VBox topHalf = new VBox(10, topBox, box4);
-        final TableView mapTable = new TableView();
 
-        topHalf.setPrefHeight(height / 2);
-        mapTable.setPrefHeight(height / 2);
-
-        final VBox fullScreen = new VBox(10, topHalf, mapTable);
-
+        graphPane = new Pane();
+        VBox fullScreen = new VBox(10, topHalf, graphPane);
         fullScreen.setPadding(new Insets(10));
-
-        setScene(new Scene(fullScreen, width, height));
-        showAndWait();
-    }
-    
-    public static void setTrackModule(TrackModule tm){
-        trackModule = tm;
+        setScene(new Scene(fullScreen, WIDTH, HEIGHT));
     }
 
     private HBox createTrackInfoBox() {
