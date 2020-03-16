@@ -18,7 +18,6 @@ public class CTCMap{
    private Map<String, Integer> stationMap = new HashMap<String, Integer>();
    private Map<Integer, Block> blockMap = new HashMap<Integer, Block>();
    private List<Integer> switchList = new ArrayList<Integer>();
-   private boolean init = true;
    
     public CTCMap(TrackControllerModule trackControllerModule){
         this.trackControllerModule = trackControllerModule;
@@ -29,11 +28,13 @@ public class CTCMap{
     public Map<Integer, Block> getBlockMap(){ return blockMap;}
     public Map<String, Integer> getStationMap(){ return stationMap;}
     public List<Integer> getSwitchList(){ return switchList;}
+    //TODO: need a method to get occupied blocks in in the hash map, iterate through everything in hashmap and check if block is occupied, if so add to occupied collection.
 
-    public void updateMap(){
+    // this method is more of a map initialization method
+    public void initMap(){
         
          //length, number, edges
-         //hashmap of blocks with they're UUID so that I can access any one.
+         //hashmap of blocks with they're blocknumber so that I can access any one.
          ArrayList<WaysideController> waysides = trackControllerModule.getWaysideControllers();
          for (WaysideController wayside : waysides) { 
                 List<Block> blockList = wayside.getBlocks();
@@ -52,23 +53,19 @@ public class CTCMap{
                     int yCoordinate = block.getY();
 
                     if (block instanceof Station){
-                        Station blockStation = (Station) block;
-                        if (init){
-                            stationMap.put(blockStation.getName(), Integer.valueOf(block.getBlockNumber()));
-                        }
+                        Station blockStation = (Station)block;
+                        stationMap.put(blockStation.getName(), block.getBlockNumber());
                         Station myBlock = new Station(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, blockStation.getName(), xCoordinate, yCoordinate);
-                        blockMap.put(Integer.valueOf(block.getBlockNumber()), myBlock);
+                        blockMap.put(block.getBlockNumber(), myBlock);
                     }
                     else if (block instanceof Shift){
-                        if (init){
-                            switchList.add(Integer.valueOf(block.getBlockNumber()));
-                        }
+                        switchList.add(block.getBlockNumber());
                         Shift myBlock = new Shift(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
-                        blockMap.put(Integer.valueOf(block.getBlockNumber()), myBlock);
+                        blockMap.put(block.getBlockNumber(), myBlock);
                     }
                     else{
                         Normal myBlock = new Normal(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
-                        blockMap.put(Integer.valueOf(block.getBlockNumber()), myBlock);
+                        blockMap.put(block.getBlockNumber(), myBlock);
                     }
                 }   
         }
@@ -76,11 +73,31 @@ public class CTCMap{
         for(WaysideController wayside: waysides){
             List<Block> blockList = wayside.getBlocks();
             for(Block block : blockList){
-               Block myBlock = blockMap.get(Integer.valueOf(block.getBlockNumber()));
+               Block myBlock = blockMap.get(block.getBlockNumber());
                myBlock.setEdges(block.getEdges());
             }
         }
 
-        init = false;
+    }
+
+    // need to create second method that doesn't just reinitialize the map, but updates it's current attributes
+    // occupied and switch positions
+    public void updateMap(){
+        ArrayList<WaysideController> waysides = trackControllerModule.getWaysideControllers();
+
+        for (WaysideController wayside : waysides) { 
+            List<Block> blockList = wayside.getBlocks();
+
+            for(Block block : blockList){
+                Block myBlock = blockMap.get(block.getBlockNumber());
+                myBlock.setOccupied(block.getOccupied());
+
+                if (block instanceof Shift){ 
+                    Shift shiftBlock = (Shift)block;
+                    Shift myShiftBlock = (Shift)myBlock;
+                    myShiftBlock.setPosition(shiftBlock.getPosition());           
+                }
+            }
+        }
     }
 }

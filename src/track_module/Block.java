@@ -57,6 +57,7 @@ abstract public class Block {
     public int getX() {return xCorrdinate;};
     public int getY() {return yCorrdinate;};
 
+    public void setOccupied(boolean occupied){this.occupied = occupied;}
     public void setFunctional( boolean set) {functional= set;};
     public void setHeater( boolean set) {heater= set;};
     public void setEdges(Set<Edge>edges){this.edges = edges;};

@@ -7,12 +7,17 @@ public class CTCModule extends Module{
     private Schedule schedule = null;
 
     public void main() {
+
+        // updateMap()
+        // TODO: Need method to get occupied blocks from map.
+        // TODO: Need method to get next block on train's route based on it's curr known position (contains method)
+
         // use this module to get/set data from wayside every cycle which includes
         // track state (includes occupied blocks)
         // ticket sales for each line
         // train error infomartion
         
-        // gives off list of CTC trains(Speed(M/s), Authority, currPosition of each train)
+        // gives off list of CTC trains(Suggested Speed(M/s), Authority, currPosition of each train)
         // gives off switches
         // gives off occupied blocks
     }
@@ -25,6 +30,7 @@ public class CTCModule extends Module{
     public void updateMap(){
         if (map == null){
             map = new CTCMap(trackControllerModule);
+            map.initMap();
         }
         map.updateMap();
     }
