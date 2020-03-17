@@ -8,8 +8,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.beans.value.ChangeListener; 
-import javafx.beans.value.ObservableValue; 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -18,7 +18,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.text.Text; 
+import javafx.scene.text.Text;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.HBox;
@@ -34,6 +34,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 
 public class TrainModuleUI extends Stage {
@@ -140,7 +142,6 @@ public class TrainModuleUI extends Stage {
     }
 
     private HBox createInfoBox() {
-        // TODO: pull data from module
         VBox name1 = createTextBox("Suggested Speed");
         VBox name2 = createTextBox("Current Speed");
         VBox name3 = createTextBox("Authority");
@@ -180,14 +181,15 @@ public class TrainModuleUI extends Stage {
         VBox name6 = createTextBox("Train Engine");
         VBox nameBox = new VBox(10, createVBox(), name1, name2, name3, name4, name5, name6);
 
-        VBox light1 = createCircleBox(10, Color.GREEN);
-        VBox light2 = createCircleBox(10, Color.GREEN);
-        VBox light3 = createCircleBox(10, Color.GREEN);
-        VBox light4 = createCircleBox(10, Color.GREEN);
-        VBox light5 = createCircleBox(10, Color.GREEN);
-        VBox light6 = createCircleBox(10, Color.GREEN);
+        VBox light1 = createCircleBox(10, Color.GREEN, Color.RED, trainData.getLeftDoorWorking());
+        VBox light2 = createCircleBox(10, Color.GREEN, Color.RED, trainData.getRightDoorWorking());
+        VBox light3 = createCircleBox(10, Color.GREEN, Color.RED, trainData.getLightWorking());
+        VBox light4 = createCircleBox(10, Color.GREEN, Color.RED, trainData.getServiceBrakeWorking());
+        VBox light5 = createCircleBox(10, Color.GREEN, Color.RED, trainData.getEmergencyBrakeWorking());
+        VBox light6 = createCircleBox(10, Color.GREEN, Color.RED, trainData.getEngineWorking());
         VBox lightBox = new VBox(10, createTextBox("Status"), light1, light2, light3, light4, light5, light6);
 
+        // TODO: working button
         VBox button1 = createButtonBox("Insert Failure", 100, 30);
         VBox button2 = createButtonBox("Insert Failure", 100, 30);
         VBox button3 = createButtonBox("Insert Failure", 100, 30);
@@ -299,6 +301,17 @@ public class TrainModuleUI extends Stage {
     private VBox createCircleBox(int radius, Color color) {
         // all VBox create function are unified to 40px height
         VBox circleBox = new VBox(createCircle(radius, color));
+        circleBox.setPrefHeight(40);
+        circleBox.setAlignment(Pos.CENTER_LEFT);
+        return circleBox;
+    }
+
+    private VBox createCircleBox(int radius, Color color, Color color2, BooleanProperty booleanProperty) {
+        // all VBox create function are unified to 40px height
+        // boolean true for color, false for color2
+        Circle circle = createCircle(radius, color);
+        Bindings.when(booleanProperty).then(color).otherwise(color2);
+        VBox circleBox = new VBox(circle);
         circleBox.setPrefHeight(40);
         circleBox.setAlignment(Pos.CENTER_LEFT);
         return circleBox;

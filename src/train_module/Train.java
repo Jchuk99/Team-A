@@ -68,7 +68,7 @@ public class Train {
         // testing
         //if (currentBlock == null) return;
 
-        currentGrade = currentBlock.getGrade();
+        //currentGrade = currentBlock.getGrade();
         
         // TODO: use the formula here
         currentPower = targetPower;
@@ -84,7 +84,7 @@ public class Train {
 
         // TODO: put train id in correct block
 
-        updateBlock();
+        //updateBlock();
         updateString();
     }
 
