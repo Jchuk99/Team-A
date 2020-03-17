@@ -95,8 +95,7 @@ public class TrainData {
     }
  
     public StringProperty getCurrentGrade() {
-        // TODO: get grade from block
-        return new SimpleStringProperty("0.5 %");
+        return currentGrade;
     }
  
     public StringProperty getTemperature() {
