@@ -37,7 +37,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import src.train_controller.TrainControllerModule.TrainController;
 import src.train_module.Train;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
@@ -68,7 +67,7 @@ public class TrainControllerUI extends Stage{
     
     public TrainControllerUI(){
 
-        setTitle("TrainModel UI");
+        setTitle("Train Controller UI");
 
         /****** select train ******/
         // TODO: get train data from module
