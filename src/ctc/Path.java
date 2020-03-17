@@ -2,8 +2,7 @@ package src.ctc;
 
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+//import java.util.UUID;
 import java.time.LocalDateTime;
 
 import src.track_module.Block;
@@ -18,8 +17,7 @@ public class Path {
     private int endBlock;
     //private UUID startBlock;
     //private UUID endBlock;
-    //need a list of blocks
-    //List<Integer> course;
+
     
     public Path(){
     }
@@ -43,14 +41,15 @@ public class Path {
     //TODO: Make algorithim account for distance of blocks
     private LinkedList<Integer> search(int start, int destination) {
         start = 1;
-		Block block = CTCModule.blockMap.get(Integer.valueOf(start));
+        CTCMap map = CTCModule.map;
+		Block block = map.getBlock(start);
         LinkedList<Integer> course = new LinkedList<Integer>();
 		Deque<Block> q = new LinkedList<Block>();
-		boolean[] marked = new boolean[CTCModule.blockMap.size() + 1];
-        int[] edgeTo = new int[CTCModule.blockMap.size() + 1];      
-		int[] distTo = new int[CTCModule.blockMap.size() + 1];
+		boolean[] marked = new boolean[map.size() + 1];
+        int[] edgeTo = new int[map.size() + 1];      
+		int[] distTo = new int[map.size() + 1];
 		
-        for (int v = 0; v < CTCModule.blockMap.size() + 1 ; v++){
+        for (int v = 0; v < map.size() + 1 ; v++){
             distTo[v] = Integer.MAX_VALUE;
         }
         

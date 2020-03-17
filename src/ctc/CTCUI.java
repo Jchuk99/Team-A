@@ -1,7 +1,5 @@
 package src.ctc;
 
-import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,9 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import javafx.scene.input.MouseEvent;
@@ -27,25 +23,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.text.DecimalFormat;
-import java.util.concurrent.CountDownLatch;
 
-import com.brunomnsilva.smartgraph.graph.Graph;
-import com.brunomnsilva.smartgraph.graph.GraphEdgeList;
-import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
-import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
-import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
-import com.brunomnsilva.smartgraph.graphview.SmartRandomPlacementStrategy;
+
 
 public class CTCUI extends Stage {
     public static CTCModule ctcOffice;
@@ -84,9 +67,9 @@ public class CTCUI extends Stage {
         manualMode.setText("Manual Input/Schedule");
         manualMode.setPrefWidth(300);
         manualMode.setPrefHeight(50);
-        // scheduleButton.setMaxSize(800, 800);
-        manualMode.setStyle(
-                "-fx-border-color: black;" + "-fx-border-width: 2;" + "-fx-font-size:20;" + "-fx-text-fill: black;");
+
+        manualMode.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
+                               "-fx-font-size:20;" + "-fx-text-fill: black;");
 
         manualMode.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -95,85 +78,20 @@ public class CTCUI extends Stage {
             }
         });
 
-        HBox topHalf1 = new HBox(10, ticketBox, createSpacer(), totalTicketBox, createSpacer(), manualMode,
-                createSpacer(), timeBox);
+        HBox topLine = new HBox(10, ticketBox, createSpacer(), totalTicketBox, createSpacer(), manualMode, createSpacer(), timeBox);
+        TableView<Person> trainTable = createTrainTable();
 
-        /****** bottom half ******/
-        TableView trainTable = new TableView();
-        trainTable.setPlaceholder(new Label("No trains available"));
-        trainTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        TableColumn<String, Person> trains = new TableColumn<>("Train");
-        trains.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-
-        TableColumn<String, Person> currPos = new TableColumn<>("Current Position");
-        currPos.setCellValueFactory(new PropertyValueFactory<>("currPos"));
-
-        TableColumn<String, Person> destination = new TableColumn<>("Current Destination");
-        destination.setCellValueFactory(new PropertyValueFactory<>("destination"));
-
-        TableColumn<String, Person> speed = new TableColumn<>("Suggested Speed(mph)");
-        speed.setCellValueFactory(new PropertyValueFactory<>("destination"));
-
-        trainTable.getColumns().add(trains);
-        trainTable.getColumns().add(currPos);
-        trainTable.getColumns().add(destination);
-        trainTable.getColumns().add(speed);
-
-        ObservableList<Person> trainData = FXCollections.observableArrayList(
-                new Person("Train 1", "EDGEBROOK", "SOUTH BANK", "25"),
-                new Person("Train 2", "Block 12", "BLOCK 4", "25"), new Person("Train 3", "Block 15", "BLOCK 5", "25"),
-                new Person("Train 4", "Block 39", "Block 6", "25"), new Person("Train 5", "Block 44", "Block 7", "25"));
-
-        trainTable.setItems(trainData);
-
-        VBox topHalf = new VBox(10, topHalf1, trainTable);
-        TableView mapTable = new TableView();
-
-        Graph<String, String> g = new GraphEdgeList<>();
-        g.insertVertex("A");
-        g.insertVertex("B");
-        g.insertVertex("C");
-        g.insertVertex("D");
-        g.insertVertex("E");
-        g.insertVertex("F");
-        g.insertVertex("G");
-
-        g.insertEdge("A", "B", "1");
-        g.insertEdge("A", "C", "2");
-        g.insertEdge("A", "D", "3");
-        g.insertEdge("A", "E", "4");
-        g.insertEdge("A", "F", "5");
-        g.insertEdge("A", "G", "6");
-
-        g.insertVertex("H");
-        g.insertVertex("I");
-        g.insertVertex("J");
-        g.insertVertex("K");
-        g.insertVertex("L");
-        g.insertVertex("M");
-        g.insertVertex("N");
-
-        g.insertEdge("H", "I", "7");
-        g.insertEdge("H", "J", "8");
-        g.insertEdge("H", "K", "9");
-        g.insertEdge("H", "L", "10");
-        g.insertEdge("H", "M", "11");
-        g.insertEdge("H", "N", "12");
-
-        g.insertEdge("A", "H", "0");
-        SmartPlacementStrategy strategy = new SmartCircularSortedPlacementStrategy();
-        SmartGraphPanel<String, String> graphView = new SmartGraphPanel<String, String>(g, strategy);
-
+        VBox topHalf = new VBox(10, topLine, trainTable);
         topHalf.setPrefHeight(height/2);
-        //graphView.setAlignment(Pos.CENTER);
-        graphView.setPrefHeight(height/2);
+
+        /******bottom half******/
+        TableView<Person> mapTable = new TableView<Person>();;
+        mapTable.setPrefHeight(height/2);
+
         
-
-        VBox fullScreen = new VBox(10, topHalf, graphView);
-
+        /****full scree *****/
+        VBox fullScreen = new VBox(10, topHalf, mapTable);
         fullScreen.setPadding(new Insets(10));
-
         setScene(new Scene(fullScreen, length, height));
 
         //graphView.init();
@@ -194,6 +112,7 @@ public class CTCUI extends Stage {
         int height = 800; 
   
         /******top half******/
+
         //trainBox
         Pair<VBox, TableView<Person>> p = createTrainBox(length, height);
         VBox trainBox = p.getKey();
@@ -202,13 +121,11 @@ public class CTCUI extends Stage {
         trainBox.setPrefHeight(height/2);  
         trainBox.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;"); 
 
-
         //destBox
         Pair<TableView<Person>, TableView<Person>> bTable = createBlockTables();
         TableView<Person> stationTable = bTable.getKey();
         TableView<Person> blocksTable = bTable.getValue();
 
-       
         HBox destBox = new HBox(10, stationTable, blocksTable);
         destBox.setPrefWidth(length/3);
         destBox.setPrefHeight(height/2);
@@ -216,42 +133,16 @@ public class CTCUI extends Stage {
 
         HBox topHalf1 = new HBox(10, trainBox, destBox);
 
-
-        TableView<Person> statusTable = new TableView();
-        //statusTable.setPlaceholder(new Label("No trains selected"));
-        statusTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        TableColumn<Person, String> trainIDStatus = new TableColumn<>("Train");
-        trainIDStatus.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-
-        TableColumn<Person, String> posStatus = new TableColumn<>("Current Position");
-        posStatus.setCellValueFactory(new PropertyValueFactory<>("currPos"));
-
-        TableColumn<Person, String> destStatus = new TableColumn<>("Destination");
-        destStatus.setCellValueFactory(new PropertyValueFactory<>("destination"));
-
-        TableColumn<Person, String> speedStatus = new TableColumn<>("Suggested Speed(mph)");
-        speedStatus.setCellValueFactory(new PropertyValueFactory<>("suggestedSpeed"));
-
-        statusTable.getColumns().add(trainIDStatus);
-        statusTable.getColumns().add(posStatus);
-        statusTable.getColumns().add(destStatus);
-        statusTable.getColumns().add(speedStatus);
-        statusTable.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
-        statusTable.setPrefWidth(length/6);
-        Person currentTrain = (new Person("Train 1", "7", "EDGEBROOK", "25"));
-        statusTable.getItems().add(currentTrain);
+        TableView<Person> statusTable = createStatusTable(length);
 
         VBox box1 = new VBox(10, topHalf1, statusTable);
         box1.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
-
 
         Label speed = new Label(" "); 
         speed.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
                            "-fx-font-size:12;" + "-fx-text-fill: black;" + "-fx-padding: 5;");
         Slider speedSlider = createSpeedSlider(speed);
-        
-
+    
         VBox sliderBox = new VBox(10, speedSlider, speed);
         sliderBox.setAlignment(Pos.CENTER);
 
@@ -263,10 +154,8 @@ public class CTCUI extends Stage {
         HBox timeBox = new HBox(10, timeText, timeLabel);
         timeBox.setAlignment(Pos.CENTER);
             
-
         Button dispatch = createDispatchButton(trainTable, blocksTable, stationTable, speedSlider);
 
-    
         VBox box3 = new VBox(10, timeBox, createSpacer(), sliderBox, createSpacer(),  dispatch);
         box3.setPrefWidth(length/3);
         box3.setPrefHeight(height/2);
@@ -293,6 +182,74 @@ public class CTCUI extends Stage {
         popupwindow.show();
     }
     
+    private static TableView<Person> createTrainTable(){
+
+        TableView<Person> trainTable = new TableView<Person>();
+        trainTable.setPlaceholder(new Label("No trains available"));
+        trainTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<Person, String> trains = new TableColumn<>("Train");
+        trains.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+
+        TableColumn<Person, String>  currPos = new TableColumn<>("Current Position");
+        currPos.setCellValueFactory(new PropertyValueFactory<>("currPos"));
+
+        TableColumn<Person, String>  destination= new TableColumn<>("Current Destination");
+        destination.setCellValueFactory(new PropertyValueFactory<>("destination"));
+
+        TableColumn<Person, String> speed = new TableColumn<>("Suggested Speed(mph)");
+        speed.setCellValueFactory(new PropertyValueFactory<>("destination"));
+
+        trainTable.getColumns().add(trains);
+        trainTable.getColumns().add(currPos);
+        trainTable.getColumns().add(destination);
+        trainTable.getColumns().add(speed);
+
+        ObservableList<Person> trainData = FXCollections.observableArrayList(
+            new Person("Train 1","EDGEBROOK","SOUTH BANK", "25"),
+            new Person("Train 2","Block 12", "BLOCK 4","25"),
+            new Person("Train 3","Block 15", "BLOCK 5","25"),
+            new Person("Train 4","Block 39", "Block 6","25"),
+            new Person("Train 5","Block 44", "Block 7","25")
+        );
+        
+        trainTable.setItems(trainData);
+
+        return trainTable;
+    }
+
+    private static TableView<Person> createStatusTable(int length){
+
+        //TODO: This is going to need to access traindate corresponding to
+        //whichever train is currently clicked @ the moment.
+        // if train does not exist on map, show blank, else show all it's information in specified columns
+        TableView<Person> statusTable = new TableView<Person>();
+        //statusTable.setPlaceholder(new Label("No trains selected"));
+        statusTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<Person, String> trainIDStatus = new TableColumn<>("Train");
+        trainIDStatus.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+
+        TableColumn<Person, String> posStatus = new TableColumn<>("Current Position");
+        posStatus.setCellValueFactory(new PropertyValueFactory<>("currPos"));
+
+        TableColumn<Person, String> destStatus = new TableColumn<>("Destination");
+        destStatus.setCellValueFactory(new PropertyValueFactory<>("destination"));
+
+        TableColumn<Person, String> speedStatus = new TableColumn<>("Suggested Speed(mph)");
+        speedStatus.setCellValueFactory(new PropertyValueFactory<>("suggestedSpeed"));
+
+        statusTable.getColumns().add(trainIDStatus);
+        statusTable.getColumns().add(posStatus);
+        statusTable.getColumns().add(destStatus);
+        statusTable.getColumns().add(speedStatus);
+        statusTable.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+        statusTable.setPrefWidth(length/6);
+        Person currentTrain = (new Person("Train 1", "7", "EDGEBROOK", "25"));
+        statusTable.getItems().add(currentTrain);
+
+        return statusTable;
+    }
     
     private static Pair<VBox, TableView<Person>> createTrainBox(int length, int height){
         
@@ -319,7 +276,6 @@ public class CTCUI extends Stage {
             }
         });
         
-        
         HBox buttonGrouper = new HBox(10, trainInput);
         buttonGrouper.setAlignment(Pos.CENTER);
         buttonGrouper.setPrefHeight(height/6); 
@@ -327,9 +283,7 @@ public class CTCUI extends Stage {
         VBox trainBox = new VBox(10, trainTable, buttonGrouper);
         return new Pair<VBox, TableView<Person>>(trainBox, trainTable);
 
-
     }
-    //private static TableView<
 
     private static TableView<SchedulerUI> createScheduleTable(){
 
@@ -497,7 +451,6 @@ public class CTCUI extends Stage {
 
     private static Button createScheduleButton(){
 
-         
         Button scheduleButton = new Button();
         scheduleButton.setText("Select Schedule File");
         scheduleButton.setPrefWidth(400);
