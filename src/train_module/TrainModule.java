@@ -2,7 +2,7 @@ package src.train_module;
 
 import src.Module;
 import src.track_module.Block;
-import src.train_controller.TrainControllerModule.TrainController;
+import src.train_controller.TrainController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 

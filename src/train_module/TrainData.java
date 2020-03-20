@@ -32,25 +32,34 @@ public class TrainData {
         // set Train to train or null for GUI to pull data from
         currentTrain = train;
         if (train == null) {
+            suggestedSpeed.unbind();
             suggestedSpeed.setValue("");
+            currentSpeed.unbind();
             currentSpeed.setValue("");
             authority.setValue("");
+            authority.unbind();
             currentPower.setValue("");
+            currentPower.unbind();
             passengerCount.setValue("");
+            passengerCount.unbind();
             currentWeight.setValue("");
+            currentWeight.unbind();
             currentAcceleration.setValue("");
-            //currentGrade.setValue("");
+            currentAcceleration.unbind();
+            currentGrade.setValue("");
+            currentGrade.unbind();
             temperatureInside.setValue("");
+            temperatureInside.unbind();
         } else {
-            suggestedSpeed.setValue(currentTrain.suggestedSpeed + " mph");
-            currentSpeed.setValue(currentTrain.currentSpeed + " mph");
-            authority.setValue(currentTrain.authority + " ft");
-            currentPower.setValue(currentTrain.currentPower + " kW");
-            passengerCount.setValue(currentTrain.passengerCount + "");
-            currentWeight.setValue(currentTrain.currentWeight + " tons");
-            currentAcceleration.setValue(currentTrain.currentAcceleration + " ft/s^2");
-            //currentGrade.setValue(currentTrain.currentGrade + " %");
-            temperatureInside.setValue(currentTrain.temperatureInside + " F");
+            suggestedSpeed.bind(currentTrain.getSuggestedSpeed());
+            currentSpeed.bind(currentTrain.getCurrentSpeed());
+            authority.bind(currentTrain.getAuthority());
+            currentPower.bind(currentTrain.getCurrentPower());
+            passengerCount.bind(currentTrain.getPassengetCount());
+            currentWeight.bind(currentTrain.getCurrentWeight());
+            currentAcceleration.bind(currentTrain.getCurrentAcceleration());
+            currentGrade.bind(currentTrain.getCurrentGrade());
+            temperatureInside.bind(currentTrain.getTemperature());
         }
     }
 
