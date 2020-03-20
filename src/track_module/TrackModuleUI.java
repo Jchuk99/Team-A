@@ -6,26 +6,18 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
-import javafx.scene.text.Text;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.Node;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import src.track_module.BlockConstructor.Shift;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
+
+import src.UICommon;
 
 public class TrackModuleUI extends Stage {
     static final int WIDTH = 900;
@@ -45,11 +37,11 @@ public class TrackModuleUI extends Stage {
         setTitle("TrackModel UI");
         
         /****** temperature and track file ******/
-        VBox temperatureLabel = createLabelBox("47 F");
-        final HBox temperatureBox = new HBox(10, createTextBox("Temperature"), temperatureLabel);
+        VBox temperatureLabel = UICommon.createLabelBox("47 F");
+        final HBox temperatureBox = new HBox(10, UICommon.createTextBox("Temperature"), temperatureLabel);
 
         // select track file button
-        VBox buttonBox = createButtonBox("Select Track File", 150, 30);
+        VBox buttonBox = UICommon.createButtonBox("Select Track File", 150, 30);
         Button button = (Button)buttonBox.getChildren().get(0);
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -67,7 +59,7 @@ public class TrackModuleUI extends Stage {
                 Map.buildMap(trackModule.blocks, graphPane);
             }
         });
-        final HBox topBox = new HBox(10, temperatureBox, createHSpacer(), buttonBox, createHSpacer());
+        final HBox topBox = new HBox(10, temperatureBox, UICommon.createHSpacer(), buttonBox, UICommon.createHSpacer());
         /****** temperature and track file ******/
 
         /****** Track Information ******/
@@ -91,7 +83,7 @@ public class TrackModuleUI extends Stage {
         /****** infrastructure ******/
 
         /****** beacon ******/
-        final HBox beaconBox = new HBox(10, createTextBox("Beacon"), createLabelBox("STATION; CASTLE SHANNON; BLOCK 96;"));
+        final HBox beaconBox = new HBox(10, UICommon.createLabelBox("STATION; CASTLE SHANNON; BLOCK 96;"));
         beaconBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
         /****** beacon ******/
         
@@ -111,27 +103,27 @@ public class TrackModuleUI extends Stage {
 
     private HBox createTrackInfoBox() {
         // TODO: pull data from module
-        VBox name1 = createTextBox("Length");
-        VBox name2 = createTextBox("Speed Limit");
-        VBox name3 = createTextBox("Grade");
-        VBox name4 = createTextBox("Elevation");
-        VBox name5 = createTextBox("Underground");
+        VBox name1 = UICommon.createTextBox("Length");
+        VBox name2 = UICommon.createTextBox("Speed Limit");
+        VBox name3 = UICommon.createTextBox("Grade");
+        VBox name4 = UICommon.createTextBox("Elevation");
+        VBox name5 = UICommon.createTextBox("Underground");
         VBox nameBox1 = new VBox(10, name1, name2, name3, name4, name5);
 
-        VBox name6 = createTextBox("Track Heater");
-        VBox name7 = createTextBox("Block Status");
+        VBox name6 = UICommon.createTextBox("Track Heater");
+        VBox name7 = UICommon.createTextBox("Block Status");
         VBox nameBox2 = new VBox(10, name6, name7);
 
-        VBox label1 = createLabelBox("330 ft");
-        VBox label2 = createLabelBox("24 mph");
-        VBox label3 = createLabelBox("1.5 %");
-        VBox label4 = createLabelBox("3 ft");
-        VBox label5 = createLabelBox("false");
+        VBox label1 = UICommon.createLabelBox("330 ft");
+        VBox label2 = UICommon.createLabelBox("24 mph");
+        VBox label3 = UICommon.createLabelBox("1.5 %");
+        VBox label4 = UICommon.createLabelBox("3 ft");
+        VBox label5 = UICommon.createLabelBox("false");
         VBox labelBox1 = new VBox(10, label1, label2, label3, label4, label5);
 
-        VBox label6 = createLabelBox("OFF");
-        VBox label7 = createLabelBox("OCCUPIED");
-        VBox buttonBox = createButtonBox("Insert Failure", 100, 30);
+        VBox label6 = UICommon.createLabelBox("OFF");
+        VBox label7 = UICommon.createLabelBox("OCCUPIED");
+        VBox buttonBox = UICommon.createButtonBox("Insert Failure", 100, 30);
         Button button = (Button)buttonBox.getChildren().get(0);
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -142,45 +134,45 @@ public class TrackModuleUI extends Stage {
         VBox labelBox2 = new VBox(10, label6, label7, buttonBox);
 
 
-        HBox trackInfoBox = new HBox(10, createHSpacer(), nameBox1 , createHSpacer(), labelBox1, createHSpacer(), nameBox2, createHSpacer(), labelBox2, createHSpacer());
+        HBox trackInfoBox = new HBox(10, UICommon.createHSpacer(), nameBox1 , UICommon.createHSpacer(), labelBox1, UICommon.createHSpacer(), nameBox2, UICommon.createHSpacer(), labelBox2, UICommon.createHSpacer());
         return trackInfoBox;
     }
 
     private HBox createSignalLightBox() {
-        Circle circleG = createCircle(10, Color.GREEN);
-        Circle circleY = createCircle(10, Color.YELLOW);
-        Circle circleR = createCircle(10, Color.RED);
+        Circle circleG = UICommon.createCircle(10, Color.GREEN);
+        Circle circleY = UICommon.createCircle(10, Color.YELLOW);
+        Circle circleR = UICommon.createCircle(10, Color.RED);
         final HBox circleBox = new HBox(10, circleG, circleY, circleR);
         circleBox.setAlignment(Pos.CENTER);
         circleBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 2; -fx-padding: 10;");
 
-        final HBox SignalLightBox = new HBox(10, createTextBox("Signal Light"), circleBox);
+        final HBox SignalLightBox = new HBox(10, UICommon.createTextBox("Signal Light"), circleBox);
         return SignalLightBox;
     }
 
     private HBox createBlockIDBox() {
-        VBox label = createLabelBox("12");
-        HBox blockIDBox = new HBox(10, createHSpacer(), createTextBox("Block ID"), label, createHSpacer());
+        VBox label = UICommon.createLabelBox("12");
+        HBox blockIDBox = new HBox(10, UICommon.createHSpacer(), UICommon.createTextBox("Block ID"), label, UICommon.createHSpacer());
         blockIDBox.setAlignment(Pos.CENTER);
         return blockIDBox;
     }
 
     private HBox createInfrastructureBox() {
-        VBox crossingLabel = createLabelBox("Crossing");
+        VBox crossingLabel = UICommon.createLabelBox("Crossing");
 
-        VBox statusLabel = createLabelBox("");
-        HBox statusBox = new HBox(10, createTextBox("Status"), statusLabel);
+        VBox statusLabel = UICommon.createLabelBox("");
+        HBox statusBox = new HBox(10, UICommon.createTextBox("Status"), statusLabel);
 
-        crossingBox = new VBox(10, crossingLabel, statusBox, createVSpacer());
+        crossingBox = new VBox(10, crossingLabel, statusBox, UICommon.createVSpacer());
         crossingBox.setAlignment(Pos.CENTER);
 
-        VBox stationLabel = createLabelBox("Station");
+        VBox stationLabel = UICommon.createLabelBox("Station");
 
-        VBox stationNameLabel = createLabelBox("Central");
-        HBox stationNameBox = new HBox(10, createTextBox("Station Name"), stationNameLabel);
+        VBox stationNameLabel = UICommon.createLabelBox("Central");
+        HBox stationNameBox = new HBox(10, UICommon.createTextBox("Station Name"), stationNameLabel);
 
-        VBox ticketSaleLabel = createLabelBox("30 / h");
-        HBox ticketSaleBox = new HBox(10, createTextBox("Ticket Sale"), ticketSaleLabel);
+        VBox ticketSaleLabel = UICommon.createLabelBox("30 / h");
+        HBox ticketSaleBox = new HBox(10, UICommon.createTextBox("Ticket Sale"), ticketSaleLabel);
 
         stationBox = new VBox(10, stationLabel, stationNameBox, ticketSaleBox);
         stationBox.setAlignment(Pos.CENTER);
@@ -207,85 +199,4 @@ public class TrackModuleUI extends Stage {
             crossingBox.setManaged(true);
         }
     }
-    
-    private VBox createVBox() {
-        // all VBox create function are unified to 40px height
-        VBox box = new VBox(0);
-        box.setPrefHeight(40);
-        box.setAlignment(Pos.CENTER_LEFT);
-        return box;
-    }
-
-    private Button createButton(String text, int width, int height) {
-        Button button = new Button();
-        button.setText(text);
-        button.setPrefWidth(width);
-        button.setPrefHeight(height);
-        return button;
-    }
-
-    private VBox createButtonBox(String text, int width, int height) {
-        // all VBox create function are unified to 40px height
-        VBox buttonBox = new VBox(0, createButton(text, width, height));
-        buttonBox.setPrefHeight(40);
-        buttonBox.setAlignment(Pos.CENTER_LEFT);
-        return buttonBox;
-    }
-
-    private Text createText(String text) {
-        Text t = new Text(text);
-        return t;
-    }
-
-    private VBox createTextBox(String text) {
-        // all VBox create function are unified to 40px height
-        VBox textBox = new VBox(0, createText(text));
-        textBox.setPrefHeight(40);
-        textBox.setAlignment(Pos.CENTER_LEFT);
-        return textBox;
-    }
-
-    private Label createLabel(String text) {
-        Label label = new Label(text);
-        label.setStyle("-fx-border-style: solid inside; -fx-border-width: 2; -fx-padding: 5;");
-        return label;
-    }
-
-    private VBox createLabelBox(String text) {
-        // all VBox create function are unified to 40px height
-        VBox labelBox = new VBox(0, createLabel(text));
-        labelBox.setPrefHeight(40);
-        labelBox.setAlignment(Pos.CENTER_LEFT);
-        return labelBox;
-    }
-
-    private Circle createCircle(int radius, Color color) {
-        Circle circle = new Circle();
-        circle.setRadius(radius);
-        circle.setFill(color);
-        return circle;
-    }
-
-    private VBox createCircleBox(int radius, Color color) {
-        // all VBox create function are unified to 40px height
-        VBox circleBox = new VBox(createCircle(radius, color));
-        circleBox.setPrefHeight(40);
-        circleBox.setAlignment(Pos.CENTER_LEFT);
-        return circleBox;
-    }
-
-    private static Node createVSpacer() {
-        final Region spacer = new Region();
-        // Make it always grow or shrink according to the available space
-        VBox.setVgrow(spacer, Priority.ALWAYS);
-        return spacer;
-    }
-
-    private static Node createHSpacer() {
-        final Region spacer = new Region();
-        // Make it always grow or shrink according to the available space
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        return spacer;
-    }
-
 }

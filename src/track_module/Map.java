@@ -5,12 +5,17 @@ import java.util.UUID;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Separator;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import src.UICommon;
 
 
 public class Map {
@@ -30,29 +35,37 @@ public class Map {
                 line.setStyle(LINESTYLE);
                 pane.getChildren().add(line);
             }
+            circle.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+                // Title Example: Green Line: 64
+                String title = block.getLine() + " Line: " + Integer.toString(block.getBlockNumber());
+                Text t0 = UICommon.createText(title);
+                VBox titleBox = new VBox(t0);
+                titleBox.setAlignment( Pos.TOP_CENTER);
+
+                String blockType = "Type: " + block.getClass().getSimpleName();
+                Text t1 = UICommon.createText(blockType);
+
+                String blockLength = "Length: " + Integer.toString(block.getLength());
+                Text t2 = UICommon.createText(blockLength);
+
+                String blockSpeed = "Speed Limit: " + Float.toString(block.getSpeedLimit());
+                Text t3 = UICommon.createText(blockSpeed);
+
+                String blockGrade = "Grade: " + Float.toString(block.getGrade());
+                Text t4 = UICommon.createText(blockGrade);
+
+                String blockElevation = "Elevation: " + Float.toString(block.getElevation());
+                Text t5 = UICommon.createText(blockElevation);
+
+                VBox tableBox = new VBox(t1,t2,t3,t4,t5);
+                tableBox.setPadding( new Insets(5));
+
+                VBox totalBox = new VBox( titleBox, tableBox);
+                Scene scene = new Scene(totalBox, POPUP_WIDTH, POPUP_HEIGHT);
+                Stage stage = new Stage();
+                stage.setScene(scene);
+                stage.show();
+            });
         }
-
-        VBox buttonBox = createButtonBox("Select Track File", 150, 30);
-        Scene scene = new Scene(buttonBox, POPUP_WIDTH, POPUP_HEIGHT);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.show();
-        
-    }
-
-    private static VBox createButtonBox(String text, int width, int height) {
-        // all VBox create function are unified to 40px height
-        VBox buttonBox = new VBox(0, createButton(text, width, height));
-        buttonBox.setPrefHeight(40);
-        buttonBox.setAlignment(Pos.CENTER_LEFT);
-        return buttonBox;
-    }
-
-    private static Button createButton(String text, int width, int height) {
-        Button button = new Button();
-        button.setText(text);
-        button.setPrefWidth(width);
-        button.setPrefHeight(height);
-        return button;
     }
 }
