@@ -243,7 +243,7 @@ public class Train {
         return currentGradeString;
     }
 
-    public StringProperty getTemperature() {
+    public StringProperty getTemperatureInside() {
         return temperatureInsideString;
     }
     /****** for GUI ******/
