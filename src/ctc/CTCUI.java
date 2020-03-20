@@ -78,15 +78,45 @@ public class CTCUI extends Stage {
             }
         });
 
-        HBox topLine = new HBox(10, ticketBox, createSpacer(), totalTicketBox, createSpacer(), manualMode, createSpacer(), timeBox);
-        TableView<Person> trainTable = createTrainTable();
+        HBox topHalf1 = new HBox(10, ticketBox, createSpacer(), totalTicketBox, createSpacer(), manualMode,
+                createSpacer(), timeBox);
 
-        VBox topHalf = new VBox(10, topLine, trainTable);
+        /****** bottom half ******/
+        TableView trainTable = new TableView();
+        trainTable.setPlaceholder(new Label("No trains available"));
+        trainTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<String, Person> trains = new TableColumn<>("Train");
+        trains.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+
+        TableColumn<String, Person> currPos = new TableColumn<>("Current Position");
+        currPos.setCellValueFactory(new PropertyValueFactory<>("currPos"));
+
+        TableColumn<String, Person> destination = new TableColumn<>("Current Destination");
+        destination.setCellValueFactory(new PropertyValueFactory<>("destination"));
+
+        TableColumn<String, Person> speed = new TableColumn<>("Suggested Speed(mph)");
+        speed.setCellValueFactory(new PropertyValueFactory<>("destination"));
+
+        trainTable.getColumns().add(trains);
+        trainTable.getColumns().add(currPos);
+        trainTable.getColumns().add(destination);
+        trainTable.getColumns().add(speed);
+
+        ObservableList<Person> trainData = FXCollections.observableArrayList(
+                new Person("Train 1", "EDGEBROOK", "SOUTH BANK", "25"),
+                new Person("Train 2", "Block 12", "BLOCK 4", "25"), new Person("Train 3", "Block 15", "BLOCK 5", "25"),
+                new Person("Train 4", "Block 39", "Block 6", "25"), new Person("Train 5", "Block 44", "Block 7", "25"));
+
+        trainTable.setItems(trainData);
+
+        VBox topHalf = new VBox(10, topHalf1, trainTable);
+        TableView mapTable = new TableView();
+
+        
+
         topHalf.setPrefHeight(height/2);
-
-        /******bottom half******/
-        TableView<Person> mapTable = new TableView<Person>();;
-        mapTable.setPrefHeight(height/2);
+        VBox fullScreen = new VBox(10, topHalf, mapTable);
 
         
         /****full scree *****/
