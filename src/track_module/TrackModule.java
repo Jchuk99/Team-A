@@ -22,6 +22,11 @@ public class TrackModule extends Module {
         TrackModuleUI.setTrackModule(this);
         blocks= new HashMap<UUID, Block>();
     }
+    
+    public void update(){
+		
+	}
+	
 
     public void main() {
         
