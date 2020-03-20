@@ -3,8 +3,7 @@ import java.util.*;
 
 public class Schedule{
 
-    // data strucuture to hold trains, should probably be hashMap
-    private List<CTCTrain> trains = new ArrayList<CTCTrain>();
+    private HashMap<Integer, CTCTrain> trains = new HashMap<Integer, CTCTrain>();
     // data structure to hold schedule file
     
     public Schedule(){
@@ -13,23 +12,27 @@ public class Schedule{
     public void uploadSchedule(){
     }
 
-    // should change name to dispatch train
-    public CTCTrain createTrain(String trainID, float suggestedSpeed, int destination){
-        CTCTrain train = new CTCTrain();
-        trains.add(train);
+    public CTCTrain dispatchTrain(String trainIDString, float suggestedSpeed, int destination){
+        int trainID = Integer.parseInt(trainIDString.split(" ")[1]);
 
-        
-        train.setTrainID(Integer.parseInt(trainID.split(" ")[1]));
+        if (!trains.containsKey(trainID)){
+            CTCTrain train = new CTCTrain();
+            trains.put(trainID, train);
+        }
+
+        CTCTrain train = trains.get(trainID);
+
+        train.setTrainID(trainID);
         train.setDestination(destination);
         train.setSuggestedSpeed(suggestedSpeed);
-        // should change name to addPath
-        train.dispatchRoute(destination);
+
+        train.updateRoute(destination);
 
         return train;
     }
     
-    public List<CTCTrain> getTrains(){
-        return trains;
+    public Set<CTCTrain> getTrains(){
+        return new HashSet<CTCTrain>(trains.values());
     }
 
 }
