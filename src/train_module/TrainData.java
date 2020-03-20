@@ -2,30 +2,30 @@ package src.train_module;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.BooleanProperty;
 
 public class TrainData {
 
     Train currentTrain;
-    StringProperty suggestedSpeed;
-    StringProperty currentSpeed;
-    StringProperty authority;
-    StringProperty currentPower;
-    StringProperty passengerCount;
-    StringProperty currentWeight;
-    StringProperty currentAcceleration;
-    StringProperty currentGrade;
-    StringProperty temperatureInside;
+    StringProperty suggestedSpeed = new SimpleStringProperty("");
+    StringProperty currentSpeed = new SimpleStringProperty("");
+    StringProperty authority = new SimpleStringProperty("");
+    StringProperty currentPower = new SimpleStringProperty("");
+    StringProperty passengerCount = new SimpleStringProperty("");
+    StringProperty currentWeight = new SimpleStringProperty("");
+    StringProperty currentAcceleration = new SimpleStringProperty("");
+    StringProperty currentGrade = new SimpleStringProperty("");
+    StringProperty temperatureInside = new SimpleStringProperty("");
+
+    BooleanProperty leftDoorWorking = new SimpleBooleanProperty(false);
+    BooleanProperty rightDoorWorking = new SimpleBooleanProperty(false);
+    BooleanProperty lightWorking = new SimpleBooleanProperty(false);
+    BooleanProperty serviceBrakeWorking = new SimpleBooleanProperty(false);
+    BooleanProperty emergencyBrakeWorking = new SimpleBooleanProperty(false);
+    BooleanProperty engineWorking = new SimpleBooleanProperty(false);
 
     public TrainData() {
-        suggestedSpeed = new SimpleStringProperty("");
-        currentSpeed = new SimpleStringProperty("");
-        authority = new SimpleStringProperty("");
-        currentPower = new SimpleStringProperty("");
-        passengerCount = new SimpleStringProperty("");
-        currentWeight = new SimpleStringProperty("");
-        currentAcceleration = new SimpleStringProperty("");
-        currentGrade = new SimpleStringProperty("");
-        temperatureInside = new SimpleStringProperty("");
     }
 
     public void setTrain(Train train) {
@@ -36,20 +36,33 @@ public class TrainData {
             suggestedSpeed.setValue("");
             currentSpeed.unbind();
             currentSpeed.setValue("");
-            authority.setValue("");
             authority.unbind();
-            currentPower.setValue("");
+            authority.setValue("");
             currentPower.unbind();
-            passengerCount.setValue("");
+            currentPower.setValue("");
             passengerCount.unbind();
-            currentWeight.setValue("");
+            passengerCount.setValue("");
             currentWeight.unbind();
-            currentAcceleration.setValue("");
+            currentWeight.setValue("");
             currentAcceleration.unbind();
-            currentGrade.setValue("");
+            currentAcceleration.setValue("");
             currentGrade.unbind();
-            temperatureInside.setValue("");
+            currentGrade.setValue("");
             temperatureInside.unbind();
+            temperatureInside.setValue("");
+
+            leftDoorWorking.unbind();
+            leftDoorWorking.setValue(false);
+            rightDoorWorking.unbind();
+            rightDoorWorking.setValue(false);
+            lightWorking.unbind();
+            lightWorking.setValue(false);
+            serviceBrakeWorking.unbind();
+            serviceBrakeWorking.setValue(false);
+            emergencyBrakeWorking.unbind();
+            emergencyBrakeWorking.setValue(false);
+            engineWorking.unbind();
+            engineWorking.setValue(false);
         } else {
             suggestedSpeed.bind(currentTrain.getSuggestedSpeed());
             currentSpeed.bind(currentTrain.getCurrentSpeed());
@@ -60,6 +73,13 @@ public class TrainData {
             currentAcceleration.bind(currentTrain.getCurrentAcceleration());
             currentGrade.bind(currentTrain.getCurrentGrade());
             temperatureInside.bind(currentTrain.getTemperature());
+
+            leftDoorWorking.bind(currentTrain.getLeftDoorWorking());
+            rightDoorWorking.bind(currentTrain.getRightDoorWorking());
+            lightWorking.bind(currentTrain.getLightWorking());
+            serviceBrakeWorking.bind(currentTrain.getServiceBrakeWorking());
+            emergencyBrakeWorking.bind(currentTrain.getEmergencyBrakeWorking());
+            engineWorking.bind(currentTrain.getEngineWorking());
         }
     }
 
@@ -95,12 +115,35 @@ public class TrainData {
     }
  
     public StringProperty getCurrentGrade() {
-        // TODO: get grade from block
-        return new SimpleStringProperty("0.5 %");
+        return currentGrade;
     }
  
     public StringProperty getTemperature() {
         return temperatureInside;
     }
  
+    
+    public BooleanProperty getLeftDoorWorking() {
+        return leftDoorWorking;
+    }
+
+    public BooleanProperty getRightDoorWorking() {
+        return rightDoorWorking;
+    }
+
+    public BooleanProperty getLightWorking() {
+        return lightWorking;
+    }
+
+    public BooleanProperty getServiceBrakeWorking() {
+        return serviceBrakeWorking;
+    }
+
+    public BooleanProperty getEmergencyBrakeWorking() {
+        return emergencyBrakeWorking;
+    }
+    
+    public BooleanProperty getEngineWorking() {
+        return engineWorking;
+    }
 }
