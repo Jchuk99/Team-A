@@ -120,7 +120,6 @@ public class CTCUI extends Stage {
 
         
         /****full scree *****/
-        VBox fullScreen = new VBox(10, topHalf, mapTable);
         fullScreen.setPadding(new Insets(10));
         setScene(new Scene(fullScreen, length, height));
 
