@@ -31,7 +31,7 @@ public class Path {
     public Path(int startBlock, int endBlock){
         this.startBlock = startBlock;
         this.endBlock = endBlock;
-        course = search(startBlock, endBlock);
+        course = findCourse(startBlock, endBlock);
     }
 
     public LocalDateTime getStartTime() {return startTime;};
@@ -39,7 +39,7 @@ public class Path {
     public int getStartBlock() {return startBlock;};
     public int getEndBlock() {return endBlock;};
 
-    public Integer getNextBlockID(Integer currBlockID) {
+    public int getNextBlockID(int currBlockID) {
             int currIndex = course.indexOf(currBlockID);
             if (currIndex == (course.size() - 1)){
                 return -1;
@@ -54,7 +54,7 @@ public class Path {
     }
     
     //TODO: Make algorithim account for distance of blocks
-    private LinkedList<Integer> search(int start, int destination) {
+    private LinkedList<Integer> findCourse(int start, int destination) {
         start = 1;
         CTCMap map = CTCModule.map;
 		Block block = map.getBlock(start);

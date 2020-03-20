@@ -18,6 +18,7 @@ public class CTCMap{
    private Map<String, Integer> stationMap = new HashMap<String, Integer>();
    private Map<Integer, Block> blockMap = new HashMap<Integer, Block>();
    private List<Integer> switchList = new ArrayList<Integer>();
+   private List<Integer> closedBlocks = new ArrayList<Integer>();
    
     public CTCMap(TrackControllerModule trackControllerModule){
         this.trackControllerModule = trackControllerModule;
@@ -28,8 +29,19 @@ public class CTCMap{
     public Map<Integer, Block> getBlockMap(){ return blockMap;}
     public Map<String, Integer> getStationMap(){ return stationMap;}
     public List<Integer> getSwitchList(){ return switchList;}
-    //TODO: need a method to get occupied blocks in in the hash map, iterate through everything in hashmap and check if block is occupied, if so add to occupied collection.
 
+    public List<Integer> getOccupiedBlocks(){
+
+        List<Integer> occupiedBlocks = new ArrayList<Integer>(); // can be a set instead of a list.. doesn't really matter
+        for (Map.Entry<Integer, Block> entry : blockMap.entrySet()){
+            Block currBlock = entry.getValue();
+            if (currBlock.getOccupied() == true){
+                occupiedBlocks.add(currBlock.getBlockNumber());
+            }
+        }
+
+        return occupiedBlocks;
+    } 
     // this method is more of a map initialization method
     public void initMap(){
         
@@ -81,7 +93,7 @@ public class CTCMap{
     }
 
     // need to create second method that doesn't just reinitialize the map, but updates it's current attributes
-    // occupied and switch positions
+    // AKA occupied and switch positions
     public void updateMap(){
         ArrayList<WaysideController> waysides = trackControllerModule.getWaysideControllers();
 
