@@ -10,13 +10,9 @@
         "deps/javafx-sdk-13.0.2/lib/javafx.swing.jar",
         "deps/javafx-sdk-13.0.2/lib/javafx.web.jar",
         "deps/javafx-sdk-13.0.2/lib/javafx-swt.jar",
-<<<<<<< HEAD
 
-        "deps/JavaFXSmartGraph-0.9/JavaFXSmartGraph-0.9.jar"
-=======
         "c:\\Users\\golde\\Downloads\\hamcrest-core-1.3.jar",
         "c:\\Users\\golde\\Downloads\\junit-4.13.jar"
->>>>>>> e7ccfe5a47695074a46e3b8faa26bb4fd2397f40
     ],
     "restructuredtext.confPath": ""
 }
