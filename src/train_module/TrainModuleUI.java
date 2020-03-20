@@ -1,6 +1,5 @@
 package src.train_module;
 
-import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -69,11 +68,13 @@ public class TrainModuleUI extends Stage {
         /****** select train ******/
 
         /****** beacon ******/
+        // TODO: beacon update
         final HBox beaconBox = new HBox(10, createTextBox("Beacon"), createLabelBox("STATION; CASTLE SHANNON; BLOCK 96;"));
         beaconBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
         /****** beacon ******/
 
         /****** top box - time and signal ******/
+        // TODO: top box update
         final HBox topBox = createTopBox();
         topBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
         /****** top box - time and signal ******/
@@ -165,7 +166,7 @@ public class TrainModuleUI extends Stage {
         VBox label6 = createLabelBox("", trainData.getCurrentWeight());
         VBox label7 = createLabelBox("", trainData.getCurrentAcceleration());
         VBox label8 = createLabelBox("", trainData.getCurrentGrade());
-        VBox label9 = createLabelBox("", trainData.getTemperature());
+        VBox label9 = createLabelBox("", trainData.getTemperatureInside());
         VBox labelBox2 = new VBox(10, label5, label6, label7, label8, label9);
         
         final HBox infoBox = new HBox(10, createHSpacer(), nameBox1, labelBox1, createHSpacer(), nameBox2, labelBox2, createHSpacer());
@@ -189,14 +190,49 @@ public class TrainModuleUI extends Stage {
         VBox light6 = createCircleBox(10, Color.GREEN, Color.RED, trainData.getEngineWorking());
         VBox lightBox = new VBox(10, createTextBox("Status"), light1, light2, light3, light4, light5, light6);
 
-        // TODO: working button
-        VBox button1 = createButtonBox("Insert Failure", 100, 30);
-        VBox button2 = createButtonBox("Insert Failure", 100, 30);
-        VBox button3 = createButtonBox("Insert Failure", 100, 30);
-        VBox button4 = createButtonBox("Insert Failure", 100, 30);
-        VBox button5 = createButtonBox("Insert Failure", 100, 30);
-        VBox button6 = createButtonBox("Insert Failure", 100, 30);
-        VBox buttonBox = new VBox(10, createTextBox("Insert Failure"), button1, button2, button3, button4, button5, button6);
+        Button button1 = createButton("Insert Failure", 100, 30);
+        button1.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                trainData.setLeftDoorWorking(false);
+            }
+        });
+        Button button2 = createButton("Insert Failure", 100, 30);
+        button2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                trainData.setRightDoorWorking(false);
+            }
+        });
+        Button button3 = createButton("Insert Failure", 100, 30);
+        button3.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                trainData.setLightWorking(false);
+            }
+        });
+        Button button4 = createButton("Insert Failure", 100, 30);
+        button4.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                trainData.setServiceBrakeWorking(false);
+            }
+        });
+        Button button5 = createButton("Insert Failure", 100, 30);
+        button5.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                trainData.setEmergencyBrakeWorking(false);
+            }
+        });
+        Button button6 = createButton("Insert Failure", 100, 30);
+        button6.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                trainData.setEngineWorking(false);
+            }
+        });
+        VBox buttonBox = new VBox(10, createTextBox("Insert Failure"), createVBox(button1), createVBox(button2), createVBox(button3), createVBox(button4), createVBox(button5), createVBox(button6));
 
         HBox box = new HBox(10, createHSpacer(), nameBox, createHSpacer(), lightBox, createHSpacer(), buttonBox, createHSpacer());
 
@@ -238,6 +274,14 @@ public class TrainModuleUI extends Stage {
         return box;
     }
 
+    private VBox createVBox(Node node) {
+        // all VBox create function are unified to 40px height
+        VBox box = new VBox(0, node);
+        box.setPrefHeight(40);
+        box.setAlignment(Pos.CENTER_LEFT);
+        return box;
+    }
+
     private Button createButton(String text, int width, int height) {
         Button button = new Button();
         button.setText(text);
@@ -248,10 +292,7 @@ public class TrainModuleUI extends Stage {
 
     private VBox createButtonBox(String text, int width, int height) {
         // all VBox create function are unified to 40px height
-        VBox buttonBox = new VBox(0, createButton(text, width, height));
-        buttonBox.setPrefHeight(40);
-        buttonBox.setAlignment(Pos.CENTER_LEFT);
-        return buttonBox;
+        return createVBox(createButton(text, width, height));
     }
 
     private Text createText(String text) {
@@ -261,10 +302,7 @@ public class TrainModuleUI extends Stage {
 
     private VBox createTextBox(String text) {
         // all VBox create function are unified to 40px height
-        VBox textBox = new VBox(0, createText(text));
-        textBox.setPrefHeight(40);
-        textBox.setAlignment(Pos.CENTER_LEFT);
-        return textBox;
+        return createVBox(createText(text));
     }
 
     private Label createLabel(String text) {
@@ -275,20 +313,14 @@ public class TrainModuleUI extends Stage {
 
     private VBox createLabelBox(String text) {
         // all VBox create function are unified to 40px height
-        VBox labelBox = new VBox(0, createLabel(text));
-        labelBox.setPrefHeight(40);
-        labelBox.setAlignment(Pos.CENTER_LEFT);
-        return labelBox;
+        return createVBox(createLabel(text));
     }
 
     private VBox createLabelBox(String text, StringProperty valueProperty) {
         // all VBox create function are unified to 40px height
         Label label = createLabel(text);
         label.textProperty().bind(valueProperty);
-        VBox labelBox = new VBox(0, label);
-        labelBox.setPrefHeight(40);
-        labelBox.setAlignment(Pos.CENTER_LEFT);
-        return labelBox;
+        return createVBox(label);
     }
 
     private Circle createCircle(int radius, Color color) {
@@ -300,21 +332,26 @@ public class TrainModuleUI extends Stage {
 
     private VBox createCircleBox(int radius, Color color) {
         // all VBox create function are unified to 40px height
-        VBox circleBox = new VBox(createCircle(radius, color));
-        circleBox.setPrefHeight(40);
-        circleBox.setAlignment(Pos.CENTER_LEFT);
-        return circleBox;
+        return createVBox(createCircle(radius, color));
     }
 
-    private VBox createCircleBox(int radius, Color color, Color color2, BooleanProperty booleanProperty) {
+    private VBox createCircleBox(int radius, Color color1, Color color2, BooleanProperty booleanProperty) {
         // all VBox create function are unified to 40px height
-        // boolean true for color, false for color2
-        Circle circle = createCircle(radius, color);
-        Bindings.when(booleanProperty).then(color).otherwise(color2);
-        VBox circleBox = new VBox(circle);
-        circleBox.setPrefHeight(40);
-        circleBox.setAlignment(Pos.CENTER_LEFT);
-        return circleBox;
+        // boolean true for color1, false for color2
+        Circle circle = new Circle();
+        circle.setRadius(radius);
+        Bindings.when(booleanProperty).then(color1).otherwise(color2);
+        booleanProperty.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue o,Boolean oldVal, Boolean newVal){
+                if (newVal) {
+                    circle.setFill(color1);
+                } else {
+                    circle.setFill(color2);
+                }
+            }
+        });
+        return createVBox(circle);
     }
 
     private static Node createVSpacer() {

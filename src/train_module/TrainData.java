@@ -72,7 +72,7 @@ public class TrainData {
             currentWeight.bind(currentTrain.getCurrentWeight());
             currentAcceleration.bind(currentTrain.getCurrentAcceleration());
             currentGrade.bind(currentTrain.getCurrentGrade());
-            temperatureInside.bind(currentTrain.getTemperature());
+            temperatureInside.bind(currentTrain.getTemperatureInside());
 
             leftDoorWorking.bind(currentTrain.getLeftDoorWorking());
             rightDoorWorking.bind(currentTrain.getRightDoorWorking());
@@ -118,11 +118,11 @@ public class TrainData {
         return currentGrade;
     }
  
-    public StringProperty getTemperature() {
+    public StringProperty getTemperatureInside() {
         return temperatureInside;
     }
- 
-    
+
+
     public BooleanProperty getLeftDoorWorking() {
         return leftDoorWorking;
     }
@@ -146,4 +146,30 @@ public class TrainData {
     public BooleanProperty getEngineWorking() {
         return engineWorking;
     }
+
+
+    public void setLeftDoorWorking(boolean state) {
+        if (currentTrain != null) currentTrain.leftDoorWorking.setValue(state);
+    }
+
+    public void setRightDoorWorking(boolean state) {
+        if (currentTrain != null) currentTrain.rightDoorWorking.setValue(state);
+    }
+
+    public void setLightWorking(boolean state) {
+        if (currentTrain != null) currentTrain.lightWorking.setValue(state);
+    }
+    
+    public void setServiceBrakeWorking(boolean state) {
+        if (currentTrain != null) currentTrain.serviceBrakeWorking.setValue(state);
+    }
+    
+    public void setEmergencyBrakeWorking(boolean state) {
+        if (currentTrain != null) currentTrain.emergencyBrakeWorking.setValue(state);
+    }
+    
+    public void setEngineWorking(boolean state) {
+        if (currentTrain != null) currentTrain.engineWorking.setValue(state);
+    }
+    
 }
