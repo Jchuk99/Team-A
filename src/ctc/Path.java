@@ -2,8 +2,7 @@ package src.ctc;
 
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+//import java.util.UUID;
 import java.time.LocalDateTime;
 
 import src.track_module.Block;
@@ -16,10 +15,10 @@ public class Path {
     private LocalDateTime endTime;
     private int startBlock;
     private int endBlock;
+    LinkedList<Integer> course;
     //private UUID startBlock;
     //private UUID endBlock;
-    //need a list of blocks
-    //List<Integer> course;
+
     
     public Path(){
     }
@@ -32,25 +31,40 @@ public class Path {
     public Path(int startBlock, int endBlock){
         this.startBlock = startBlock;
         this.endBlock = endBlock;
+        course = findCourse(startBlock, endBlock);
     }
 
-    
+    public LocalDateTime getStartTime() {return startTime;};
+    public LocalDateTime getEndTime() {return endTime;};
+    public int getStartBlock() {return startBlock;};
+    public int getEndBlock() {return endBlock;};
+
+    public int getNextBlockID(int currBlockID) {
+            int currIndex = course.indexOf(currBlockID);
+            if (currIndex == (course.size() - 1)){
+                return -1;
+            }
+            else{
+                return course.get((currIndex + 1));
+            }
+    } 
+
     public LinkedList<Integer> getCourse(){
-        LinkedList<Integer> course = search(startBlock, endBlock);
         return course;    
     }
     
     //TODO: Make algorithim account for distance of blocks
-    private LinkedList<Integer> search(int start, int destination) {
+    private LinkedList<Integer> findCourse(int start, int destination) {
         start = 1;
-		Block block = CTCModule.blockMap.get(Integer.valueOf(start));
+        CTCMap map = CTCModule.map;
+		Block block = map.getBlock(start);
         LinkedList<Integer> course = new LinkedList<Integer>();
 		Deque<Block> q = new LinkedList<Block>();
-		boolean[] marked = new boolean[CTCModule.blockMap.size() + 1];
-        int[] edgeTo = new int[CTCModule.blockMap.size() + 1];      
-		int[] distTo = new int[CTCModule.blockMap.size() + 1];
+		boolean[] marked = new boolean[map.size() + 1];
+        int[] edgeTo = new int[map.size() + 1];      
+		int[] distTo = new int[map.size() + 1];
 		
-        for (int v = 0; v < CTCModule.blockMap.size() + 1 ; v++){
+        for (int v = 0; v < map.size() + 1 ; v++){
             distTo[v] = Integer.MAX_VALUE;
         }
         
@@ -79,12 +93,6 @@ public class Path {
 		course.add(0, curr);
 		return course;
     }
-
-    public LocalDateTime getStartTime() {return startTime;};
-    public LocalDateTime getEndTime() {return endTime;};
-    public int getStartBlock() {return startBlock;};
-    public int getEndBlock() {return endBlock;};
-
     
     // public UUID getStartBlock() {return startBlock;};
     // public UUID getEndBlock() {return endBlock;};

@@ -3,16 +3,21 @@ import java.util.*;
 
 public class Route {
 
-    private List<Path> paths = new ArrayList<Path>();
+    // Instead of list maybe the paths should be a queue.
+    private Queue<Path> paths = new LinkedList<Path>();
+    private Path currPath;
 
     public Route(){
     }
     
-    public Path getCurrPath(){
+    public void updateCurrPath(){
         if (!paths.isEmpty()){
-            return paths.get(0);
+            currPath = paths.poll();
         }
-        return null;
+    }
+
+    public Path getCurrPath(){
+        return currPath;
     }
 
     public void addPath(int start, int end){

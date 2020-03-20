@@ -1,7 +1,7 @@
 package src.train_module;
 
 import src.track_module.Block;
-import src.train_controller.TrainControllerModule.TrainController;
+import src.train_controller.TrainController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -55,7 +55,10 @@ public class Train {
     }
 
     public void update() {
-        if (currentBlock == null) return;
+        // testing
+        //if (currentBlock == null) return;
+
+        
         // TODO: use the formula here
         currentPower = targetPower;
 
