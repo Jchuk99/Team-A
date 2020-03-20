@@ -15,6 +15,7 @@ public class Path {
     private LocalDateTime endTime;
     private int startBlock;
     private int endBlock;
+    LinkedList<Integer> course;
     //private UUID startBlock;
     //private UUID endBlock;
 
@@ -30,16 +31,30 @@ public class Path {
     public Path(int startBlock, int endBlock){
         this.startBlock = startBlock;
         this.endBlock = endBlock;
+        course = findCourse(startBlock, endBlock);
     }
 
-    
+    public LocalDateTime getStartTime() {return startTime;};
+    public LocalDateTime getEndTime() {return endTime;};
+    public int getStartBlock() {return startBlock;};
+    public int getEndBlock() {return endBlock;};
+
+    public int getNextBlockID(int currBlockID) {
+            int currIndex = course.indexOf(currBlockID);
+            if (currIndex == (course.size() - 1)){
+                return -1;
+            }
+            else{
+                return course.get((currIndex + 1));
+            }
+    } 
+
     public LinkedList<Integer> getCourse(){
-        LinkedList<Integer> course = search(startBlock, endBlock);
         return course;    
     }
     
     //TODO: Make algorithim account for distance of blocks
-    private LinkedList<Integer> search(int start, int destination) {
+    private LinkedList<Integer> findCourse(int start, int destination) {
         start = 1;
         CTCMap map = CTCModule.map;
 		Block block = map.getBlock(start);
@@ -78,12 +93,6 @@ public class Path {
 		course.add(0, curr);
 		return course;
     }
-
-    public LocalDateTime getStartTime() {return startTime;};
-    public LocalDateTime getEndTime() {return endTime;};
-    public int getStartBlock() {return startBlock;};
-    public int getEndBlock() {return endBlock;};
-
     
     // public UUID getStartBlock() {return startBlock;};
     // public UUID getEndBlock() {return endBlock;};
