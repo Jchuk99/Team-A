@@ -22,26 +22,14 @@ public class TrackModule extends Module {
         TrackModuleUI.setTrackModule(this);
         blocks= new HashMap<UUID, Block>();
     }
+    
+    public void update(){
+		
+	}
+	
 
     public void main() {
         
-    }
-
-    public void createTrain( float suggestedSpeed, float authority, Route route) {
-        System.out.println(suggestedSpeed);
-        System.out.println(authority);
-        
-        Path path= route.getCurrPath();
-       
-        /* let's talk about this one.
-        UUID uuid= path.getStartBlock();
-        Block block= trackModule.getBlockByUUID(uuid);
-        yard.createTrain( suggestedSpeed, authority, block);*/
-    }
-    public Yard getYard() {return yard;};
-
-    public Block getBlockByUUID( UUID uuid) {
-        return blocks.get( uuid);
     }
 
     public void buildTrack( String csvFile) throws IOException {
@@ -133,5 +121,21 @@ public class TrackModule extends Module {
         for( Block block : myBlocks.values()) {
             blocks.put( block.id, block);
         }
+    }
+
+    public void createTrain( float suggestedSpeed, float authority, Route route) {
+        System.out.println(suggestedSpeed);
+        System.out.println(authority);
+        
+        /* let's talk about this one.
+        Path path= route.getCurrPath();
+        UUID uuid= path.getStartBlock();
+        Block block= trackModule.getBlockByUUID(uuid);
+        yard.createTrain( suggestedSpeed, authority, block);*/
+    }
+    public Yard getYard() {return yard;};
+
+    public Block getBlockByUUID( UUID uuid) {
+        return blocks.get( uuid);
     }
 }

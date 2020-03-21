@@ -3,10 +3,12 @@ package src.ctc;
 public class CTCTrain{
 
     private int authority;
-    private float suggestedSpeed; // IN METERS PER SECOND INTERALLY
+    private float suggestedSpeed; // IN METERS PER SECOND INTENRALLY
     private int trainID;
     private int destination;
     private int currPos;
+    //private int errorStatus; //TODO: make this an enum.
+    //private long timeOnBlock; // IN SECONDS INTERNALLY
     private Route route;
 
     public CTCTrain(){
@@ -14,13 +16,31 @@ public class CTCTrain{
         currPos = 0;
     }
 
-    public void dispatchRoute(int blockDest){
-        int start = 1;
-        if (currPos != 0) start = currPos;
-        //If the train already has a route, do i just want to add this to the end of the route?
-        route = new Route();
-        route.addPath(start, blockDest);
+    public void updateRoute(int blockDest){
+        int start;
+        if (route == null){
+            route = new Route();
+        }
+
+        //If train does not have any queued paths then will be in yard.
+        if (route.size() == 0){
+            start = 1;
+            route.addPath(start, blockDest);
+        }
+        else{
+            start = route.getLastPath().getEndBlock();
+            route.addPath(start, blockDest);
+            //Tif train is @ the end of it's path then update the current path.
+            if (currPos == route.getCurrPath().getEndBlock()){
+                route.updateCurrPath();
+            } 
+        }
+
         authority = route.getCurrPath().getCourse().size();
+    }
+
+    public int getNextBlockID(){
+        return route.getCurrPath().getNextBlockID(currPos);
     }
     
     public void setAuthority(int authority){
@@ -34,6 +54,9 @@ public class CTCTrain{
     }
     public void setDestination(int destination){
         this.destination = destination;
+    }
+    public void setCurrPos(int currPos){
+        this.currPos = currPos;
     }
     public Route getRoute(){
         return route;
@@ -49,5 +72,8 @@ public class CTCTrain{
     }
     public int getDestination(){
         return destination;
+    }
+    public int getCurrPos(){
+        return currPos;
     }
 }

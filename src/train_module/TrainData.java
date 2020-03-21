@@ -2,55 +2,84 @@ package src.train_module;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.BooleanProperty;
 
 public class TrainData {
 
     Train currentTrain;
-    StringProperty suggestedSpeed;
-    StringProperty currentSpeed;
-    StringProperty authority;
-    StringProperty currentPower;
-    StringProperty passengerCount;
-    StringProperty currentWeight;
-    StringProperty currentAcceleration;
-    StringProperty currentGrade;
-    StringProperty temperatureInside;
+    StringProperty suggestedSpeed = new SimpleStringProperty("");
+    StringProperty currentSpeed = new SimpleStringProperty("");
+    StringProperty authority = new SimpleStringProperty("");
+    StringProperty currentPower = new SimpleStringProperty("");
+    StringProperty passengerCount = new SimpleStringProperty("");
+    StringProperty currentWeight = new SimpleStringProperty("");
+    StringProperty currentAcceleration = new SimpleStringProperty("");
+    StringProperty currentGrade = new SimpleStringProperty("");
+    StringProperty temperatureInside = new SimpleStringProperty("");
+
+    BooleanProperty leftDoorWorking = new SimpleBooleanProperty(false);
+    BooleanProperty rightDoorWorking = new SimpleBooleanProperty(false);
+    BooleanProperty lightWorking = new SimpleBooleanProperty(false);
+    BooleanProperty serviceBrakeWorking = new SimpleBooleanProperty(false);
+    BooleanProperty emergencyBrakeWorking = new SimpleBooleanProperty(false);
+    BooleanProperty engineWorking = new SimpleBooleanProperty(false);
 
     public TrainData() {
-        suggestedSpeed = new SimpleStringProperty("");
-        currentSpeed = new SimpleStringProperty("");
-        authority = new SimpleStringProperty("");
-        currentPower = new SimpleStringProperty("");
-        passengerCount = new SimpleStringProperty("");
-        currentWeight = new SimpleStringProperty("");
-        currentAcceleration = new SimpleStringProperty("");
-        currentGrade = new SimpleStringProperty("");
-        temperatureInside = new SimpleStringProperty("");
     }
 
     public void setTrain(Train train) {
         // set Train to train or null for GUI to pull data from
         currentTrain = train;
         if (train == null) {
+            suggestedSpeed.unbind();
             suggestedSpeed.setValue("");
+            currentSpeed.unbind();
             currentSpeed.setValue("");
+            authority.unbind();
             authority.setValue("");
+            currentPower.unbind();
             currentPower.setValue("");
+            passengerCount.unbind();
             passengerCount.setValue("");
+            currentWeight.unbind();
             currentWeight.setValue("");
+            currentAcceleration.unbind();
             currentAcceleration.setValue("");
-            //currentGrade.setValue("");
+            currentGrade.unbind();
+            currentGrade.setValue("");
+            temperatureInside.unbind();
             temperatureInside.setValue("");
+
+            leftDoorWorking.unbind();
+            leftDoorWorking.setValue(false);
+            rightDoorWorking.unbind();
+            rightDoorWorking.setValue(false);
+            lightWorking.unbind();
+            lightWorking.setValue(false);
+            serviceBrakeWorking.unbind();
+            serviceBrakeWorking.setValue(false);
+            emergencyBrakeWorking.unbind();
+            emergencyBrakeWorking.setValue(false);
+            engineWorking.unbind();
+            engineWorking.setValue(false);
         } else {
-            suggestedSpeed.setValue(currentTrain.suggestedSpeed + " mph");
-            currentSpeed.setValue(currentTrain.currentSpeed + " mph");
-            authority.setValue(currentTrain.authority + " ft");
-            currentPower.setValue(currentTrain.currentPower + " kW");
-            passengerCount.setValue(currentTrain.passengerCount + "");
-            currentWeight.setValue(currentTrain.currentWeight + " tons");
-            currentAcceleration.setValue(currentTrain.currentAcceleration + " ft/s^2");
-            //currentGrade.setValue(currentTrain.currentGrade + " %");
-            temperatureInside.setValue(currentTrain.temperatureInside + " F");
+            suggestedSpeed.bind(currentTrain.getSuggestedSpeed());
+            currentSpeed.bind(currentTrain.getCurrentSpeed());
+            authority.bind(currentTrain.getAuthority());
+            currentPower.bind(currentTrain.getCurrentPower());
+            passengerCount.bind(currentTrain.getPassengetCount());
+            currentWeight.bind(currentTrain.getCurrentWeight());
+            currentAcceleration.bind(currentTrain.getCurrentAcceleration());
+            currentGrade.bind(currentTrain.getCurrentGrade());
+            temperatureInside.bind(currentTrain.getTemperatureInside());
+
+            leftDoorWorking.bind(currentTrain.getLeftDoorWorking());
+            rightDoorWorking.bind(currentTrain.getRightDoorWorking());
+            lightWorking.bind(currentTrain.getLightWorking());
+            serviceBrakeWorking.bind(currentTrain.getServiceBrakeWorking());
+            emergencyBrakeWorking.bind(currentTrain.getEmergencyBrakeWorking());
+            engineWorking.bind(currentTrain.getEngineWorking());
         }
     }
 
@@ -86,12 +115,61 @@ public class TrainData {
     }
  
     public StringProperty getCurrentGrade() {
-        // TODO: get grade from block
-        return new SimpleStringProperty("0.5 %");
+        return currentGrade;
     }
  
-    public StringProperty getTemperature() {
+    public StringProperty getTemperatureInside() {
         return temperatureInside;
     }
- 
+
+
+    public BooleanProperty getLeftDoorWorking() {
+        return leftDoorWorking;
+    }
+
+    public BooleanProperty getRightDoorWorking() {
+        return rightDoorWorking;
+    }
+
+    public BooleanProperty getLightWorking() {
+        return lightWorking;
+    }
+
+    public BooleanProperty getServiceBrakeWorking() {
+        return serviceBrakeWorking;
+    }
+
+    public BooleanProperty getEmergencyBrakeWorking() {
+        return emergencyBrakeWorking;
+    }
+    
+    public BooleanProperty getEngineWorking() {
+        return engineWorking;
+    }
+
+
+    public void setLeftDoorWorking(boolean state) {
+        if (currentTrain != null) currentTrain.leftDoorWorking.setValue(state);
+    }
+
+    public void setRightDoorWorking(boolean state) {
+        if (currentTrain != null) currentTrain.rightDoorWorking.setValue(state);
+    }
+
+    public void setLightWorking(boolean state) {
+        if (currentTrain != null) currentTrain.lightWorking.setValue(state);
+    }
+    
+    public void setServiceBrakeWorking(boolean state) {
+        if (currentTrain != null) currentTrain.serviceBrakeWorking.setValue(state);
+    }
+    
+    public void setEmergencyBrakeWorking(boolean state) {
+        if (currentTrain != null) currentTrain.emergencyBrakeWorking.setValue(state);
+    }
+    
+    public void setEngineWorking(boolean state) {
+        if (currentTrain != null) currentTrain.engineWorking.setValue(state);
+    }
+    
 }

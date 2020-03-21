@@ -56,7 +56,12 @@ abstract public class Block {
     public Set<Edge> getEdges(){return edges;};
     public int getX() {return xCorrdinate;};
     public int getY() {return yCorrdinate;};
+<<<<<<< HEAD
     
+=======
+
+    public void setOccupied(boolean occupied){this.occupied = occupied;}
+>>>>>>> 6356eb75bfc37fe3f3ab0b430e3a7c085d98a0f0
     public void setFunctional( boolean set) {functional= set;};
     public void setHeater( boolean set) {heater= set;};
     public void setEdges(Set<Edge>edges){this.edges = edges;};

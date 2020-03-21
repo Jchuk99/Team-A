@@ -29,6 +29,10 @@ public class TrackControllerModule extends Module {
 	public ArrayList<WaysideController> getWaysideControllers(){
 		return waysideControllers;
 	}
+
+	public void update(){
+		
+	}
 	
 
 	/*private getTrackStatus(){

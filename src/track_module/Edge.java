@@ -9,4 +9,5 @@ public class Edge {
         this.connected= connected;
     }
     public Block getBlock(){return block;};
+    public Boolean getConnected(){return connected;};
 }
