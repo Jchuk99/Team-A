@@ -1,10 +1,14 @@
 package src.track_controller;
 
+import java.util.*;
+import src.track_module.Block;
+import java.io.*;
+
 public class PLC {
     private String id = null;
-    private StringBuilder text;
-	public PLC(StringBuilder text){
-        this.text = text;
+    private File file;
+	public PLC(File file){
+        this.file = file;
 	}
 	public PLC(String id){
 		this.id = id;
@@ -18,6 +22,33 @@ public class PLC {
     }
 
     public void parseAndCompile(){
-    	
+        StringBuilder plcText = new StringBuilder("");
+        String line;
+    	try{
+            BufferedReader in = new BufferedReader(new FileReader(file));
+            while((line = in.readLine()) != null) {
+                plcText.append(line);
+            }
+        }
+        catch(FileNotFoundException e){ 
+            System.out.println("file not found");
+        }
+        catch(IOException e) {
+        System.out.println("Error processing file.");
+        }      
+
     }
+
+    public void runPLCLogicSwitch(LinkedList<Block> blocks){
+        parseAndCompile();
+        //toggle switches
+    }
+
+    public void runPLCLogicCrossing(LinkedList<Block> blocks){
+
+    }
+    public void runPLCLogicCrossingLights(LinkedList<Block> blocks){
+
+    }
+
 }

@@ -1,8 +1,8 @@
 package src.track_controller;
 
 import src.track_module.Block;
-import src.track_controller.PLC;
 import java.util.*;
+import java.io.File;
 
 
 public class WaysideController {
@@ -11,7 +11,6 @@ public class WaysideController {
 	//private LinkedList<Train> trains;
 	private String id = null;
 	private PLC plc;
-
 
 	public WaysideController(){
 		this.blocks= new LinkedList<Block>();
@@ -25,8 +24,8 @@ public class WaysideController {
 		return id;
 	}
 
-	public void uploadPLC(StringBuilder plcText){
-		plc = new PLC(plcText);
+	public void uploadPLC(File file){
+		plc = new PLC(file);
 
 	}
 
@@ -37,7 +36,12 @@ public class WaysideController {
 	public LinkedList<Block> getBlocks(){
 		return blocks;
 	}
-	
+
+	public void runPLC(){
+		plc.runPLCLogicSwitch(blocks);
+		plc.runPLCLogicCrossing(blocks);
+		plc.runPLCLogicCrossingLights(blocks);
+	}
 
 }
 /*private void setTrains()
@@ -56,15 +60,7 @@ private void closeBlock(LinkedList<Block>){
 private void openGate(LinkedList<Block>){
 	plc.runPLC()
 }
-private void activateLights(LinkedList<Block>){
-	plc.runPLC()
-}
-private void setSuggestedSpeed(LinkedList<Block>){
-	plc.runPLC()
-}
-private void setAuthority(LinkedList<Block>){
-	plc.runPLC()
-}
+
 private LinkedList<Block> getBlockInfo(LinkedList<Block>){
 private
 }*/

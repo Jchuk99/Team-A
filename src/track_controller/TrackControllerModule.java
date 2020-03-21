@@ -1,8 +1,6 @@
 package src.track_controller;
 
 import java.util.*;
-import src.track_controller.WaysideController;
-import src.track_controller.WaysideUI;
 import src.Module;
 
 public class TrackControllerModule extends Module {
@@ -11,6 +9,10 @@ public class TrackControllerModule extends Module {
 	private int authority;
 	//LinkedList<Train> trains;
 	ArrayList<WaysideController> waysideControllers;
+
+	public void main() {
+
+	}
 
 	public TrackControllerModule(){
 		super();
@@ -28,9 +30,6 @@ public class TrackControllerModule extends Module {
 		return waysideControllers;
 	}
 	
-	public void main() {
-
-	}
 
 	/*private getTrackStatus(){
 		//go through all the waysides 

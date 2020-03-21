@@ -16,7 +16,7 @@ abstract public class Block {
     final String line;
     final char section;
     final int length;
-    final int blockNumber;
+    int blockNumber;
     final float speedLimit;
     final float grade;
     final float elevation;
@@ -56,7 +56,7 @@ abstract public class Block {
     public Set<Edge> getEdges(){return edges;};
     public int getX() {return xCorrdinate;};
     public int getY() {return yCorrdinate;};
-
+    
     public void setFunctional( boolean set) {functional= set;};
     public void setHeater( boolean set) {heater= set;};
     public void setEdges(Set<Edge>edges){this.edges = edges;};
