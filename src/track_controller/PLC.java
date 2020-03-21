@@ -3,6 +3,7 @@ package src.track_controller;
 import java.util.*;
 import src.track_module.Block;
 import java.io.*;
+import src.ctc.*;
 
 public class PLC {
     private String id = null;
@@ -39,15 +40,15 @@ public class PLC {
 
     }
 
-    public void runPLCLogicSwitch(LinkedList<Block> blocks){
+    public void runPLCLogicSwitch(LinkedList<Block> blocks, Set<CTCTrain> trains, ArrayList<Block> closedBlocks){
         parseAndCompile();
         //toggle switches
     }
 
-    public void runPLCLogicCrossing(LinkedList<Block> blocks){
+    public void runPLCLogicCrossing(LinkedList<Block> blocks, Set<CTCTrain> trains, ArrayList<Block> closedBlocks){
         parseAndCompile();
     }
-    public void runPLCLogicCrossingLights(LinkedList<Block> blocks){
+    public void runPLCLogicCrossingLights(LinkedList<Block> blocks, Set<CTCTrain> trains, ArrayList<Block> closedBlocks){
         parseAndCompile();
     }
 

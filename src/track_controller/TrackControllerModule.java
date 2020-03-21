@@ -36,7 +36,13 @@ public class TrackControllerModule extends Module {
 		/*switchPositions = this.ctcModule.getSwitchPositions();
 		closedBlocks = this.ctcModule.getClosedBlocks();
 		for(WaysideController waysideController : waysideControllers){
-			
+			Set<CTCTrain> trainsInJuris = getTrainsInJuris(waysideController.getBlocks());
+			HashMap<UUID, position> switchesInJuris = getSwitchesInJuris(waysideController.getBlocks());
+			ArrayList<Block> closedBlocksInJuris = getClosedBlocksInJuris(waysideController.getBlocks());
+			waysideController.setTrains(trainsInJuris);
+			waysideController.setSwitches(switchesInJuris);
+			waysideController.setClosedBlocks(closedBlocksInJuris);
+			waysideController.runPLC();
 		}
 		*/
 	}
@@ -54,7 +60,7 @@ public class TrackControllerModule extends Module {
 		return trainsInJuris;
 	}
 
-	/*public HashMap<UUID, position> getSwitchPositionsInJuris(LinkedList<Block> blocks){
+	/*public HashMap<UUID, position> getSwitchesInJuris(LinkedList<Block> blocks){
 		HashMap<UUID, position> switchesInJuris = new HashMap<UUID, position>();	
 		for(Block block : blocks){
 			if(switchesInJuris.containsKey(block.getBlockNumber)){
