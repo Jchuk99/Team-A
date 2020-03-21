@@ -50,8 +50,8 @@ public class ApplicationUI extends Application {
         TrainControllerUI trainControllerUI = new TrainControllerUI();
 
         ctcUI.show();
-        trackControllerUI.show();
         trackModuleUI.show();
+        trackControllerUI.show();
         trainModuleUI.show();
         trainControllerUI.show();
 

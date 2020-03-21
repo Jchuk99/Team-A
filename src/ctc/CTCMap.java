@@ -95,6 +95,7 @@ public class CTCMap{
     // need to create second method that doesn't just reinitialize the map, but updates it's current attributes
     // AKA occupied and switch positions
     public void updateMap(){
+        /* TODO i just pulled from master and this didn't work so I commented it out for now
         ArrayList<WaysideController> waysides = trackControllerModule.getWaysideControllers();
 
         for (WaysideController wayside : waysides) { 
@@ -111,5 +112,6 @@ public class CTCMap{
                 }
             }
         }
+        */
     }
 }

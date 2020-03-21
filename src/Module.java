@@ -36,9 +36,9 @@ public abstract class Module{
         update();
     }
 
-    public void update() {
-        // module update logic for every clock tick
-    }
+    public abstract void update();
+    // module update logic for every clock tick
+    
 
     public void setTrainModule( TrainModule trainModule) {this.trainModule= trainModule;};
     public void setTrainControllerModule( TrainControllerModule trainControllerModule) {this.trainControllerModule= trainControllerModule;};

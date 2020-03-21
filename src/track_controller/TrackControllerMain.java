@@ -1,32 +1,35 @@
 package src.track_controller;
+import src.Module;
 import src.track_controller.TrackControllerModule;
 import src.track_module.TrackModule;
 
 import javafx.application.Application;
+import java.util.HashSet;
 
-/*public class TrackControllerMain{
+public class TrackControllerMain{
 	public static void main(String[] args){
+		TrackModule trackModule = new TrackModule();
 		TrackControllerModule trackControllerModule = new TrackControllerModule();
-		try {
-			TrackModule tm= new TrackModule();
-			
-			tm.setTrackControllerModule(trackControllerModule);
-			tm.userInterface();
-		}
-		catch( Exception e) {
-			System.out.println( e);
-		}
-
-		new Thread(){
-			@Override
-			public void run(){
-				javafx.application.Application.launch(WaysideUI.class);
-			}
-	}.start();
-
-	WaysideUI waysideUI = WaysideUI.waitForStartUpTest();
-	waysideUI.setTrackControllerModule(trackControllerModule);
+		HashSet<Module> modules= new HashSet<Module>();
+		modules.add(trackControllerModule);
+		modules.add(trackModule);
+		
+		for( Module module : modules) {
+			module.setTrackControllerModule(trackControllerModule);
+			module.setTrackModule(trackModule);
+        }
 	
+		Thread thread = new Thread() {
+            @Override
+            public void run() {
+                Application.launch(ApplicationTrackControllerUI.class);
+            }
+        };
+        thread.start();
+
+        for( Module module : modules) {
+            module.main();
+		}
 	}
-}*/
+}
 
