@@ -1,8 +1,6 @@
 package src.track_controller;
 
 import src.track_module.Block;
-import src.track_module.BlockConstructor;
-import src.track_module.BlockConstructor.Normal;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -37,13 +35,7 @@ public class WaysideUI extends Stage{
     public WaysideUI(){
         setTitle("Wayside Controller UI");
         ArrayList<WaysideController> waysideControllers = trackControllerModule.getWaysideControllers();
-        System.out.println(waysideControllers);
         WaysideController waysideController = new WaysideController();
-        float suggestedSpeed = trackControllerModule.getSuggestedSpeed();
-        int authority = trackControllerModule.getAuthority();
-        int trainId = trackControllerModule.getTrainId();
-
-        Pane graphPane;
 
         int length = 1200;
         int height = 800;

@@ -45,10 +45,10 @@ public class PLC {
     }
 
     public void runPLCLogicCrossing(LinkedList<Block> blocks){
-
+        parseAndCompile();
     }
     public void runPLCLogicCrossingLights(LinkedList<Block> blocks){
-
+        parseAndCompile();
     }
 
 }

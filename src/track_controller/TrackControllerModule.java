@@ -2,12 +2,13 @@ package src.track_controller;
 
 import java.util.*;
 import src.Module;
+import src.ctc.*;
+import src.track_module.*;
 
 public class TrackControllerModule extends Module {
-	private float suggestedSpeed;
-	private int trainId;
-	private int authority;
-	//LinkedList<Train> trains;
+	Set<CTCTrain> trains;
+	//HashMap<UUID, position> switchPositions;
+	//ArrayList<Block> closedBlocks;
 	ArrayList<WaysideController> waysideControllers;
 
 	public void main() {
@@ -31,30 +32,46 @@ public class TrackControllerModule extends Module {
 	}
 
 	public void update(){
-		
+		trains = this.ctcModule.getTrains();
+		/*switchPositions = this.ctcModule.getSwitchPositions();
+		closedBlocks = this.ctcModule.getClosedBlocks();
+		for(WaysideController waysideController : waysideControllers){
+			
+		}
+		*/
 	}
 	
+	public Set<CTCTrain> getTrainsInJuris(LinkedList<Block> blocks){
+		//I know this is O(n^2) but whatever
+		Set<CTCTrain> trainsInJuris = new HashSet<CTCTrain>();
+		for(CTCTrain train : trains){
+			for(Block block : blocks){
+				if(train.getCurrPos() == block.getBlockNumber()){
+					trainsInJuris.add(train);
+				}
+			}
+		}
+		return trainsInJuris;
+	}
 
-	/*private getTrackStatus(){
-		//go through all the waysides 
+	/*public HashMap<UUID, position> getSwitchPositionsInJuris(LinkedList<Block> blocks){
+		HashMap<UUID, position> switchesInJuris = new HashMap<UUID, position>();	
+		for(Block block : blocks){
+			if(switchesInJuris.containsKey(block.getBlockNumber)){
+				switchesInJuris.put(blockNumber, switchesInJuris.get(block.getBlockNumber));
+			}
+		}
+		return switchesInJuris;
+	}
+
+	public ArrayList<Block> getClosedBlocksInJuris(LinkedList<Block> blocks){
+		ArrayList<Block> closedBlocksInJuris = new ArrayList<Block>();
+		for(Block block : blocks){
+			
+		}
+		return trainsInJuris;
 	}*/
-	public void setTrainInfo(int trainId, float suggestedSpeed, int authority){
-		this.suggestedSpeed = suggestedSpeed;
-		this.trainId = trainId;
-		this.authority = authority;
-	}
 
-	public float getSuggestedSpeed(){
-		return suggestedSpeed;
-	}
-
-	public int getTrainId(){
-		return trainId;
-	}
-
-	public int getAuthority(){
-		return authority;
-	}
 
 
 

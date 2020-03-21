@@ -45,10 +45,6 @@ public class ApplicationUI extends Application {
         TrackModuleUI trackModuleUI = new TrackModuleUI();
         
         CTCUI ctcUI = new CTCUI();
-<<<<<<< HEAD
-        TrackModuleUI trackModuleUI = new TrackModuleUI();
-=======
->>>>>>> 6356eb75bfc37fe3f3ab0b430e3a7c085d98a0f0
         WaysideUI trackControllerUI = new WaysideUI();
         TrainModuleUI trainModuleUI = new TrainModuleUI();
         TrainControllerUI trainControllerUI = new TrainControllerUI();
