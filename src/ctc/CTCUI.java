@@ -90,17 +90,13 @@ public class CTCUI extends Stage {
         TableView mapTable = new TableView();
 
         
-
         topHalf.setPrefHeight(height/2);
         VBox fullScreen = new VBox(10, topHalf, mapTable);
 
         
-        /****full scree *****/
+        /****full screen *****/
         fullScreen.setPadding(new Insets(10));
         setScene(new Scene(fullScreen, length, height));
-
-        //graphView.init();
-
 
     }
     

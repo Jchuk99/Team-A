@@ -41,7 +41,7 @@ public class ApplicationUI extends Application {
             module.main();
         }
 
-         // Nothing else works until it gets map information from the track Module.
+        // Nothing else works until it gets map information from the track Module.
         TrackModuleUI trackModuleUI = new TrackModuleUI();
         
         CTCUI ctcUI = new CTCUI();
@@ -50,8 +50,8 @@ public class ApplicationUI extends Application {
         TrainControllerUI trainControllerUI = new TrainControllerUI();
 
         ctcUI.show();
-        trackControllerUI.show();
         trackModuleUI.show();
+        trackControllerUI.show();
         trainModuleUI.show();
         trainControllerUI.show();
 

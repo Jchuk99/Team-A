@@ -1,20 +1,17 @@
 package src.track_controller;
+
 import src.track_module.Block;
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.*;
-import javafx.geometry.*;
-import javafx.scene.layout.Priority; 
+import javafx.geometry.*; 
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.shape.*;
 import javafx.scene.paint.Color;
@@ -23,8 +20,8 @@ import javafx.stage.Modality;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.stage.FileChooser;
+import javafx.scene.layout.Pane;
 import javafx.collections.ObservableList;
  
 public class WaysideUI extends Stage{
@@ -37,16 +34,8 @@ public class WaysideUI extends Stage{
 
     public WaysideUI(){
         setTitle("Wayside Controller UI");
-        System.out.println(trackControllerModule);
         ArrayList<WaysideController> waysideControllers = trackControllerModule.getWaysideControllers();
         WaysideController waysideController = new WaysideController();
-        float suggestedSpeed = trackControllerModule.getSuggestedSpeed();
-        int authority = trackControllerModule.getAuthority();
-        int trainId = trackControllerModule.getTrainId();
-
-        System.out.println(suggestedSpeed);
-        System.out.println(authority);
-        System.out.println(trainId);
 
         int length = 1200;
         int height = 800;
@@ -63,21 +52,23 @@ public class WaysideUI extends Stage{
         int plcCount = 0;
         for(WaysideController controller : waysideControllers){
             controller.setId("PLC " + ++plcCount);
-            System.out.println(controller.getId());
+            System.out.println(controller.getClass());
             plcTable.getItems().add(controller);
         }
         
         TableView blockTable = new TableView();
-        TableColumn<String, Block> blockID = new TableColumn<>("Block ID");
+        TableColumn<String, BlockProperties> blockID = new TableColumn<>("Block ID");
         blockID.setCellValueFactory(new PropertyValueFactory<>("blockNumber"));
-        TableColumn<String, Block> blockStatus = new TableColumn<>("Block Status");
+        TableColumn<String, BlockProperties> blockStatus = new TableColumn<>("Block Status");
         blockStatus.setCellValueFactory(new PropertyValueFactory<>("occupied"));
-        TableColumn<String, Block> blockOpenClose= new TableColumn<>("Block Open/Close");
+        /*TableColumn<String, Normal> blockOpenClose= new TableColumn<>("Block Open/Close");
         blockOpenClose.setCellValueFactory(new PropertyValueFactory<>("blockOpenClose"));
-        /*TableColumn<String, Block> suggestedSpeed = new TableColumn<>("Suggested Speed (mph)");
+        TableColumn<String, Block> suggestedSpeed = new TableColumn<>("Suggested Speed (mph)");
         suggestedSpeed.setCellValueFactory(new PropertyValueFactory<>("suggestedSpeed"));
         TableColumn<String, Block> authority = new TableColumn<>("Authority (ft)");
         authority.setCellValueFactory(new PropertyValueFactory<>("authority"));*/
+        blockTable.getColumns().add(blockID);
+        blockTable.getColumns().add(blockStatus);
         blockTable.setPrefWidth(length/3);
         
 
@@ -96,10 +87,15 @@ public class WaysideUI extends Stage{
             public void handle(ActionEvent event) {
                 if(!plcTable.getSelectionModel().isEmpty()){
                     WaysideController waysideController = (WaysideController) plcTable.getSelectionModel().getSelectedItem();
-                    
+                    blockTable.getItems().clear();
                     for(Block block : waysideController.getBlocks()){
+                        String occupiedText = "Unoccupied";
+                        if(block.getOccupied()){
+                            occupiedText = "Occupied";
+                        }
+                        BlockProperties blockFix = new BlockProperties(block.getBlockNumber(), occupiedText);
                         System.out.println("Block ID: " + block.getBlockNumber() + " Block Occupied: " + block.getOccupied() + " Suggested Speed: 50 Authority: 60");
-                        blockTable.getItems().add(block);
+                        blockTable.getItems().add(blockFix);
                     }        
                 }
             }
@@ -157,6 +153,9 @@ public class WaysideUI extends Stage{
         statusGrouper.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 1;" + "-fx-padding: 5;");
 
         TableView switchTable = new TableView();
+        /*
+        TODO what is the person class still ehre for
+        
         TableColumn<String, Person> switchID = new TableColumn<>("Switch ID");
         switchID.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         TableColumn<String, Person> switchPosition = new TableColumn<>("Switch Position");
@@ -167,6 +166,7 @@ public class WaysideUI extends Stage{
         switchTable.getItems().add(new Person("3", "1"));
         switchTable.setPrefWidth(length/6);
         switchTable.setPrefHeight(height/6);
+        */
 
         VBox box2 = new VBox(10, lightGrouper, statusGrouper, switchTable);
         box2.setPrefWidth(length/3);
@@ -225,74 +225,62 @@ public class WaysideUI extends Stage{
         //show();
     }
 
-    /*public static WaysideUI waitForStartUpTest(){
-        try{
-            latch.await();
-        }catch(InterruptedException e){
-            e.printStackTrace();
-        }
-        return waysideUI;
-    }
-
-    public static void setStartUpTest(WaysideUI waysideUI0){
-        waysideUI = waysideUI0;
-        latch.countDown();
-    }*/
-
 
     public static void getPLCTextBox(int option, WaysideController waysideController){
         Stage popupwindow = new Stage();   
         popupwindow.initModality(Modality.APPLICATION_MODAL);
         final TextArea textArea3 = new TextArea();
         TextArea textArea2 = new TextArea();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open File");
+        File file = null;
         if(option == 1){
+            Button confirm = new Button("Confirm");           
+            confirm.setOnAction(new EventHandler<ActionEvent>(){
+                StringBuilder plcText = new StringBuilder("");
+                String line; 
+                public void handle(ActionEvent event){
+                    
+                    /*try{
+                    BufferedReader in = new BufferedReader(new FileReader(textArea3.getText()));
+                        while((line = in.readLine()) != null) {
+                            plcText.append(line);
+                        }*/
+                
+                    /*catch(FileNotFoundException e){ 
+                        System.out.println("file not found");
+                    }
+                    catch(IOException e) {
+                    System.out.println("Error processing file.");
+                    }*/       
+                    
+                    //popupwindow.close();
+                }
+    
+            });
+    
             popupwindow.setTitle("PLC Input");        
             textArea2 = new TextArea("{Enter PLC Code Here} \n\n //sample code \n\n if(~block1){ \n block1 = 1; \n } \n else{ \n block1 = 0; \n } \n\n enableCrossing = block1 & block2;");
+            Button cancel = new Button("Cancel");           
+            cancel.setOnAction(e -> popupwindow.close());
+            HBox buttons = new HBox(10, confirm, cancel);
+            buttons.setStyle("-fx-padding: 5;"); 
+            VBox layout= new VBox(10); 
+            layout.getChildren().addAll(textArea2, buttons); 
+            layout.setAlignment(Pos.CENTER);           
+            Scene scene1= new Scene(layout, 300, 250);            
+            popupwindow.setScene(scene1);          
+            popupwindow.showAndWait();  
         }
-        else{
-            popupwindow.setTitle("Enter the file path");
-            //textArea3 = new TextArea();
+
+        else{       
+            file = fileChooser.showOpenDialog(null);
+            waysideController.uploadPLC(file);
         }
          
-        Button confirm = new Button("Confirm");           
-        confirm.setOnAction(new EventHandler<ActionEvent>(){
-            StringBuilder plcText = new StringBuilder("");
-            String line; 
-            public void handle(ActionEvent event){
-                System.out.println(textArea3.getText());
-                try{
-                    BufferedReader in = new BufferedReader(new FileReader(textArea3.getText()));
-                    while((line = in.readLine()) != null) {
-                        plcText.append(line);
-                    }
-                }
-                catch(FileNotFoundException e){ 
-                    System.out.println("file not found");
-                }
-                catch(IOException e) {
-                System.out.println("Error processing file.");
-                }         
-                waysideController.uploadPLC(plcText);
-                popupwindow.close();
-            }
 
-        });
 
-        Button cancel = new Button("Cancel");           
-        cancel.setOnAction(e -> popupwindow.close());
-        HBox buttons = new HBox(10, confirm, cancel);
-        buttons.setStyle("-fx-padding: 5;"); 
-        VBox layout= new VBox(10);   
-        if(option == 1){      
-            layout.getChildren().addAll(textArea2, buttons); 
-        }
-        else{
-            layout.getChildren().addAll(textArea3, buttons);     
-        }          
-        layout.setAlignment(Pos.CENTER);           
-        Scene scene1= new Scene(layout, 300, 250);            
-        popupwindow.setScene(scene1);          
-        popupwindow.showAndWait();
+
     }
 
     

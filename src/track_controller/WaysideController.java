@@ -1,17 +1,19 @@
 package src.track_controller;
 
 import src.track_module.Block;
-import src.track_controller.PLC;
 import java.util.*;
+import java.io.File;
+import src.ctc.*;
 
 
 public class WaysideController {
 
 	private LinkedList<Block> blocks;
-	//private LinkedList<Train> trains;
 	private String id = null;
 	private PLC plc;
-
+	Set<CTCTrain> trains;
+	//HashMap<UUID, position> switchPositions;
+	ArrayList<Block> closedBlocks;
 
 	public WaysideController(){
 		this.blocks= new LinkedList<Block>();
@@ -25,8 +27,8 @@ public class WaysideController {
 		return id;
 	}
 
-	public void uploadPLC(StringBuilder plcText){
-		plc = new PLC(plcText);
+	public void uploadPLC(File file){
+		plc = new PLC(file);
 
 	}
 
@@ -37,34 +39,35 @@ public class WaysideController {
 	public LinkedList<Block> getBlocks(){
 		return blocks;
 	}
-	
+
+	public void runPLC(){
+		plc.runPLCLogicSwitch(blocks, trains, closedBlocks);
+		plc.runPLCLogicCrossing(blocks, trains, closedBlocks);
+		plc.runPLCLogicCrossingLights(blocks, trains, closedBlocks);
+	}
+
+	public void setTrains(Set<CTCTrain> trainsInJuris){
+		this.trains = trainsInJuris;
+	}
+
+	public Set<CTCTrain> getTrains(){
+		return trains;
+	}
+
+	/*public void setSwitchPosition(){
+
+	}
+	public HashMap<UUID, position> getSwitchPositions(){
+		return
+	}*/
+
+	public void setClosedBlocks(ArrayList<Block> closedBlocksInJuris){
+		this.closedBlocks = closedBlocksInJuris;
+	}
+
+	public ArrayList<Block> getClosedBlocks(){
+		return closedBlocks;
+	}
+
 
 }
-/*private void setTrains()
-private LinkedList<Block> getBlockJurisdiction(){
-	return blocks
-}
-private void setBlockJurisdiction(LinkedList<Block> blocks){
-	this.blocks = blocks
-}
-private void toggleSwitch(LinkedList<Block>){
-	plc.runPLC()
-}
-private void closeBlock(LinkedList<Block>){
-	plc.runPLC()
-}
-private void openGate(LinkedList<Block>){
-	plc.runPLC()
-}
-private void activateLights(LinkedList<Block>){
-	plc.runPLC()
-}
-private void setSuggestedSpeed(LinkedList<Block>){
-	plc.runPLC()
-}
-private void setAuthority(LinkedList<Block>){
-	plc.runPLC()
-}
-private LinkedList<Block> getBlockInfo(LinkedList<Block>){
-private
-}*/

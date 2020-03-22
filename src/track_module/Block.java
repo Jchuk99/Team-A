@@ -18,7 +18,7 @@ abstract public class Block {
     final String line;
     final char section;
     final int length;
-    final int blockNumber;
+    int blockNumber;
     final float speedLimit;
     final float grade;
     final float elevation;
