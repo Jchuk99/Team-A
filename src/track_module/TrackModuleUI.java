@@ -99,6 +99,7 @@ public class TrackModuleUI extends Stage {
         VBox fullScreen = new VBox(10, topHalf, graphPane);
         fullScreen.setPadding(new Insets(10));
         setScene(new Scene(fullScreen, WIDTH, HEIGHT));
+        showAndWait();
     }
 
     private HBox createTrackInfoBox() {

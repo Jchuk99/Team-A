@@ -1,5 +1,7 @@
 package src.track_module;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import src.track_module.Block;
 
 public class BlockConstructor {
@@ -20,6 +22,7 @@ public class BlockConstructor {
             this.name= name;
         }
        public void addTicketsSold( int tickets) {this.tickets+= tickets;};
+       public StringProperty getStationNameProperty() { return new SimpleStringProperty(name); }
        public int getTicketSold() {return tickets;};
        public String getName() {return name;};
     }

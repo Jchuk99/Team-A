@@ -12,7 +12,7 @@ public class Schedule{
     public void uploadSchedule(){
     }
 
-    public CTCTrain dispatchTrain(String trainIDString, float suggestedSpeed, int destination){
+    public CTCTrain dispatchTrain(String trainIDString, float suggestedSpeed, UUID destination){
         int trainID = Integer.parseInt(trainIDString.split(" ")[1]);
 
         if (!trains.containsKey(trainID)){

@@ -23,14 +23,11 @@ public class Route {
         return paths.peekLast();
     }
 
-    public void addPath(int start, int end){
+    public void addPath(UUID start, UUID end){
         paths.add(new Path(start, end));
     }
 
     public int size(){ return paths.size();}
 
-    /*public void addPath(UUID start, UUID end){
-        paths.add(new Path(start, end));
-    }*/
 }
 

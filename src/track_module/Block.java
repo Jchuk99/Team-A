@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import src.train_module.Train;
 
 abstract public class Block {
@@ -43,6 +45,7 @@ abstract public class Block {
 
     public String getLine() {return line;};
     public char getSection() {return section;};
+    public UUID getUUID(){return id;};
     public int getBlockNumber() {return blockNumber;};
     public boolean getOccupied() {return occupied;};
     public boolean getFunctional() {return functional;};
@@ -57,7 +60,10 @@ abstract public class Block {
     public int getX() {return xCorrdinate;};
     public int getY() {return yCorrdinate;};
 
-    public void setOccupied(boolean occupied){this.occupied = occupied;}
+    public StringProperty getBlockNumberProperty() { return new SimpleStringProperty("" + blockNumber); }
+
+    public void setOccupied(boolean occupied){this.occupied = occupied;};
+    public void setUUID(UUID id){this.id = id;};
     public void setFunctional( boolean set) {functional= set;};
     public void setHeater( boolean set) {heater= set;};
     public void setEdges(Set<Edge>edges){this.edges = edges;};
@@ -83,4 +89,5 @@ abstract public class Block {
     public String toString() {
         return String.valueOf(this.blockNumber);
     }
+
 }
