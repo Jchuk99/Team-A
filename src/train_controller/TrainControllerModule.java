@@ -26,7 +26,7 @@ import javafx.collections.ObservableList;
 
 public class TrainControllerModule extends Module {
 
-	public ObservableList<TrainController> controllerList;
+	private ObservableList<TrainController> controllerList;
 	
 	public TrainControllerModule(){
 		TrainControllerUI.setModule(this);
@@ -40,8 +40,8 @@ public class TrainControllerModule extends Module {
 
 	@Override
 	public void update() {
-		for (TrainController controller : controllerList) {
-			controller.update();
+		for (int i=0;i<controllerList.size();i++) {
+			controllerList.get(i).update();
 		}
 	}
 

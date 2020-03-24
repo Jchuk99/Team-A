@@ -10,22 +10,29 @@ import java.lang.Integer;
 import src.train_module.Train;
 
 public class TrainController {
-    public Train attachedTrain = null;
-    public TrainControllerUI attachedUI;
-    public BooleanProperty leftDoorsControlClosed;
-    public BooleanProperty rightDoorsControlClosed;
-    public BooleanProperty manualModeOn;
-    public BooleanProperty cabinLightsControlOn;
-    public BooleanProperty headLightsControlOn;
-    public StringProperty hvacSetpoint;
-    public StringProperty driverSpeed;
-    public BooleanProperty emergencyBrakeControlOn;
-    public BooleanProperty serviceBrakeControlOn;
-    public int UUID;
+    private Train attachedTrain = null;
+    //public TrainControllerUI attachedUI;
+    private BooleanProperty leftDoorsControlClosed;
+    private BooleanProperty rightDoorsControlClosed;
+    private BooleanProperty manualModeOn;
+    private BooleanProperty cabinLightsControlOn;
+    private BooleanProperty headLightsControlOn;
+    private StringProperty hvacSetpoint;
+    private StringProperty driverSpeed;
+    private BooleanProperty emergencyBrakeControlOn;
+    private BooleanProperty serviceBrakeControlOn;
+    private int UUID;
     //public BooleanProperty leftDoorStateTest=new SimpleBooleanProperty(false);
-    
-    
-
+    private float v_cmd;
+    //float v_cmd_prev;
+    private float v_curr;
+    private float v_err;
+    //float v_err_prev;
+    private float power;
+    //float v_prev;
+    //float TIMESTEP=(float)50.0; //ms
+    private float kp=(float)50.0;
+    private float ki=(float)50.0;
     /**
     
     */
@@ -37,10 +44,13 @@ public class TrainController {
         manualModeOn=new SimpleBooleanProperty(false);
         cabinLightsControlOn=new SimpleBooleanProperty(true);
         headLightsControlOn=new SimpleBooleanProperty(true);
-        hvacSetpoint=new SimpleStringProperty((Integer.toString(68)));;
-        driverSpeed=new SimpleStringProperty((Float.toString(((float)0.0))));
+        hvacSetpoint=new SimpleStringProperty("68 deg F");
+        driverSpeed=new SimpleStringProperty("0 mph");
         emergencyBrakeControlOn=new SimpleBooleanProperty(true);
         serviceBrakeControlOn=new SimpleBooleanProperty(true);
+        //v_prev=(float)0.0;
+        //v_cmd_prev=(float)0.0;
+        
     }
 
     public void attachTrain(Train train) {
@@ -53,7 +63,22 @@ public class TrainController {
         if (attachedTrain == null) {
             return;
         }
-        attachedTrain.setPower(10);
+        
+        if(manualModeOn.getValue()){
+            v_cmd=Float.parseFloat(driverSpeed.getValueSafe().substring(0,2));
+        }
+        else {
+            v_cmd=Float.parseFloat(attachedTrain.getSuggestedSpeed().getValueSafe().split(" ")[0]);
+        }
+        v_curr=Float.parseFloat(attachedTrain.getCurrentSpeed().getValueSafe().split(" ")[0]);
+        v_err=v_cmd-v_curr;
+        //v_err_prev=v_cmd_prev-v_prev;
+
+
+        //v_cmd_prev=v_cmd_curr;
+        //v_prev=v_curr;
+        power=(float)(v_err*kp+v_curr*ki);
+        attachedTrain.setPower(power);
     }
 
     public void setTrain(float suggestedSpeed, float authority) {
@@ -163,8 +188,8 @@ public class TrainController {
         /**
         
         */
-        public void setDriverSpeed(float x){
-            driverSpeed.setValue(Float.toString(x)+" mph");
+        public void setDriverSpeed(int x){
+            driverSpeed.setValue(x+" mph");
         }
         
         /**

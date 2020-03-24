@@ -16,6 +16,15 @@ public class TrainControllerData {
     StringProperty currentAcceleration = new SimpleStringProperty("");
     StringProperty hvacSetpoint = new SimpleStringProperty("");
 
+    public BooleanProperty leftDoorsControlClosed=new SimpleBooleanProperty(false);
+    public BooleanProperty rightDoorsControlClosed=new SimpleBooleanProperty(false);
+    public BooleanProperty manualModeOn=new SimpleBooleanProperty(false);
+    public BooleanProperty cabinLightsControlOn=new SimpleBooleanProperty(false);
+    public BooleanProperty headLightsControlOn=new SimpleBooleanProperty(false);
+    public BooleanProperty emergencyBrakeControlOn=new SimpleBooleanProperty(false);
+    public BooleanProperty serviceBrakeControlOn=new SimpleBooleanProperty(false);
+
+
     BooleanProperty leftDoorWorking = new SimpleBooleanProperty(false);
     BooleanProperty rightDoorWorking = new SimpleBooleanProperty(false);
     BooleanProperty lightWorking = new SimpleBooleanProperty(false);
@@ -45,6 +54,21 @@ public class TrainControllerData {
             hvacSetpoint.unbind();
             hvacSetpoint.setValue("");
 
+            leftDoorsControlClosed.unbind();
+            leftDoorsControlClosed.setValue(false);
+            rightDoorsControlClosed.unbind();
+            rightDoorsControlClosed.setValue(false);
+            manualModeOn.unbind();
+            manualModeOn.setValue(false);
+            cabinLightsControlOn.unbind();
+            cabinLightsControlOn.setValue(false);
+            headLightsControlOn.unbind();
+            headLightsControlOn.setValue(false);
+            emergencyBrakeControlOn.unbind();
+            emergencyBrakeControlOn.setValue(false);
+            serviceBrakeControlOn.unbind();
+            serviceBrakeControlOn.setValue(false);
+
             leftDoorWorking.unbind();
             leftDoorWorking.setValue(false);
             rightDoorWorking.unbind();
@@ -60,10 +84,19 @@ public class TrainControllerData {
         } else {
             suggestedSpeed.bind(currentTC.getSuggestedSpeed());
             currentSpeed.bind(currentTC.getCurrentSpeed());
+            driverSpeed.bind(currentTC.getDriverSpeed());
             authority.bind(currentTC.getAuthority());
             currentPower.bind(currentTC.getCurrentPower());
             currentAcceleration.bind(currentTC.getCurrentAcceleration());
             hvacSetpoint.bind(currentTC.getHVACSetpoint());
+
+            leftDoorsControlClosed.bind(currentTC.getLeftDoorsControlClosed());
+            rightDoorsControlClosed.bind(currentTC.getRightDoorsControlClosed());
+            manualModeOn.bind(currentTC.getManualModeOn());
+            cabinLightsControlOn.bind(currentTC.getCabinLightsControlOn());
+            headLightsControlOn.bind(currentTC.getHeadLightsControlOn());
+            emergencyBrakeControlOn.bind(currentTC.getEmergencyBrakeControlOn());
+            serviceBrakeControlOn.bind(currentTC.getServiceBrakeControlOn());
 
             leftDoorWorking.bind(currentTC.getLeftDoorWorking());
             rightDoorWorking.bind(currentTC.getRightDoorWorking());
@@ -128,5 +161,115 @@ public class TrainControllerData {
     
     public BooleanProperty getEngineWorking() {
         return engineWorking;
+    }
+
+    public void setManualModeOn(boolean x){
+        currentTC.setManualModeOn(x);
+    }
+    
+    /**
+    
+    */
+    public void setLeftDoorsControlClosed(boolean x){
+        currentTC.setLeftDoorsControlClosed(x);
+    }
+    
+    /**
+    
+    */
+    public void setRightDoorsControlClosed(boolean x){
+        currentTC.setRightDoorsControlClosed(x);
+    }
+    
+    
+    /**
+    
+    */
+    public void setCabinLightsControlOn(boolean x){
+        currentTC.setCabinLightsControlOn(x);
+    }
+    
+    /**
+    
+    */
+    public void setHeadLightsControlOn(boolean x){
+        currentTC.setHeadLightsControlOn(x);
+    }
+    
+    /**
+    
+    */
+    public void setHVACSetpoint(int x){
+        currentTC.setHVACSetpoint(x);
+    }
+    
+    /**
+    
+    */
+    public void setDriverSpeed(int x){
+        currentTC.setDriverSpeed(x);
+    }
+    
+    /**
+    
+    */
+    public void setEmergencyBrakeControlOn(boolean x){
+        currentTC.setEmergencyBrakeControlOn(x);
+    }
+    
+    /**
+    
+    */
+    public void setServiceBrakeControlOn(boolean x){
+        currentTC.setServiceBrakeControlOn(x);
+    }
+
+    /**
+    
+    */
+    public BooleanProperty getManualModeOn(){
+        return manualModeOn;
+    }
+    
+    /**
+    
+    */	
+    public BooleanProperty getLeftDoorsControlClosed(){
+        return leftDoorsControlClosed;
+    }
+    
+    /**
+    
+    */
+    public BooleanProperty getRightDoorsControlClosed(){
+        return rightDoorsControlClosed;
+    }
+
+    /**
+    
+    */
+    public BooleanProperty getCabinLightsControlOn(){
+        return cabinLightsControlOn;
+    }
+    
+    /**
+    
+    */
+    public BooleanProperty getHeadLightsControlOn(){
+        return headLightsControlOn;
+    }
+    
+    /**
+    
+    */
+    public BooleanProperty getEmergencyBrakeControlOn(){
+        return emergencyBrakeControlOn;
+    }
+    
+    /**
+    
+    */
+    public BooleanProperty getServiceBrakeControlOn(){
+        return serviceBrakeControlOn;
     }
 }

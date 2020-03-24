@@ -85,7 +85,7 @@ public class TrainControllerUI extends Stage {
         /****** info ******/
 
         /****** status ******/
-        final VBox statusBox = createStatusBox();
+        final HBox statusBox = createStatusBox();
         statusBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
         /****** status ******/
 
@@ -182,23 +182,25 @@ public class TrainControllerUI extends Stage {
             public void handle(ActionEvent event) {
                 // TODO: button handle
                 if (manControlToggle.isSelected()==false){
-                    trainControllerData.currentTC.setManualModeOn(false);
+                    trainControllerData.setManualModeOn(false);
                 }
                 else{
-                    trainControllerData.currentTC.setManualModeOn(true);
+                    trainControllerData.setManualModeOn(true);
                 }
             }
         });
-        VBox speedLabel = createLabelBox("0", driverSpeed);
-        speedLabel.setPrefWidth(400);
+        
         Slider speedSlider = new Slider();
         speedSlider.setMin(0); 
         speedSlider.setMax(43); 
         speedSlider.setValue(20); 
+        VBox speedLabel = createLabelBox("0 mph", driverSpeed);
+        //speedLabel.setPrefWidth(200);
         speedSlider.valueProperty().addListener( new ChangeListener<Number>() { 
            
             public void changed(ObservableValue <? extends Number > observable, Number oldValue, Number newValue) { 
-                trainControllerData.currentTC.setDriverSpeed(newValue.floatValue()); 
+                trainControllerData.setDriverSpeed(newValue.intValue());
+                //System.out.println(trainControllerData.getDriverSpeed()); 
            } 
         });
         VBox manControlBox= new VBox(10,manControlToggle,speedLabel,speedSlider);
@@ -215,7 +217,8 @@ public class TrainControllerUI extends Stage {
            
             public void changed(ObservableValue <? extends Number > observable, Number oldValue, Number newValue) { 
                //hvacSetpoint.setValue(newValue.intValue()+" deg F"); 
-               trainControllerData.currentTC.setHVACSetpoint(newValue.intValue());
+               trainControllerData.setHVACSetpoint(newValue.intValue());
+               //System.out.println(trainControllerData.getHVACSetpoint());
            } 
        }); 
        hvacSetpointBox.setPrefWidth(120);
@@ -228,7 +231,7 @@ public class TrainControllerUI extends Stage {
 		return midControlBox;
 	}
 
-    private VBox createStatusBox() {
+    private HBox createStatusBox() {
         /*VBox name1 = createTextBox("Left Door Closed");
         VBox name2 = createTextBox("Right Door Closed");
         VBox name3 = createTextBox("Cabin Lights On");
@@ -245,10 +248,10 @@ public class TrainControllerUI extends Stage {
         VBox light4 = createCircleBox(10, Color.GREEN, Color.RED, trainControllerData.getLightWorking());
         VBox light5 = createCircleBox(10, Color.GREEN, Color.RED, trainControllerData.getServiceBrakeWorking());
         VBox light6 = createCircleBox(10, Color.GREEN, Color.RED, trainControllerData.getEngineWorking());
-        VBox light7 = createCircleBox(30, Color.GREEN, Color.RED, trainControllerData.getEmergencyBrakeWorking());
+        VBox light7 = createCircleBox(20, Color.GREEN, Color.RED, trainControllerData.getEmergencyBrakeWorking());
         
         
-        VBox lightBox = new VBox(20, createTextBox("Status"), light1, light2, light3, light4, light5, light6, light7);
+        VBox lightBox = new VBox(30, createTextBox("Status"), light1, light2, light3, light4, light5, light6, light7);
 
         // TODO: working button
                 ToggleButton button1 = createToggleButton("Left Doors Closed", 200, 40);
@@ -257,10 +260,10 @@ public class TrainControllerUI extends Stage {
             public void handle(ActionEvent event) {
                 // TODO: button handle
                 if (button1.isSelected()==false){
-                    trainControllerData.currentTC.setLeftDoorsControlClosed(false);
+                    trainControllerData.setLeftDoorsControlClosed(false);
                 }
                 else{
-                    trainControllerData.currentTC.setLeftDoorsControlClosed(true);
+                    trainControllerData.setLeftDoorsControlClosed(true);
                 }
             }
         });
@@ -271,10 +274,10 @@ public class TrainControllerUI extends Stage {
             public void handle(ActionEvent event) {
                 // TODO: button handle
                 if (button2.isSelected()==false){
-                    trainControllerData.currentTC.setRightDoorsControlClosed(false);
+                    trainControllerData.setRightDoorsControlClosed(false);
                 }
                 else{
-                    trainControllerData.currentTC.setRightDoorsControlClosed(true);
+                    trainControllerData.setRightDoorsControlClosed(true);
                 }
             }
         });
@@ -285,10 +288,10 @@ public class TrainControllerUI extends Stage {
             public void handle(ActionEvent event) {
                 // TODO: button handle
                 if (button3.isSelected()==false){
-                    trainControllerData.currentTC.setCabinLightsControlOn(false);
+                    trainControllerData.setCabinLightsControlOn(false);
                 }
                 else{
-                    trainControllerData.currentTC.setCabinLightsControlOn(true);
+                    trainControllerData.setCabinLightsControlOn(true);
                 }
             }
         });
@@ -300,10 +303,10 @@ public class TrainControllerUI extends Stage {
             public void handle(ActionEvent event) {
                 // TODO: button handle
                 if (button4.isSelected()==false){
-                    trainControllerData.currentTC.setHeadLightsControlOn(false);
+                    trainControllerData.setHeadLightsControlOn(false);
                 }
                 else{
-                    trainControllerData.currentTC.setHeadLightsControlOn(true);
+                    trainControllerData.setHeadLightsControlOn(true);
                 }
             }
         });
@@ -314,17 +317,15 @@ public class TrainControllerUI extends Stage {
             public void handle(ActionEvent event) {
                 // TODO: button handle
                 if (button5.isSelected()==false){
-                    trainControllerData.currentTC.setServiceBrakeControlOn(false);
+                    trainControllerData.setServiceBrakeControlOn(false);
                 }
                 else{
-                    trainControllerData.currentTC.setServiceBrakeControlOn(true);
+                    trainControllerData.setServiceBrakeControlOn(true);
                 }
             }
         });
 
-        VBox buttonBox = new VBox(10, createTextBox("Control"), button1, button2, button3, button4, button5, name6);
-
-        HBox box = new HBox(10, createHSpacer(), lightBox, createHSpacer(), buttonBox, createHSpacer());
+        
         /*
         final Button ebrakeButton = createButton("Emergency brake", 200, 50);
         ebrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: red;");
@@ -361,12 +362,12 @@ public class TrainControllerUI extends Stage {
                 // TODO: button handle
                 if (eBrakeButton.isSelected()==false){
                     eBrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: red;");
-                    trainControllerData.currentTC.setEmergencyBrakeControlOn(false);
+                    trainControllerData.setEmergencyBrakeControlOn(false);
                     
                 }
                 else{
                     eBrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: firebrick;");
-                    trainControllerData.currentTC.setEmergencyBrakeControlOn(true);
+                    trainControllerData.setEmergencyBrakeControlOn(true);
                     
                 }
             }
@@ -387,10 +388,12 @@ public class TrainControllerUI extends Stage {
                 eBrakeButton.setEffect(null);
             }
         });
+        VBox buttonBox = new VBox(10, createTextBox("Control"), button1, button2, button3, button4, button5, name6,eBrakeButton);
 
-        final VBox statusBox = new VBox(10, box, eBrakeButton);
-        statusBox.setAlignment(Pos.CENTER);
-        return statusBox;
+        HBox box = new HBox(10, createHSpacer(), lightBox, createHSpacer(), buttonBox, createHSpacer());
+        //final VBox statusBox = new VBox(10, box, eBrakeButton);
+        box.setAlignment(Pos.CENTER);
+        return box;
     }
 
     private VBox createVBox() {
