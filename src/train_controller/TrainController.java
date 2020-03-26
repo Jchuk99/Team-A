@@ -1,41 +1,57 @@
 package src.train_controller;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
+import java.lang.Float;
+import java.lang.Integer;
 import src.train_module.Train;
 
 public class TrainController {
-    public Train attachedTrain = null;
-    public TrainControllerUI attachedUI;
-    public boolean leftDoorsControlClosed;
-    public boolean rightDoorsControlClosed;
-    public boolean manualModeOn;
-    public boolean cabinLightsControlOn;
-    public boolean headLightsControlOn;
-    public int hvacSetpoint;
-    public float driverSpeed;
-    public boolean emergencyBrakeControlOn;
-    public boolean serviceBrakeControlOn;
-    public int UUID;
+    private Train attachedTrain = null;
+    //public TrainControllerUI attachedUI;
+    private BooleanProperty leftDoorsControlClosed;
+    private BooleanProperty rightDoorsControlClosed;
+    private BooleanProperty manualModeOn;
+    private BooleanProperty cabinLightsControlOn;
+    private BooleanProperty headLightsControlOn;
+    private StringProperty hvacSetpoint;
+    private StringProperty driverSpeed;
+    //private StringProperty beacon;
+    private BooleanProperty emergencyBrakeControlOn;
+    private BooleanProperty serviceBrakeControlOn;
+    private int UUID;
     //public BooleanProperty leftDoorStateTest=new SimpleBooleanProperty(false);
-    
-    
-
+    private float v_cmd;
+    //float v_cmd_prev;
+    private float v_curr;
+    private float v_err;
+    //float v_err_prev;
+    private float power;
+    //float v_prev;
+    //float TIMESTEP=(float)50.0; //ms
+    private float kp=(float)50.0;
+    private float ki=(float)50.0;
     /**
     
     */
     public TrainController(){ //
         //attachedUI = new TrainControllerUI(this);
         UUID=0;
-        leftDoorsControlClosed=false;
-        rightDoorsControlClosed=false;
-        manualModeOn=false;
-        cabinLightsControlOn=true;
-        headLightsControlOn=true;
-        int hvacSetpoint=68;
-        float driverSpeed=(float)0.0;
-        emergencyBrakeControlOn=true;
-        serviceBrakeControlOn=true;
+        leftDoorsControlClosed=new SimpleBooleanProperty(false);
+        rightDoorsControlClosed=new SimpleBooleanProperty(false);
+        manualModeOn=new SimpleBooleanProperty(false);
+        cabinLightsControlOn=new SimpleBooleanProperty(true);
+        headLightsControlOn=new SimpleBooleanProperty(true);
+        hvacSetpoint=new SimpleStringProperty("68 deg F");
+        driverSpeed=new SimpleStringProperty("0 mph");
+        emergencyBrakeControlOn=new SimpleBooleanProperty(true);
+        serviceBrakeControlOn=new SimpleBooleanProperty(true);
+        //v_prev=(float)0.0;
+        //v_cmd_prev=(float)0.0;
+        
     }
 
     public void attachTrain(Train train) {
@@ -48,7 +64,42 @@ public class TrainController {
         if (attachedTrain == null) {
             return;
         }
-        attachedTrain.setPower(10);
+        
+        if(manualModeOn.getValue()){
+            if(driverSpeed.getValueSafe().isEmpty()){
+                v_cmd=(float)0.0;
+            }
+            else{
+                v_cmd=Float.parseFloat(driverSpeed.getValueSafe().substring(0,2));
+            }
+        }
+        else {
+            if(attachedTrain.getSuggestedSpeed().getValueSafe().isEmpty()){
+                v_cmd=(float)0.0;
+            }
+            else{
+                v_cmd=Float.parseFloat(attachedTrain.getSuggestedSpeed().getValueSafe().split(" ")[0]);
+            }
+        }
+        if(attachedTrain.getCurrentSpeed().getValueSafe().isEmpty()){
+            v_curr=(float)0.0;
+        }
+        else{
+            v_curr=Float.parseFloat(attachedTrain.getCurrentSpeed().getValueSafe().split(" ")[0]);
+        }
+        v_err=v_cmd-v_curr;
+        //v_err_prev=v_cmd_prev-v_prev;
+
+
+        //v_cmd_prev=v_cmd_curr;
+        //v_prev=v_curr;
+        if(getAuthority().getValueSafe()=="0"){
+            power=(float)0.0;    
+        }
+        else{
+            power=(float)(v_err*kp+v_curr*ki);
+        }
+        attachedTrain.setPower(power);
     }
 
     public void setTrain(float suggestedSpeed, float authority) {
@@ -67,7 +118,7 @@ public class TrainController {
             return new SimpleStringProperty("Train "+UUID);
             
         }
-        public boolean getManualModeOn(){
+        public BooleanProperty getManualModeOn(){
             return manualModeOn;
         }
         
@@ -75,13 +126,13 @@ public class TrainController {
         
         */
         public void setManualModeOn(boolean x){
-            manualModeOn=x;
+            manualModeOn.setValue(x);
         }
         
         /**
         
         */	
-        public boolean getLeftDoorsControlClosed(){
+        public BooleanProperty getLeftDoorsControlClosed(){
             return leftDoorsControlClosed;
         }
         
@@ -89,13 +140,13 @@ public class TrainController {
         
         */
         public void setLeftDoorsControlClosed(boolean x){
-            leftDoorsControlClosed=x;
+            leftDoorsControlClosed.setValue(x);
         }
         
         /**
         
         */
-        public boolean getRightDoorsControlClosed(){
+        public BooleanProperty getRightDoorsControlClosed(){
             return rightDoorsControlClosed;
         }
         
@@ -103,13 +154,13 @@ public class TrainController {
         
         */
         public void setRightDoorsControlClosed(boolean x){
-            rightDoorsControlClosed=x;
+            rightDoorsControlClosed.setValue(x);
         }
         
         /**
         
         */
-        public boolean getCabinLightsControlOn(){
+        public BooleanProperty getCabinLightsControlOn(){
             return cabinLightsControlOn;
         }
         
@@ -117,13 +168,13 @@ public class TrainController {
         
         */
         public void setCabinLightsControlOn(boolean x){
-            cabinLightsControlOn=x;
+            cabinLightsControlOn.setValue(x);
         }
         
         /**
         
         */
-        public boolean getHeadLightsControlOn(){
+        public BooleanProperty getHeadLightsControlOn(){
             return headLightsControlOn;
         }
         
@@ -131,13 +182,13 @@ public class TrainController {
         
         */
         public void setHeadLightsControlOn(boolean x){
-            headLightsControlOn=x;
+            headLightsControlOn.setValue(x);
         }
         
         /**
         
         */
-        public int getHVACSetpoint(){
+        public StringProperty getHVACSetpoint(){
             return hvacSetpoint;
         }
         
@@ -145,27 +196,27 @@ public class TrainController {
         
         */
         public void setHVACSetpoint(int x){
-            hvacSetpoint=x;
+            hvacSetpoint.setValue(x+" deg F");
         }
         
         /**
         
         */
-        public float getDriverSpeed(){
+        public StringProperty getDriverSpeed(){
             return driverSpeed;
         }
         
         /**
         
         */
-        public void setDriverSpeed(float x){
-            driverSpeed=x;
+        public void setDriverSpeed(int x){
+            driverSpeed.setValue(x+" mph");
         }
         
         /**
         
         */
-        public boolean getEmergencyBrakeControlOn(){
+        public BooleanProperty getEmergencyBrakeControlOn(){
             return emergencyBrakeControlOn;
         }
         
@@ -173,13 +224,13 @@ public class TrainController {
         
         */
         public void setEmergencyBrakeControlOn(boolean x){
-            emergencyBrakeControlOn=x;
+            emergencyBrakeControlOn.setValue(x);
         }
         
         /**
         
         */
-        public boolean getServiceBrakeControlOn(){
+        public BooleanProperty getServiceBrakeControlOn(){
             return serviceBrakeControlOn;
         }
         
@@ -187,10 +238,12 @@ public class TrainController {
         
         */
         public void setServiceBrakeControlOn(boolean x){
-            serviceBrakeControlOn=x;
+            serviceBrakeControlOn.setValue(x);
         }
     
-    
+        public StringProperty getBeacon(){
+            return new SimpleStringProperty("XKCD47");
+        }
     
     // /**
         
@@ -200,59 +253,79 @@ public class TrainController {
         // /**
         
         // */
-        // public String getError(){
-            // return attachedTrain.getError();
-        // }
         
-        // /**
+        /**
         
-        // */
-        // public float getAuthority(){
-            // return attachedTrain.getAuthority();
-        // }
+        */
+        public StringProperty getAuthority(){
+            return attachedTrain.getAuthority();
+        }
         
-        // /**
+        /**
         
-        // */
-        // public float getSuggestedSpeed(){
-            // return attachedTrain.getSuggestedSpeed();
-        // }
+        */
+        public StringProperty getSuggestedSpeed(){
+            return attachedTrain.getSuggestedSpeed();
+        }
         
-        // /**
+        /**
         
-        // */
-        // public float getActualSpeed(){
-            // return attachedTrain.getActualSpeed();
-        // }
+        */
+        public StringProperty getCurrentSpeed(){
+            return attachedTrain.getCurrentSpeed();
+        }
         
-        // /**
+        /**
         
-        // */
-        // public float getAcceleration(){
-            // return attachedTrain.getAcceleration();
-        // }
+        */
+        public StringProperty getCurrentAcceleration(){
+            return attachedTrain.getCurrentAcceleration();
+        }
         
-        // /**
+        /**
         
-        // */
-        // public float getPower(){
-            // return attachedTrain.getPower();
-        // }
+        */
+        public StringProperty getCurrentPower(){
+            return attachedTrain.getCurrentPower();
+        }
+
+		public BooleanProperty getLeftDoorWorking() {
+			return attachedTrain.getLeftDoorWorking();
+        }
         
-        // /**
+        public BooleanProperty getRightDoorWorking() {
+			return attachedTrain.getRightDoorWorking();
+        }
+
+        public BooleanProperty getLightWorking() {
+			return attachedTrain.getLightWorking();
+        }
+
+        public BooleanProperty getServiceBrakeWorking() {
+			return attachedTrain.getServiceBrakeWorking();
+        }
+
+        public BooleanProperty getEmergencyBrakeWorking() {
+			return attachedTrain.getEmergencyBrakeWorking();
+        }
+
+        public BooleanProperty getEngineWorking() {
+			return attachedTrain.getEngineWorking();
+        }
+        /**
         
-        // */
-        // public String getBeacon(){
-            // return attachedTrain.getBeacon();
-        // }
+        */
+        //public String getBeacon(){
+        //    return attachedTrain.getBeacon();
+        //}
         
-        // /**
+        /**
         
-        // */
-        // public String getMap(){
-            // return attachedTrain.getMap();
-        // }
-    // }
+        */
+        //public String getMap(){
+        //    return attachedTrain.getMap();
+        //}
+    }
     
     // /**
         
@@ -271,7 +344,7 @@ public class TrainController {
             // }
         // }
     // }
-    }
+    
     /*
     public static void main(String[] args){
         /*new Thread(){
