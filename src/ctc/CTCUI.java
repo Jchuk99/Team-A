@@ -36,6 +36,7 @@ import java.util.Set;
 
 
 public class CTCUI extends Stage {
+    static ObservableList<Person> trainData = FXCollections.observableArrayList();
     public static CTCModule ctcOffice;
     static int trainID = 0;
 
@@ -257,7 +258,6 @@ public class CTCUI extends Stage {
         trains.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         trainTable.getColumns().add(trains);
 
-        ObservableList<Person> trainData = FXCollections.observableArrayList();
         trainTable.setItems(trainData);
         trainTable.setPrefWidth(length/6);
 

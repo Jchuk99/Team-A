@@ -88,10 +88,10 @@ public class TrainControllerUI extends Stage{
         
         trainTable.setPrefWidth(width / 8);
 
-        tc=attachedTrainControllerModule.getList().lastElement();
+       // tc=attachedTrainControllerModule.getList().lastElement();
 
         // testing: add a train to test
-        trainData.add(attachedTrainControllerModule.getList().firstElement());
+        //trainData.add(attachedTrainControllerModule.getList().firstElement());
         
         /*attachedTrainControllerModule.getList().addListener(new ChangeListener<HashSet<TrainControllerModule.TrainController>>() {
             public void changed(ObservableValue <? extends HashSet<TrainControllerModule.TrainController> > observable, HashSet<TrainControllerModule.TrainController> oldValue, HashSet<TrainControllerModule.TrainController> newValue) { 

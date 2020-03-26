@@ -14,7 +14,7 @@ public class Path {
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    LinkedList<UUID> course;
+    private LinkedList<UUID> course;
     private UUID startBlock;
     private UUID endBlock;
 

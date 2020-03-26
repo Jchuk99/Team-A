@@ -85,6 +85,10 @@ abstract public class Block {
             this.train.setTrain( suggestedSpeed, authority);
     }
 
+    public boolean equals(Block block){
+        return id == block.getUUID();
+    }
+
     @Override
     public String toString() {
         return String.valueOf(this.blockNumber);

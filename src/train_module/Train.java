@@ -1,18 +1,23 @@
 package src.train_module;
 
 import src.track_module.Block;
+import src.track_module.Edge;
+import src.track_module.TrackModule;
 import src.train_controller.TrainController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+
+
 import javafx.beans.property.BooleanProperty;
 
 public class Train {
 
     int UUID;
     TrainController controller;
+    Block prevBlock = null;
     Block currentBlock = null;
-    Boolean goForward = true;
+    Boolean goForward = false;
     float currentSpeed = 0;
     float currentPower = 0;
     float currentPosition = 0;
@@ -54,13 +59,17 @@ public class Train {
     private StringProperty currentGradeString = new SimpleStringProperty("");
     private StringProperty temperatureInsideString = new SimpleStringProperty("");
 
-    public Train(int id, TrainController trainController) {
+    public Train(int id, TrainController trainController, Block currentBlock) {
         UUID = id;
         controller = trainController;
+        this.currentBlock = currentBlock;
     }
 
     public void setBlock(Block block) {
+        prevBlock = currentBlock;
         currentBlock = block;
+        currentBlock.setTrain(this);
+        goForward = true;
         // TODO: check direction
     }
 
@@ -76,33 +85,55 @@ public class Train {
 
         // TODO: use the formula here
         // testing
-        currentAcceleration = UUID;
-        currentSpeed += currentAcceleration;
+        //currentAcceleration = UUID;
+        //currentSpeed += currentAcceleration;
         if (currentSpeed > 40) currentSpeed = 40;
 
         currentPosition += currentSpeed;
 
         // TODO: put train id in correct block
-
-        //updateBlock();
+        if (!(authority > 0)){
+            //TODO: STOP THE TRAIN
+            currentSpeed = 0;
+        }
+        if (goForward){
+         updateBlock();
+        }
         updateString();
     }
 
     private void updateBlock() {
         // check still inside current block
-        Block nextBlock;
+        Block nextBlock = null;
         if (currentPosition > currentBlock.getLength()) {
             currentPosition -= currentBlock.getLength();
             currentBlock.setTrain(null);
             // TODO:get next block here
-            //nextBlock = currentBlock.getEdges();
-            //currentBlock = nextBlock;
-            //currentBlock.setTrain(this);
+            // if its a connected edge and it's not the previous block
+            for (Edge edge: currentBlock.getEdges()){
+                   Block edgeBlock = edge.getBlock();
+                if(edge.getConnected() && !edgeBlock.equals(prevBlock)){
+                    nextBlock = edgeBlock;
+                }
+            };
+            prevBlock = currentBlock;
+            assert nextBlock != null;
+            System.out.println("Next Block: " + nextBlock.getBlockNumber());
+            currentBlock = nextBlock;
+            currentBlock.setTrain(this);
+            --authority;
         } else if (currentPosition < 0) {
             // opposite direction
 
         }
+    }
 
+
+    public void setSpeed(float speed){
+        currentSpeed = speed;
+    }
+    public void setAuthority(float authority){
+        this.authority = authority;
     }
 
     public int getUUID() {

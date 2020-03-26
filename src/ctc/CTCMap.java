@@ -42,6 +42,7 @@ public class CTCMap{
     public List<Station> getStationList(){ return new ArrayList<Station>(stationMap.values());}
     public Map<UUID, Station> getStationMap(){ return stationMap;}
     public List<UUID> getSwitchList(){ return switchList;}
+    public List<UUID> getClosedBlocks(){return closedBlocks; }
 
     //TODO: gonna have to rework this when there's multiple lines, and multiple diffrent exits from the yard.
     public UUID getStartingBlockID(){

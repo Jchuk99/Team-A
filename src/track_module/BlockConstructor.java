@@ -65,11 +65,9 @@ public class BlockConstructor {
         public Yard() {
             super( "yard", ' ', 0, 0, 0, 0, 0, 0, false, 0, 0);
         }
-        public void createTrain(CTCTrain ctcTrain, Block block) {
-            Train train = new Train(ctcTrain.getTrainID(), new TrainController());
-
-            train.setTrain(ctcTrain.getSuggestedSpeed(),ctcTrain.getAuthority());
-            train.setBlock(block);
+        public void createTrain(CTCTrain ctcTrain, Block startingBlock) {
+        //new Train(ctcTrain.getTrainID(), new TrainController(), this);
+        
             
         }
     }

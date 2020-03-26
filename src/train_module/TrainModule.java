@@ -31,7 +31,7 @@ public class TrainModule extends Module {
     public Train createTrain() {
         //create controller
         TrainController controller = trainControllerModule.createTrainController();
-        Train train = new Train(nextID++, controller);
+        Train train = new Train(nextID++, controller, trackModule.getYard());
         controller.attachTrain(train);
         trainList.add(train);
         return train;
