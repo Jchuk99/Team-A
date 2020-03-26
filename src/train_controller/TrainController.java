@@ -55,8 +55,8 @@ public class TrainController {
     }
 
     public void attachTrain(Train train) {
-        attachedTrain=train;
-        UUID=train.getUUID();
+        attachedTrain = train;
+        UUID = train.getUUID();
     }
 
     public void update() {
@@ -103,7 +103,9 @@ public class TrainController {
     }
 
     public void setTrain(float suggestedSpeed, float authority) {
-        // get set train information from train model
+        // get set train information from train mode
+        attachedTrain.setSpeed(suggestedSpeed);
+        attachedTrain.setAuthority(authority);
         
     }
     

@@ -84,4 +84,7 @@ abstract public class Block {
         if( this.train != null)
             this.train.setTrain( suggestedSpeed, authority);
     }
+    public boolean equals(Block block){
+        return id == block.getUUID();
+    }
 }

@@ -54,9 +54,35 @@ public class TrainControllerUI extends Stage {
         final TableView<TrainController> trainControllerTable = createTrainControllerTable(trainControllerModule.getList());
         trainControllerTable.setPrefWidth(width / 8);
 
-        // testing displaying info for selected train
-        //trainControllerModule.createTrainController();
-        //trainControllerModule.createTrainController();
+        //final TableView trainTable = createTrainTable(trainData);
+        
+        final TableView<TrainController> trainTable = new TableView<TrainController>();
+        trainTable.setPlaceholder(new Label("No trains available"));
+
+        final TableColumn<TrainController, String> trainTableCol = new TableColumn<TrainController, String>("Select Train");
+        trainTableCol.setCellValueFactory(cellData -> cellData.getValue().getName());
+        trainTable.getColumns().add(trainTableCol);
+
+        //Error here trainTable.setItems(trainData);
+
+        
+        trainTable.setPrefWidth(width / 8);
+
+       // tc=attachedTrainControllerModule.getList().lastElement();
+
+        // testing: add a train to test
+        //trainData.add(attachedTrainControllerModule.getList().firstElement());
+        
+        /*attachedTrainControllerModule.getList().addListener(new ChangeListener<HashSet<TrainControllerModule.TrainController>>() {
+            public void changed(ObservableValue <? extends HashSet<TrainControllerModule.TrainController> > observable, HashSet<TrainControllerModule.TrainController> oldValue, HashSet<TrainControllerModule.TrainController> newValue) { 
+                
+            } 
+        });*/
+        
+        
+        
+        
+        
 
         trainControllerTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TrainController>() {
             @Override
