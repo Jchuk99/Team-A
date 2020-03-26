@@ -153,6 +153,9 @@ public class WaysideUI extends Stage{
         statusGrouper.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 1;" + "-fx-padding: 5;");
 
         TableView switchTable = new TableView();
+        /*
+        TODO what is the person class still ehre for
+        
         TableColumn<String, Person> switchID = new TableColumn<>("Switch ID");
         switchID.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         TableColumn<String, Person> switchPosition = new TableColumn<>("Switch Position");
@@ -163,6 +166,7 @@ public class WaysideUI extends Stage{
         switchTable.getItems().add(new Person("3", "1"));
         switchTable.setPrefWidth(length/6);
         switchTable.setPrefHeight(height/6);
+        */
 
         VBox box2 = new VBox(10, lightGrouper, statusGrouper, switchTable);
         box2.setPrefWidth(length/3);

@@ -53,7 +53,10 @@ public class TrackControllerModule extends Module {
 		Set<CTCTrain> trainsInJuris = new HashSet<CTCTrain>();
 		for(CTCTrain train : trains){
 			for(Block block : blocks){
-				if(train.getCurrPos() == block.getBlockNumber()){
+				/*if(train.getCurrPos() == block.getBlockNumber()){
+					trainsInJuris.add(train);
+				}*/
+				if(train.getCurrPos() == block.getUUID()){
 					trainsInJuris.add(train);
 				}
 			}
