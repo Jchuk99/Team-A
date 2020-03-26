@@ -101,12 +101,9 @@ public class TrackModule extends Module {
             myBlocks.put( blockNumber, block);
             
             if( !waysides.containsKey( section)) {
-                WaysideController asdf= this.trackControllerModule.createWayside();
-                waysides.put( section, asdf);
+                waysides.put( section, this.trackControllerModule.createWayside());
             }
-            WaysideController wayside= waysides.get( section);
-            wayside.addBlock(block);
-            
+            waysides.get( section).addBlock(block);    
         }
         csvReader.close();
 
@@ -119,7 +116,7 @@ public class TrackModule extends Module {
             source.addEdge( destination, edge[2] != 0);
         }
         for( Block block : myBlocks.values()) {
-            blocks.put( block.id, block);
+            blocks.put( block.getUUID(), block);
         }
     }
 
