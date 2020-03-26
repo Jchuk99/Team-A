@@ -21,6 +21,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -29,8 +31,9 @@ public class TrainControllerModule extends Module {
 	private ObservableList<TrainController> controllerList;
 	
 	public TrainControllerModule(){
-		TrainControllerUI.setModule(this);
+		
 		controllerList=FXCollections.observableArrayList();
+		TrainControllerUI.setModule(this);
 		//TrainController tc=createTrainController();
 	}
 
@@ -54,6 +57,9 @@ public class TrainControllerModule extends Module {
 		controllerList.add(tc);
 		return tc;
 	}
-	
+	public StringProperty getTimeStamp(){
+		
+		return new SimpleStringProperty("12:04:20 AM");
+	}
 	
 }

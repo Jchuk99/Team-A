@@ -7,30 +7,31 @@ import javafx.beans.property.BooleanProperty;
 
 public class TrainControllerData {
 
-    TrainController currentTC;
-    StringProperty driverSpeed = new SimpleStringProperty("");
-    StringProperty suggestedSpeed = new SimpleStringProperty("");
-    StringProperty currentSpeed = new SimpleStringProperty("");
-    StringProperty authority = new SimpleStringProperty("");
-    StringProperty currentPower = new SimpleStringProperty("");
-    StringProperty currentAcceleration = new SimpleStringProperty("");
-    StringProperty hvacSetpoint = new SimpleStringProperty("");
+    private TrainController currentTC;
+    private StringProperty driverSpeed = new SimpleStringProperty("");
+    private StringProperty beacon = new SimpleStringProperty("");
+    private StringProperty suggestedSpeed = new SimpleStringProperty("");
+    private StringProperty currentSpeed = new SimpleStringProperty("");
+    private StringProperty authority = new SimpleStringProperty("");
+    private StringProperty currentPower = new SimpleStringProperty("");
+    private StringProperty currentAcceleration = new SimpleStringProperty("");
+    private StringProperty hvacSetpoint = new SimpleStringProperty("");
 
-    public BooleanProperty leftDoorsControlClosed=new SimpleBooleanProperty(false);
-    public BooleanProperty rightDoorsControlClosed=new SimpleBooleanProperty(false);
-    public BooleanProperty manualModeOn=new SimpleBooleanProperty(false);
-    public BooleanProperty cabinLightsControlOn=new SimpleBooleanProperty(false);
-    public BooleanProperty headLightsControlOn=new SimpleBooleanProperty(false);
-    public BooleanProperty emergencyBrakeControlOn=new SimpleBooleanProperty(false);
-    public BooleanProperty serviceBrakeControlOn=new SimpleBooleanProperty(false);
+    private BooleanProperty leftDoorsControlClosed=new SimpleBooleanProperty(false);
+    private BooleanProperty rightDoorsControlClosed=new SimpleBooleanProperty(false);
+    private BooleanProperty manualModeOn=new SimpleBooleanProperty(false);
+    private BooleanProperty cabinLightsControlOn=new SimpleBooleanProperty(false);
+    private BooleanProperty headLightsControlOn=new SimpleBooleanProperty(false);
+    private BooleanProperty emergencyBrakeControlOn=new SimpleBooleanProperty(false);
+    private BooleanProperty serviceBrakeControlOn=new SimpleBooleanProperty(false);
 
 
-    BooleanProperty leftDoorWorking = new SimpleBooleanProperty(false);
-    BooleanProperty rightDoorWorking = new SimpleBooleanProperty(false);
-    BooleanProperty lightWorking = new SimpleBooleanProperty(false);
-    BooleanProperty serviceBrakeWorking = new SimpleBooleanProperty(false);
-    BooleanProperty emergencyBrakeWorking = new SimpleBooleanProperty(false);
-    BooleanProperty engineWorking = new SimpleBooleanProperty(false);
+    private BooleanProperty leftDoorWorking = new SimpleBooleanProperty(false);
+    private BooleanProperty rightDoorWorking = new SimpleBooleanProperty(false);
+    private BooleanProperty lightWorking = new SimpleBooleanProperty(false);
+    private BooleanProperty serviceBrakeWorking = new SimpleBooleanProperty(false);
+    private BooleanProperty emergencyBrakeWorking = new SimpleBooleanProperty(false);
+    private BooleanProperty engineWorking = new SimpleBooleanProperty(false);
 
     public TrainControllerData() {
     }
@@ -43,6 +44,8 @@ public class TrainControllerData {
             suggestedSpeed.setValue("");
             driverSpeed.unbind();
             driverSpeed.setValue("");
+            beacon.unbind();
+            beacon.setValue("");
             currentSpeed.unbind();
             currentSpeed.setValue("");
             authority.unbind();
@@ -82,6 +85,7 @@ public class TrainControllerData {
             engineWorking.unbind();
             engineWorking.setValue(false);
         } else {
+            beacon.bind(currentTC.getBeacon());
             suggestedSpeed.bind(currentTC.getSuggestedSpeed());
             currentSpeed.bind(currentTC.getCurrentSpeed());
             driverSpeed.bind(currentTC.getDriverSpeed());
@@ -109,6 +113,9 @@ public class TrainControllerData {
 
 
     // for GUI
+    public StringProperty getBeacon(){
+        return beacon;
+    }
 
     public StringProperty getSuggestedSpeed() {
         return suggestedSpeed;

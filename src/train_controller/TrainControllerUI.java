@@ -41,11 +41,11 @@ import javafx.beans.property.StringProperty;
 
 public class TrainControllerUI extends Stage {
     public static TrainControllerModule trainControllerModule;
-
+   
     TrainControllerData trainControllerData = new TrainControllerData();
 
-    final int width = 900;
-    final int height = 800;
+    private final int width = 900;
+    private final int height = 800;
 
     public TrainControllerUI() {
         setTitle("Train Controller UI");
@@ -70,7 +70,7 @@ public class TrainControllerUI extends Stage {
         /****** select train ******/
 
         /****** beacon ******/
-        final HBox beaconBox = new HBox(10, createTextBox("Beacon"), createLabelBox("STATION; CASTLE SHANNON; BLOCK 96;"));
+        final HBox beaconBox = new HBox(10, createTextBox("Beacon"), createLabelBox("",trainControllerData.getBeacon()));
         beaconBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
         /****** beacon ******/
 
@@ -110,6 +110,7 @@ public class TrainControllerUI extends Stage {
 
     public static void setModule(TrainControllerModule module) {
         trainControllerModule = module;
+        //trainControllerModule.createTrainController();
     }
 
     private TableView<TrainController> createTrainControllerTable(ObservableList<TrainController> item) {
@@ -203,7 +204,9 @@ public class TrainControllerUI extends Stage {
                 //System.out.println(trainControllerData.getDriverSpeed()); 
            } 
         });
-        VBox manControlBox= new VBox(10,manControlToggle,speedLabel,speedSlider);
+        VBox speedLabelLabel = createLabelBox("Driver Speed");
+        HBox speedStuff=new HBox(10, speedLabel,speedLabelLabel);
+        VBox manControlBox= new VBox(10,manControlToggle,speedStuff,speedSlider);
         manControlBox.setPrefHeight(150);
 		manControlBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 2; -fx-padding: 10;");
     
@@ -238,7 +241,7 @@ public class TrainControllerUI extends Stage {
         VBox name4 = createTextBox("Headlights On");
         VBox name5 = createTextBox("Service Brake");
         */
-        VBox name6 = createTextBox("Train Engine");
+        VBox name6 = createLabelBox("Train Engine");
         //VBox nameBox = new VBox(10, createVBox(), name1, name2, name3, name4, name5, name6);
         
 

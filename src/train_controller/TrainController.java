@@ -19,6 +19,7 @@ public class TrainController {
     private BooleanProperty headLightsControlOn;
     private StringProperty hvacSetpoint;
     private StringProperty driverSpeed;
+    //private StringProperty beacon;
     private BooleanProperty emergencyBrakeControlOn;
     private BooleanProperty serviceBrakeControlOn;
     private int UUID;
@@ -65,19 +66,39 @@ public class TrainController {
         }
         
         if(manualModeOn.getValue()){
-            v_cmd=Float.parseFloat(driverSpeed.getValueSafe().substring(0,2));
+            if(driverSpeed.getValueSafe().isEmpty()){
+                v_cmd=(float)0.0;
+            }
+            else{
+                v_cmd=Float.parseFloat(driverSpeed.getValueSafe().substring(0,2));
+            }
         }
         else {
-            v_cmd=Float.parseFloat(attachedTrain.getSuggestedSpeed().getValueSafe().split(" ")[0]);
+            if(attachedTrain.getSuggestedSpeed().getValueSafe().isEmpty()){
+                v_cmd=(float)0.0;
+            }
+            else{
+                v_cmd=Float.parseFloat(attachedTrain.getSuggestedSpeed().getValueSafe().split(" ")[0]);
+            }
         }
-        v_curr=Float.parseFloat(attachedTrain.getCurrentSpeed().getValueSafe().split(" ")[0]);
+        if(attachedTrain.getCurrentSpeed().getValueSafe().isEmpty()){
+            v_curr=(float)0.0;
+        }
+        else{
+            v_curr=Float.parseFloat(attachedTrain.getCurrentSpeed().getValueSafe().split(" ")[0]);
+        }
         v_err=v_cmd-v_curr;
         //v_err_prev=v_cmd_prev-v_prev;
 
 
         //v_cmd_prev=v_cmd_curr;
         //v_prev=v_curr;
-        power=(float)(v_err*kp+v_curr*ki);
+        if(getAuthority().getValueSafe()=="0"){
+            power=(float)0.0;    
+        }
+        else{
+            power=(float)(v_err*kp+v_curr*ki);
+        }
         attachedTrain.setPower(power);
     }
 
@@ -220,7 +241,9 @@ public class TrainController {
             serviceBrakeControlOn.setValue(x);
         }
     
-    
+        public StringProperty getBeacon(){
+            return new SimpleStringProperty("XKCD47");
+        }
     
     // /**
         
