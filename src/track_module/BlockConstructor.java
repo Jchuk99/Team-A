@@ -20,7 +20,7 @@ public class BlockConstructor {
             this.name= name;
         }
        public void addTicketsSold( int tickets) {this.tickets+= tickets;};
-       public int getTicketSold() {return tickets;};
+       public int getTicketsSold() {return tickets;};
        public String getName() {return name;};
     }
 

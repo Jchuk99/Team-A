@@ -1,4 +1,4 @@
-package src.track_module;
+package src;
 
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -10,6 +10,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
+import src.track_module.Block;
+import src.track_module.Edge;
 
 public abstract class BaseMap {
 
@@ -21,7 +23,7 @@ public abstract class BaseMap {
             Circle circle = new Circle(block.getX(), block.getY(), 20);
             circle.setStyle(CIRCLESTYLE);
             pane.getChildren().add( circle);
-            for(Edge edge: block.edges) {
+            for(Edge edge: block.getEdges()) {
                 Line line= new Line( block.getX(), block.getY(), edge.getBlock().getX(), edge.getBlock().getY());
                 line.setStyle(LINESTYLE);
                 pane.getChildren().add(line);

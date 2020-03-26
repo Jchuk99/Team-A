@@ -25,10 +25,6 @@ public class TrackModuleUI extends Stage {
     static final int WIDTH = 900;
     static final int HEIGHT = 800;
     Pane graphPane;
-
-    VBox crossingBox;
-    VBox stationBox;
-
     public static TrackModule trackModule;
 
     public static void setTrackModule(TrackModule tm){

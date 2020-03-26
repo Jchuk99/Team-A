@@ -8,20 +8,34 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import src.UICommon;
+import src.BaseMap;
 
 public class TrackMap extends BaseMap {
     @Override
     public Scene buildPopUp(Block block) {
         
-        Circle circleGreen = UICommon.createCircle(10, Color.GREEN);
+        Circle circleGreen = UICommon.createCircle(10, Color.WHITE);
         Circle circleYellow = UICommon.createCircle(10, Color.WHITE);
         Circle circleRed = UICommon.createCircle(10, Color.WHITE);
-        Button failureMode = UICommon.createButton("Insert Failure", 200, 10);
+        if(block.getFunctional() == false) {
+            circleRed.setFill(Color.RED);
+        }
+        else if(block.getOccupied() == true) {
+            circleYellow.setFill(Color.YELLOW);
+        }
+        else {
+            circleGreen.setFill(Color.GREEN);
+        }
+        Button failureMode = UICommon.createButton("Set Failure", 200, 10);
+        failureMode.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+            block.setFunctional(!block.getFunctional());
+        });
         Label statusLabel = UICommon.createLabel("Status");
         statusLabel.setStyle("-fx-font-size: 18;");
         statusLabel.setAlignment(Pos.BOTTOM_CENTER);
@@ -35,14 +49,14 @@ public class TrackMap extends BaseMap {
 
         List<String[]> strLists = new ArrayList<String[]>();
         String[] strs0 = {"Type", block.getClass().getSimpleName()};
-        String[] strs1 = {"Length", Integer.toString(block.getLength())};
-        String[] strs2 = {"Speed Limit", Float.toString(block.getSpeedLimit())};
-        String[] strs3 = {"Grade", Float.toString(block.getGrade())};
-        String[] strs4 = {"Elevation", Float.toString(block.getElevation())};
-        String[] strs5 = {"Underground", Float.toString(block.getCummElevation())};
-        String[] strs6 = {"Heater", Boolean.toString(block.getHeater())};
-        String[] strs7 = {"Functional", Boolean.toString(block.getFunctional())};
-        String[] strs8 = {"Occupied", Boolean.toString(block.getOccupied())};
+        String[] strs1 = {"Length", UICommon.metersToYards(block.getLength()) + " Yards"};
+        String[] strs2 = {"Speed Limit", UICommon.metersToMiles(block.getSpeedLimit()) + " MPH"};
+        String[] strs3 = {"Grade", Float.toString(block.getGrade()) + "°"};
+        String[] strs4 = {"Elevation", UICommon.metersToFeet(block.getCummElevation()) + " Feet"};
+        String[] strs5 = {"Underground", UICommon.booleanToYesNo(block.getUndeground())};
+        String[] strs6 = {"Heater", UICommon.booleanToOnOff(block.getHeater())};
+        String[] strs7 = {"Functional", UICommon.booleanToYesNo(block.getFunctional())};
+        String[] strs8 = {"Occupied", UICommon.booleanToYesNo(block.getOccupied())};
         
         strLists.add( strs0);
         strLists.add( strs1);
