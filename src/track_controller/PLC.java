@@ -48,7 +48,7 @@ public class PLC {
     public void runPLCLogicCrossing(LinkedList<Block> blocks, Set<CTCTrain> trains, ArrayList<Block> closedBlocks){
         parseAndCompile();
     }
-    public void runPLCLogicCrossingLights(LinkedList<Block> blocks, Set<CTCTrain> trains, ArrayList<Block> closedBlocks){
+    public void runPLCLogicLights(LinkedList<Block> blocks, Set<CTCTrain> trains, ArrayList<Block> closedBlocks){
         parseAndCompile();
     }
 

@@ -43,7 +43,7 @@ public class WaysideController {
 	public void runPLC(){
 		plc.runPLCLogicSwitch(blocks, trains, closedBlocks);
 		plc.runPLCLogicCrossing(blocks, trains, closedBlocks);
-		plc.runPLCLogicCrossingLights(blocks, trains, closedBlocks);
+		plc.runPLCLogicLights(blocks, trains, closedBlocks);
 	}
 
 	public void setTrains(Set<CTCTrain> trainsInJuris){

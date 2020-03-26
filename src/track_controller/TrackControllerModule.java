@@ -31,6 +31,7 @@ public class TrackControllerModule extends Module {
 		return waysideControllers;
 	}
 
+	@Override
 	public void update(){
 		trains = this.ctcModule.getTrains();
 		/*switchPositions = this.ctcModule.getSwitchPositions();
