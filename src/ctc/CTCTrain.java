@@ -2,6 +2,9 @@ package src.ctc;
 
 import java.util.UUID;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 public class CTCTrain {
 
     private int authority;
@@ -79,4 +82,11 @@ public class CTCTrain {
     public UUID getCurrPos(){
         return currPos;
     }
+
+    /*** FOR GUI ***/
+
+    public StringProperty getTrainIDProperty() { return new SimpleStringProperty("Train " + trainID); }
+    public StringProperty getCurrPosProperty() { return new SimpleStringProperty("" + CTCModule.map.getBlock(currPos).getBlockNumber()); }
+    public StringProperty getDestProperty() { return new SimpleStringProperty("" + CTCModule.map.getBlock(destination).getBlockNumber()); }
+    public StringProperty getSuggestedSpeedProperty() { return new SimpleStringProperty("" + (suggestedSpeed * 2.237)); }
 }

@@ -10,6 +10,7 @@ import java.util.UUID;
 import src.Module;
 import src.track_controller.WaysideController;
 import src.track_module.BlockConstructor.*;
+import src.ctc.CTCTrain;
 import src.ctc.Path;
 import src.ctc.Route;
 
@@ -123,15 +124,13 @@ public class TrackModule extends Module {
         }
     }
 
-    public void createTrain( float suggestedSpeed, float authority, Route route) {
-        System.out.println(suggestedSpeed);
-        System.out.println(authority);
+    public void createTrain(CTCTrain train) {
+
         
-        /* let's talk about this one.
-        Path path= route.getCurrPath();
-        UUID uuid= path.getStartBlock();
+        UUID uuid = train.getRoute().getCurrPath().getStartBlock();
         Block block= trackModule.getBlockByUUID(uuid);
-        yard.createTrain( suggestedSpeed, authority, block);*/
+
+        yard.createTrain(train, block);
     }
     public Yard getYard() {return yard;};
 

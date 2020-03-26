@@ -1,5 +1,6 @@
 package src.ctc;
 
+import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public class CTCModule extends Module{
         //}
 
         // Need method to get all trains.
-        // List<CTCTrains> trains = schedule.getTrains(); // If the list size is 0 don't do anything.
+        // Set<CTCTrains> trains = getTrains(); // If the list size is 0 don't do anything.
 
         // LOGIC: check if the next block on the train's path is occupied. If it is there's two options:
         // 1. The train went to that next block. If so update it's position
@@ -74,19 +75,30 @@ public class CTCModule extends Module{
         suggestedSpeed = suggestedSpeed/(float)2.237; // METERS PER SECOND
         CTCTrain train = schedule.dispatchTrain(trainID, suggestedSpeed, destination);
         //TODO: should probably name this method dispatchTrain
-        this.trackModule.createTrain(train.getSuggestedSpeed(), (float) train.getAuthority(), train.getRoute());
+        this.trackModule.createTrain(train);
 
     }
 
     public Set<CTCTrain> getTrains(){
         return schedule.getTrains();
     }
+    public HashMap<Integer, CTCTrain> getTrainMap(){
+        return schedule.getTrainMap();
+    }
 
-    //public HashMap<Integer, Boolean> getSwitchStates{
+    // need a getTrain Set method.
+
+    //public HashMap<UUID, Boolean> getSwitchStates{
     //}
-    //public ArrayList<Integer> getClosedBlocks
+    //public ArrayList<UUID> getClosedBlocks
 
     /****** for GUI ******/
+
+    public ObservableList<CTCTrain> getObservableTrains(){
+        ObservableList<CTCTrain> trainList = schedule.getObservableTrains();
+        FXCollections.sort(trainList, new trainComparator());
+        return trainList;
+    }
 
     public ObservableList<Station> getObservableStationList(){
         updateMap();
@@ -96,7 +108,6 @@ public class CTCModule extends Module{
 
     public ObservableList<Block> getObservableBlockList(){
          updateMap();
-         //TODO: need comparator here to get blocks in order of the block number
          ObservableList<Block> blockList = FXCollections.observableList(map.getBlockList());
          FXCollections.sort(blockList, new blockNumberComparator());
          return blockList;

@@ -22,6 +22,7 @@ public class CTCMap{
    private TrackControllerModule trackControllerModule;
    private TrackModule trackModule;
    private UUID yardID;
+   // is there any reason for a stationMap here? Why can't I just have a list of Station blocks?
    private Map<UUID, Station> stationMap = new HashMap<UUID, Station>();
    private Map<UUID, Block> blockMap = new HashMap<UUID, Block>();
    private List<UUID> switchList = new ArrayList<UUID>();

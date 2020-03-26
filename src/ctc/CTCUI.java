@@ -30,6 +30,8 @@ import src.track_module.Block;
 import src.track_module.BlockConstructor.Station;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Set;
 
 
 
@@ -115,7 +117,8 @@ public class CTCUI extends Stage {
         /******top half******/
 
         //trainBox
-        Pair<VBox, TableView<Person>> p = createTrainBox(length, height);
+        TableView<CTCTrain> statusTable = createStatusTable(length);
+        Pair<VBox, TableView<Person>> p = createTrainBox(length, height, statusTable);
         VBox trainBox = p.getKey();
         TableView<Person> trainTable = p.getValue();
         trainBox.setPrefWidth(length/3);
@@ -133,8 +136,6 @@ public class CTCUI extends Stage {
         destBox.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
 
         HBox topHalf1 = new HBox(10, trainBox, destBox);
-
-        TableView<Person> statusTable = createStatusTable(length);
 
         VBox box1 = new VBox(10, topHalf1, statusTable);
         box1.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
@@ -183,77 +184,71 @@ public class CTCUI extends Stage {
         popupwindow.show();
     }
     
-    private static TableView<Person> createTrainTable(){
+    private static TableView<CTCTrain> createTrainTable(){
 
-        TableView<Person> trainTable = new TableView<Person>();
+        TableView<CTCTrain> trainTable = new TableView<CTCTrain>();
         trainTable.setPlaceholder(new Label("No trains available"));
         trainTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<Person, String> trains = new TableColumn<>("Train");
-        trains.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        TableColumn<CTCTrain, String> trains = new TableColumn<>("Train");
+        trains.setCellValueFactory(cellData -> cellData.getValue().getTrainIDProperty());
 
-        TableColumn<Person, String>  currPos = new TableColumn<>("Current Position");
-        currPos.setCellValueFactory(new PropertyValueFactory<>("currPos"));
+        TableColumn<CTCTrain, String>  currPos = new TableColumn<>("Current Position");
+        currPos.setCellValueFactory(cellData -> cellData.getValue().getCurrPosProperty());
 
-        TableColumn<Person, String>  destination= new TableColumn<>("Current Destination");
-        destination.setCellValueFactory(new PropertyValueFactory<>("destination"));
+        TableColumn<CTCTrain, String>  destination= new TableColumn<>("Current Destination");
+        destination.setCellValueFactory(cellData -> cellData.getValue().getDestProperty());
 
-        TableColumn<Person, String> speed = new TableColumn<>("Suggested Speed(mph)");
-        speed.setCellValueFactory(new PropertyValueFactory<>("destination"));
+        TableColumn<CTCTrain, String> speed = new TableColumn<>("Suggested Speed(mph)");
+        speed.setCellValueFactory(cellData -> cellData.getValue().getSuggestedSpeedProperty());
+
 
         trainTable.getColumns().add(trains);
         trainTable.getColumns().add(currPos);
         trainTable.getColumns().add(destination);
         trainTable.getColumns().add(speed);
 
-        ObservableList<Person> trainData = FXCollections.observableArrayList(
-            new Person("Train 1","EDGEBROOK","SOUTH BANK", "25"),
-            new Person("Train 2","Block 12", "BLOCK 4","25"),
-            new Person("Train 3","Block 15", "BLOCK 5","25"),
-            new Person("Train 4","Block 39", "Block 6","25"),
-            new Person("Train 5","Block 44", "Block 7","25")
-        );
-        
+        ObservableList<CTCTrain> trainData = ctcOffice.getObservableTrains();
         trainTable.setItems(trainData);
 
         return trainTable;
     }
 
-    private static TableView<Person> createStatusTable(int length){
+    private static TableView<CTCTrain> createStatusTable(int length){
 
-        //TODO: This is going to need to access traindate corresponding to
+        //TODO: This is going to be listening to trains. The trainBox will need this.
         //whichever train is currently clicked @ the moment.
         // if train does not exist on map, show blank, else show all it's information in specified columns
-        TableView<Person> statusTable = new TableView<Person>();
+        TableView<CTCTrain> statusTable = new TableView<CTCTrain>();
+        statusTable.setPlaceholder(new Label("No information available"));
         //statusTable.setPlaceholder(new Label("No trains selected"));
         statusTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<Person, String> trainIDStatus = new TableColumn<>("Train");
-        trainIDStatus.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        TableColumn<CTCTrain, String> trainIDStatus = new TableColumn<CTCTrain, String>("Train");
+        trainIDStatus.setCellValueFactory(cellData -> cellData.getValue().getTrainIDProperty());
 
-        TableColumn<Person, String> posStatus = new TableColumn<>("Current Position");
-        posStatus.setCellValueFactory(new PropertyValueFactory<>("currPos"));
+        TableColumn<CTCTrain, String> posStatus = new TableColumn<CTCTrain, String>("Current Position");
+        posStatus.setCellValueFactory(cellData -> cellData.getValue().getCurrPosProperty());
 
-        TableColumn<Person, String> destStatus = new TableColumn<>("Destination");
-        destStatus.setCellValueFactory(new PropertyValueFactory<>("destination"));
+        TableColumn<CTCTrain, String> destStatus = new TableColumn<CTCTrain, String>("Destination");
+        destStatus.setCellValueFactory(cellData -> cellData.getValue().getDestProperty());
 
-        TableColumn<Person, String> speedStatus = new TableColumn<>("Suggested Speed(mph)");
-        speedStatus.setCellValueFactory(new PropertyValueFactory<>("suggestedSpeed"));
-
+        TableColumn<CTCTrain, String> speedStatus = new TableColumn<CTCTrain, String>("Suggested Speed(mph)");
+        speedStatus.setCellValueFactory(cellData -> cellData.getValue().getSuggestedSpeedProperty());
+        
         statusTable.getColumns().add(trainIDStatus);
         statusTable.getColumns().add(posStatus);
         statusTable.getColumns().add(destStatus);
         statusTable.getColumns().add(speedStatus);
+
         statusTable.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
         statusTable.setPrefWidth(length/6);
-        Person currentTrain = (new Person("Train 1", "7", "EDGEBROOK", "25"));
-        statusTable.getItems().add(currentTrain);
 
         return statusTable;
     }
     
-    private static Pair<VBox, TableView<Person>> createTrainBox(int length, int height){
-        
+    private static Pair<VBox, TableView<Person>> createTrainBox(int length, int height, TableView<CTCTrain> statusTable){
+        statusTable.setEditable(true);
         TableView<Person> trainTable = new TableView<Person>();
         trainTable.setPlaceholder(new Label("No trains available"));
         trainTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -265,6 +260,21 @@ public class CTCUI extends Stage {
         ObservableList<Person> trainData = FXCollections.observableArrayList();
         trainTable.setItems(trainData);
         trainTable.setPrefWidth(length/6);
+
+
+        
+        trainTable.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
+            ObservableList<CTCTrain> trainStatus = FXCollections.observableArrayList();
+            statusTable.setItems(trainStatus);
+            Person train = trainTable.getSelectionModel().getSelectedItem();
+            int id = Integer.parseInt(train.getFirstName().split(" ")[1]);
+            HashMap<Integer, CTCTrain> trainMap = ctcOffice.getTrainMap();
+            if (trainMap.containsKey(id)){
+                trainStatus.add(trainMap.get(id));
+            }
+        
+        });
+    
         
         Button trainInput = new Button();
         trainInput.setText("Create new train");
@@ -330,7 +340,6 @@ public class CTCUI extends Stage {
         stations.setCellValueFactory(cellData -> cellData.getValue().getStationNameProperty());
         stationTable.getColumns().add(stations);
          
-        //TODO: Make it so that it gets stations from CTC
         stationTable.setItems(ctcOffice.getObservableStationList());
 
         TableView<Block> blockTable = new TableView<Block>();
@@ -339,8 +348,7 @@ public class CTCUI extends Stage {
         TableColumn<Block, String> blocks = new TableColumn<>("Select Block");
         blocks.setCellValueFactory(cellData -> cellData.getValue().getBlockNumberProperty());
         blockTable.getColumns().add(blocks);
-         
-        //TODO: Make it so that it gets map blocks from the CTC module
+
         blockTable.setItems(ctcOffice.getObservableBlockList());
        
        

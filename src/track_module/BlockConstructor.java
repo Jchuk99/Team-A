@@ -1,8 +1,14 @@
 package src.track_module;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import src.ctc.CTCTrain;
 import src.track_module.Block;
+import src.train_controller.TrainController;
+import src.train_module.Train;
 
 public class BlockConstructor {
     public static class Normal extends Block {
@@ -54,10 +60,16 @@ public class BlockConstructor {
         public void setClosed( boolean set) {lights= set;};
     }
     public static class Yard extends Block {
+
+        private Set<Train> trains = new HashSet<Train>();
         public Yard() {
             super( "yard", ' ', 0, 0, 0, 0, 0, 0, false, 0, 0);
         }
-        public void createTrain( float suggestedSpeed, float authority, Block block) {
+        public void createTrain(CTCTrain ctcTrain, Block block) {
+            Train train = new Train(ctcTrain.getTrainID(), new TrainController());
+
+            train.setTrain(ctcTrain.getSuggestedSpeed(),ctcTrain.getAuthority());
+            train.setBlock(block);
             
         }
     }

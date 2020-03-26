@@ -49,6 +49,9 @@ public class Path {
     }
     
     //TODO: Make algorithim account for distance of blocks
+    //TODO: Doesn't account for biDirectionality, going in a circle.
+    // consider a block being sent to the block behind it, how would you account for this? (firstPath out of the yard and notFirstPath)
+    // will need startBlock and the block before it on the previous path
     private LinkedList<UUID> findCourse(UUID start, UUID destination) {
         // maybe i can initialize a hashmap for marked(UUID, boolean), edgeTo(UUID, UUID), and distTo(UUID, int), by using the map to gather a list of all UUID's currently within the map
         // then let the algorithim proceed as it normally does, this should work
