@@ -1,5 +1,7 @@
 package src.track_module;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import src.track_module.Block;
 
 public class BlockConstructor {

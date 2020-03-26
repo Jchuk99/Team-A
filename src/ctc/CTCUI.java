@@ -2,10 +2,12 @@ package src.ctc;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
@@ -25,6 +27,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import src.track_module.Block;
+import src.track_module.BlockConstructor.Station;
 
 import java.text.DecimalFormat;
 
@@ -82,45 +86,18 @@ public class CTCUI extends Stage {
                 createSpacer(), timeBox);
 
         /****** bottom half ******/
-        TableView trainTable = new TableView();
-        trainTable.setPlaceholder(new Label("No trains available"));
-        trainTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        TableColumn<String, Person> trains = new TableColumn<>("Train");
-        trains.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-
-        TableColumn<String, Person> currPos = new TableColumn<>("Current Position");
-        currPos.setCellValueFactory(new PropertyValueFactory<>("currPos"));
-
-        TableColumn<String, Person> destination = new TableColumn<>("Current Destination");
-        destination.setCellValueFactory(new PropertyValueFactory<>("destination"));
-
-        TableColumn<String, Person> speed = new TableColumn<>("Suggested Speed(mph)");
-        speed.setCellValueFactory(new PropertyValueFactory<>("destination"));
-
-        trainTable.getColumns().add(trains);
-        trainTable.getColumns().add(currPos);
-        trainTable.getColumns().add(destination);
-        trainTable.getColumns().add(speed);
-
-        ObservableList<Person> trainData = FXCollections.observableArrayList(
-                new Person("Train 1", "EDGEBROOK", "SOUTH BANK", "25"),
-                new Person("Train 2", "Block 12", "BLOCK 4", "25"), new Person("Train 3", "Block 15", "BLOCK 5", "25"),
-                new Person("Train 4", "Block 39", "Block 6", "25"), new Person("Train 5", "Block 44", "Block 7", "25"));
-
-        trainTable.setItems(trainData);
-
+        TableView trainTable = createTrainTable();
         VBox topHalf = new VBox(10, topHalf1, trainTable);
         TableView mapTable = new TableView();
 
         
-        /****full screen *****/
+        topHalf.setPrefHeight(height/2);
         VBox fullScreen = new VBox(10, topHalf, mapTable);
+
+        
+        /****full screen *****/
         fullScreen.setPadding(new Insets(10));
         setScene(new Scene(fullScreen, length, height));
-        
-        //graphView.init();
-
 
     }
     
@@ -147,9 +124,9 @@ public class CTCUI extends Stage {
         trainBox.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;"); 
 
         //destBox
-        Pair<TableView<Person>, TableView<Person>> bTable = createBlockTables();
-        TableView<Person> stationTable = bTable.getKey();
-        TableView<Person> blocksTable = bTable.getValue();
+        Pair<TableView<Station>, TableView<Block>> bTable = createBlockTables();
+        TableView<Station> stationTable = bTable.getKey();
+        TableView<Block> blocksTable = bTable.getValue();
 
         HBox destBox = new HBox(10, stationTable, blocksTable);
         destBox.setPrefWidth(length/3);
@@ -346,44 +323,26 @@ public class CTCUI extends Stage {
         return scheduleTable;
     }
 
-    private static Pair<TableView<Person>, TableView<Person>> createBlockTables(){
-        TableView<Person> stationTable = new TableView<Person>();
+    private static Pair<TableView<Station>, TableView<Block>> createBlockTables(){
+        TableView<Station> stationTable = new TableView<Station>();
         stationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<Person, String> stations = new TableColumn<>("Select Destination");
-        stations.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        TableColumn<Station, String> stations = new TableColumn<>("Select Destination");
+        stations.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
         stationTable.getColumns().add(stations);
          
         //TODO: Make it so that it gets stations from CTC
-        ObservableList<Person> stationData = FXCollections.observableArrayList(
-            new Person("PIONEER"),
-            new Person("EDGEBROOK")
-        );
-        stationTable.setItems(stationData);
+        stationTable.setItems(ctcOffice.getObservableStationList());
 
-        TableView<Person> blockTable = new TableView<Person>();
+        TableView<Block> blockTable = new TableView<Block>();
         blockTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<Person, String> blocks = new TableColumn<>("Select Block");
-        blocks.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        TableColumn<Block, String> blocks = new TableColumn<>("Select Block");
+        blocks.setCellValueFactory(cellData -> cellData.getValue().getBlockNumberProperty());
         blockTable.getColumns().add(blocks);
          
         //TODO: Make it so that it gets map blocks from the CTC module
-        ObservableList<Person> blockData = FXCollections.observableArrayList(
-            new Person("1"),
-            new Person("2"),
-            new Person("3"),
-            new Person("4"),
-            new Person("5"),
-            new Person("6"),
-            new Person("7"),
-            new Person("8"),
-            new Person("9"),
-            new Person("10"),
-            new Person("11"),
-            new Person("12")
-        );
-        blockTable.setItems(blockData);
+        blockTable.setItems(ctcOffice.getObservableBlockList());
        
        
         stationTable.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
@@ -398,10 +357,10 @@ public class CTCUI extends Stage {
             }
         });
 
-        return new Pair<TableView<Person>, TableView<Person>>(stationTable, blockTable);
+        return new Pair<TableView<Station>, TableView<Block>>(stationTable, blockTable);
     }
 
-    private static Button createDispatchButton(TableView<Person> trainTable, TableView<Person> blocksTable,TableView<Person> stationTable  ,Slider speedSlider){
+    private static Button createDispatchButton(TableView<Person> trainTable, TableView<Block> blocksTable,TableView<Station> stationTable  ,Slider speedSlider){
         Button dispatch = new Button();
         dispatch.setText("DISPATCH");
         dispatch.setPrefWidth(400);
@@ -425,11 +384,11 @@ public class CTCUI extends Stage {
                 dispatch.setEffect(null);
             }
         });
-        //TODO: define a dispatch listener
+
         dispatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Person block;
+                Block block;
                 Person train;
                 float speed;
 
@@ -437,21 +396,12 @@ public class CTCUI extends Stage {
                     block = blocksTable.getSelectionModel().getSelectedItem();
                 }
                 else{
-                    // this is a station, so I'm going to need to transform station name into a block number... static hash table for now?
                     block = stationTable.getSelectionModel().getSelectedItem(); 
-                    if (block.getFirstName().equalsIgnoreCase("Pioneer"))
-                    {
-                        block.setFirstName("2");
-                    }
-                    else
-                    {
-                        block.setFirstName("9");
-                    }
                 }
 
                 train = trainTable.getSelectionModel().getSelectedItem();
                 speed = (float) speedSlider.getValue();
-                ctcOffice.dispatch(train.getFirstName(), speed, block.getFirstName());
+                ctcOffice.dispatch(train.getFirstName(), speed, block.getUUID());
             }
             });                                                    
 

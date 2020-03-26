@@ -20,29 +20,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Vector;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
-
-import java.lang.Boolean;
-
-import src.train_module.Train;
-import src.train_module.TrainModule;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class TrainControllerModule extends Module {
 
-	public Vector<TrainController> controllerList = new Vector<TrainController>();
+	private ObservableList<TrainController> controllerList;
 	
 	public TrainControllerModule(){
-		TrainControllerUI.setTC(this);
 		
+		controllerList=FXCollections.observableArrayList();
+		TrainControllerUI.setModule(this);
 		//TrainController tc=createTrainController();
 	}
 
@@ -52,12 +43,12 @@ public class TrainControllerModule extends Module {
 
 	@Override
 	public void update() {
-		for (TrainController controller : controllerList) {
-			controller.update();
+		for (int i=0;i<controllerList.size();i++) {
+			controllerList.get(i).update();
 		}
 	}
 
-	public Vector<TrainController> getList(){
+	public ObservableList<TrainController> getList(){
 		return controllerList;
 	}
 	
@@ -66,6 +57,9 @@ public class TrainControllerModule extends Module {
 		controllerList.add(tc);
 		return tc;
 	}
-	
+	public StringProperty getTimeStamp(){
+		
+		return new SimpleStringProperty("12:04:20 AM");
+	}
 	
 }
