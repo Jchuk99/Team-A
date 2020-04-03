@@ -1,8 +1,8 @@
 package src.train_module;
 
+import src.Module;
 import src.track_module.Block;
 import src.track_module.Edge;
-import src.track_module.TrackModule;
 import src.train_controller.TrainController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -19,9 +19,11 @@ public class Train {
     Block currentBlock = null;
     Boolean goForward = false;
     Boolean insideOneBlock = true;
+    float prevSpeed = 0;
     float currentSpeed = 0;
     float currentPower = 0;
     float currentPosition = 0;
+    float prevAcceleration = 0;
     float currentAcceleration = 0;
     float currentGrade = 0;
     float temperatureInside = 70;
@@ -31,6 +33,7 @@ public class Train {
     float targetPower = 0;
 
     int passengerCount = 10;
+    int crewCount = 2;
     float currentWeight = (float) 52.2;
 
     BooleanProperty leftDoorWorking = new SimpleBooleanProperty(true);
@@ -49,8 +52,18 @@ public class Train {
 
     // in tons
     final static float emptyWeight = (float) 40.9;
+    final static float passengerWeight = (float) 0.07;
     // in meter
     final static float length = (float) 32.2;
+    // in kW
+    final static float maxPower = (float) 480;
+    // in kN
+    // TODO: check this number
+    final static float maxForce = (float) 480;
+    // in m/s^2
+    final static float gravity = (float) 9.81;
+    // in m/s
+    final static float maxSpeed = (float) 19.44;
 
     private StringProperty suggestedSpeedString = new SimpleStringProperty("");
     private StringProperty currentSpeedString = new SimpleStringProperty("");
@@ -78,29 +91,57 @@ public class Train {
     }
 
     public void update() {
-        // testing
-        //if (currentBlock == null) return;
+        assert currentBlock != null;
 
-        //currentGrade = currentBlock.getGrade();
-        
-        // TODO: use the formula here
-        currentPower = targetPower;
-        if (!engineWorking.getValue()) currentPower = 0;
-
-        // TODO: use the formula here
-        // testing
-        //currentAcceleration = UUID;
-        //currentSpeed += currentAcceleration;
-        if (currentSpeed > 40) currentSpeed = 40;
-
-        
-        // spec: max speed 70 km/h
+        // spec: max speed 70 km/h = 19.44 m/s
         // service brake 1.2 m/s^2
         // emergency brake 2.73 m/s^2
         // max passenger 74 + 148 = 222
-        // max power 120 kW
+        // max power 120 * 4 = 480 kW
 
-        currentPosition += currentSpeed;
+        // TODO: braking, passenger method
+
+        // update data
+        currentWeight = emptyWeight + (passengerCount + crewCount) * passengerWeight;
+        currentGrade = currentBlock.getGrade();
+        
+        // power (in kW)
+        currentPower = targetPower;
+        if (!engineWorking.getValue()) currentPower = 0;
+        // limit power
+        if (currentPower > maxPower) {
+            currentPower = maxPower;
+        } else if (currentPower < 0) {
+            currentPower = 0;
+        }
+
+        // force (in kN)
+        // P = Fv, F = P/v
+        float force = 0;
+        if (currentSpeed == 0) {
+            force = maxForce;
+        } else {
+            force = currentPower / currentSpeed;
+        }
+        // limit force
+        if (force > maxForce) {
+            force = maxForce;
+        }
+
+        // acceleration
+        prevAcceleration = currentAcceleration;
+        // F = ma, a = F/m
+        currentAcceleration = force / currentWeight - (gravity * currentGrade);
+        // TODO: limit acceleration
+
+        // velocity
+        prevSpeed = currentSpeed;
+        currentSpeed += (Module.TIMESTEP / 2) * (currentAcceleration + prevAcceleration);
+        // limit speed
+        if (currentSpeed > 19.44) currentSpeed = maxSpeed;
+        
+        // position
+        currentPosition += (Module.TIMESTEP / 2) * (currentSpeed + prevSpeed);
 
         updateBlock();
         updateString();
@@ -173,7 +214,6 @@ public class Train {
 
     /****** called by train controller and GUI ******/
     public void setPower(float power) {
-        // TODO: check max power
         targetPower = power;
     }
 

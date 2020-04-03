@@ -1,7 +1,6 @@
 package src.train_module;
 
 import src.Module;
-import src.track_module.Block;
 import src.train_controller.TrainController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,7 +38,10 @@ public class TrainModule extends Module {
 
     public void destroyTrain(int id) {
         Train train = getTrain(id);
-        if (train != null) train.destroyTrain();
+        if (train != null) {
+            train.destroyTrain();
+            trainList.remove(train);
+        }
     }
 
 
