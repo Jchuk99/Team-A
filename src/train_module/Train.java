@@ -18,6 +18,7 @@ public class Train {
     Block prevBlock = null;
     Block currentBlock = null;
     Boolean goForward = false;
+    Boolean insideOneBlock = true;
     float currentSpeed = 0;
     float currentPower = 0;
     float currentPosition = 0;
@@ -46,8 +47,10 @@ public class Train {
     BooleanProperty serviceBrakeState = new SimpleBooleanProperty(false);
     BooleanProperty emergencyBrakeState = new SimpleBooleanProperty(false);
 
-    final static float emptyWeight = 47;
-    final static float length = 100;
+    // in tons
+    final static float emptyWeight = (float) 40.9;
+    // in meter
+    final static float length = (float) 32.2;
 
     private StringProperty suggestedSpeedString = new SimpleStringProperty("");
     private StringProperty currentSpeedString = new SimpleStringProperty("");
@@ -70,6 +73,7 @@ public class Train {
         currentBlock = block;
         currentBlock.setTrain(this);
         goForward = true;
+        insideOneBlock = true;
         // TODO: check direction
     }
 
@@ -89,49 +93,64 @@ public class Train {
         //currentSpeed += currentAcceleration;
         if (currentSpeed > 40) currentSpeed = 40;
 
+        
+        // spec: max speed 70 km/h
+        // service brake 1.2 m/s^2
+        // emergency brake 2.73 m/s^2
+        // max passenger 74 + 148 = 222
+        // max power 120 kW
+
         currentPosition += currentSpeed;
 
-        // TODO: put train id in correct block
-        if (!(authority > 0)){
-            //TODO: STOP THE TRAIN
-            currentSpeed = 0;
-        }
-        if (goForward){
-         updateBlock();
-        }
+        updateBlock();
         updateString();
     }
 
     private void updateBlock() {
         // check still inside current block
-        Block nextBlock = null;
         if (currentPosition > currentBlock.getLength()) {
             currentPosition -= currentBlock.getLength();
-            currentBlock.setTrain(null);
-            // TODO:get next block here
-            // if its a connected edge and it's not the previous block
-            for (Edge edge: currentBlock.getEdges()){
-                   Block edgeBlock = edge.getBlock();
-                if(edge.getConnected() && !edgeBlock.equals(prevBlock)){
-                    nextBlock = edgeBlock;
-                }
-            };
-            prevBlock = currentBlock;
-            assert nextBlock != null;
-            System.out.println("Next Block: " + nextBlock.getBlockNumber());
-            currentBlock = nextBlock;
-            currentBlock.setTrain(this);
-            --authority;
+            nextBlock();
         } else if (currentPosition < 0) {
-            // opposite direction
-
+            nextBlock();
+            currentPosition += currentBlock.getLength();
         }
+        // check if the end of the train leaves previous block
+        if (insideOneBlock) return;
+        if (goForward) {
+            if (currentPosition - length > 0) prevBlock.setTrain(null);
+        } else {
+            if (currentPosition + length > currentBlock.getLength()) prevBlock.setTrain(null);
+        }
+    }
+
+    private void nextBlock() {
+        //currentBlock.setTrain(null);
+        insideOneBlock = false;
+        Block nextBlock = null;
+
+        // if its a connected edge and it's not the previous block
+        for (Edge edge: currentBlock.getEdges()){
+               Block edgeBlock = edge.getBlock();
+            if(edge.getConnected() && !edgeBlock.equals(prevBlock)){
+                nextBlock = edgeBlock;
+            }
+        };
+
+        assert nextBlock != null;
+        System.out.println("Next Block: " + nextBlock.getBlockNumber());
+
+        prevBlock = currentBlock;
+        currentBlock = nextBlock;
+        currentBlock.setTrain(this);
+        currentBlock = nextBlock;
     }
 
 
     public void setSpeed(float speed){
         currentSpeed = speed;
     }
+    
     public void setAuthority(float authority){
         this.authority = authority;
     }
