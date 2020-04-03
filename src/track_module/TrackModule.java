@@ -10,6 +10,8 @@ import java.util.UUID;
 import src.Module;
 import src.track_controller.WaysideController;
 import src.track_module.BlockConstructor.*;
+import src.train_module.Train;
+import src.ctc.CTCTrain;
 import src.ctc.Path;
 import src.ctc.Route;
 
@@ -101,12 +103,9 @@ public class TrackModule extends Module {
             myBlocks.put( blockNumber, block);
             
             if( !waysides.containsKey( section)) {
-                WaysideController asdf= this.trackControllerModule.createWayside();
-                waysides.put( section, asdf);
+                waysides.put( section, this.trackControllerModule.createWayside());
             }
-            WaysideController wayside= waysides.get( section);
-            wayside.addBlock(block);
-            
+            waysides.get( section).addBlock(block);    
         }
         csvReader.close();
 
@@ -119,19 +118,23 @@ public class TrackModule extends Module {
             source.addEdge( destination, edge[2] != 0);
         }
         for( Block block : myBlocks.values()) {
-            blocks.put( block.id, block);
+            blocks.put( block.getUUID(), block);
         }
     }
 
-    public void createTrain( float suggestedSpeed, float authority, Route route) {
-        System.out.println(suggestedSpeed);
-        System.out.println(authority);
+    public void dispatchTrain(CTCTrain ctcTrain) {
+
         
-        /* let's talk about this one.
-        Path path= route.getCurrPath();
-        UUID uuid= path.getStartBlock();
-        Block block= trackModule.getBlockByUUID(uuid);
-        yard.createTrain( suggestedSpeed, authority, block);*/
+        UUID uuid = ctcTrain.getRoute().getCurrPath().getStartBlock();
+        Block startingBlock= trackModule.getBlockByUUID(uuid);
+
+        Train train = trainModule.createTrain();
+        train.setBlock(startingBlock);
+        train.setTrain(ctcTrain.getSuggestedSpeed(),ctcTrain.getAuthority());
+       
+        System.out.println("Suggeted Speed: " + ctcTrain.getSuggestedSpeed() + "Authority: " + ctcTrain.getAuthority());
+        System.out.println("Starting Block Number: " + startingBlock.getBlockNumber());
+
     }
     public Yard getYard() {return yard;};
 

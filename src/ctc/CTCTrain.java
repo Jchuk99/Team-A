@@ -2,15 +2,17 @@ package src.ctc;
 
 import java.util.UUID;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 public class CTCTrain {
 
-    private int authority;
+    private float authority;
     private float suggestedSpeed; // IN METERS PER SECOND INTENRALLY
     private int trainID;
     private UUID destination;
     private UUID currPos;
     //private int errorStatus; //TODO: make this an enum.
-    //private long timeOnBlock; // IN SECONDS INTERNALLY
     private Route route;
 
     public CTCTrain(){
@@ -28,6 +30,7 @@ public class CTCTrain {
         if (route.size() == 0){
             // block connected to yard depending on line
             start = CTCModule.map.getStartingBlockID();
+            currPos = start;
             route.addPath(start, dest);
         }
         else{
@@ -39,14 +42,14 @@ public class CTCTrain {
             } 
         }
 
-        authority = route.getCurrPath().getCourse().size();
+        authority = (float) route.getCurrPath().getCourse().size();
     }
 
     public UUID getNextBlockID(){
         return route.getCurrPath().getNextBlockID(currPos);
     }
     
-    public void setAuthority(int authority){
+    public void setAuthority(float authority){
         this.authority = authority;
     }
     public void setSuggestedSpeed(float suggestedSpeed){
@@ -64,7 +67,7 @@ public class CTCTrain {
     public Route getRoute(){
         return route;
     }
-    public int getAuthority(){
+    public float getAuthority(){
         return authority;
     }
     public float getSuggestedSpeed(){
@@ -79,4 +82,13 @@ public class CTCTrain {
     public UUID getCurrPos(){
         return currPos;
     }
+
+    /*** FOR GUI ***/
+
+    public StringProperty getTrainIDProperty() { return new SimpleStringProperty("Train " + trainID); }
+    public StringProperty getCurrPosProperty() { return new SimpleStringProperty("Train " + trainID); }
+
+        //return new SimpleStringProperty("" + CTCModule.map.getBlock(currPos).getBlockNumber()); }
+    public StringProperty getDestProperty() { return new SimpleStringProperty("" + CTCModule.map.getBlock(destination).getBlockNumber()); }
+    public StringProperty getSuggestedSpeedProperty() { return new SimpleStringProperty("" + (suggestedSpeed * 2.237)); }
 }

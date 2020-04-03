@@ -3,6 +3,10 @@ package src.track_module;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -34,7 +38,7 @@ public class TrackMap extends BaseMap {
         }
         Button failureMode = UICommon.createButton("Set Failure", 200, 10);
         failureMode.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
-            block.setFunctional(!block.getFunctional());
+            block.setOccupied(!block.getOccupied());
         });
         Label statusLabel = UICommon.createLabel("Status");
         statusLabel.setStyle("-fx-font-size: 18;");
@@ -47,6 +51,41 @@ public class TrackMap extends BaseMap {
         headerBox.setPadding( new Insets(5));
         headerBox.setAlignment(Pos.CENTER);
 
+        VBox tableBox = new VBox();
+
+        String[] strs6 = {"Heater", UICommon.booleanToOnOff(block.getHeater())};
+        String[] strs7 = {"Functional", UICommon.booleanToYesNo(block.getFunctional())};
+        String[] strs8 = {"Occupied", UICommon.booleanToYesNo(block.getOccupied())};
+
+
+
+        HBox occupiedBox= new HBox();
+        occupiedBox.setAlignment(Pos.CENTER);
+
+        Label occupiedLabel0 = UICommon.createLabel("Occupied");
+        occupiedLabel0.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+        occupiedLabel0.setAlignment(Pos.CENTER_LEFT);
+        occupiedLabel0.setPadding( new Insets(5));
+        occupiedLabel0.prefWidthProperty().bind(occupiedBox.widthProperty().divide((2)));
+        
+        Label occupiedLabel1 = UICommon.createLabel( UICommon.booleanToOnOff(block.getOccupied()));
+        occupiedLabel1.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+        occupiedLabel1.setAlignment(Pos.CENTER_LEFT);
+        occupiedLabel1.setPadding( new Insets(5));
+        occupiedLabel1.prefWidthProperty().bind(occupiedBox.widthProperty().divide((2)));
+
+        occupiedBox.getChildren().addAll(occupiedLabel0,occupiedLabel1);
+        tableBox.getChildren().add(occupiedBox);
+
+        block.occupiedProperty().addListener((obs, oldText, newText) -> {
+                occupiedLabel1.setText(UICommon.booleanToYesNo(newText));
+        });
+
+
+        
+
+        // Final Values
+
         List<String[]> strLists = new ArrayList<String[]>();
         String[] strs0 = {"Type", block.getClass().getSimpleName()};
         String[] strs1 = {"Length", UICommon.metersToYards(block.getLength()) + " Yards"};
@@ -54,9 +93,6 @@ public class TrackMap extends BaseMap {
         String[] strs3 = {"Grade", Float.toString(block.getGrade()) + "°"};
         String[] strs4 = {"Elevation", UICommon.metersToFeet(block.getCummElevation()) + " Feet"};
         String[] strs5 = {"Underground", UICommon.booleanToYesNo(block.getUndeground())};
-        String[] strs6 = {"Heater", UICommon.booleanToOnOff(block.getHeater())};
-        String[] strs7 = {"Functional", UICommon.booleanToYesNo(block.getFunctional())};
-        String[] strs8 = {"Occupied", UICommon.booleanToYesNo(block.getOccupied())};
         
         strLists.add( strs0);
         strLists.add( strs1);
@@ -64,11 +100,6 @@ public class TrackMap extends BaseMap {
         strLists.add( strs3);
         strLists.add( strs4);
         strLists.add( strs5);
-        strLists.add( strs6);
-        strLists.add( strs7);
-        strLists.add( strs8);
-
-        VBox tableBox = new VBox();
 
         for(String[] sl : strLists) {
             HBox hBox = new HBox();

@@ -13,8 +13,8 @@ public class test {
         TrainController tc=tcm.createTrainController();
         Normal b=new Normal("RED", 'Z', 0, 123456, (float)89.5, (float)0.0, 
         (float)0.0, (float)0.0, false, 0, 0);
-        Train t=new Train(3,tc);
-        tc.attachTrain(t);
+        //Train t=new Train(3,tc);
+        //tc.attachTrain(t);
 
         Thread thread = new Thread() {
             @Override
