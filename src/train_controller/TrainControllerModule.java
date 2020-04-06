@@ -52,8 +52,8 @@ public class TrainControllerModule extends Module {
 		return controllerList;
 	}
 	
-	public TrainController createTrainController(){//
-		TrainController tc=new TrainController();
+	public TrainController createTrainController(int uuid){//
+		TrainController tc=new TrainController(uuid);
 		controllerList.add(tc);
 		return tc;
 	}

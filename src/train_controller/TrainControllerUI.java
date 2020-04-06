@@ -54,9 +54,35 @@ public class TrainControllerUI extends Stage {
         final TableView<TrainController> trainControllerTable = createTrainControllerTable(trainControllerModule.getList());
         trainControllerTable.setPrefWidth(width / 8);
 
-        // testing displaying info for selected train
-        //trainControllerModule.createTrainController();
-        //trainControllerModule.createTrainController();
+        //final TableView trainTable = createTrainTable(trainData);
+        
+        final TableView<TrainController> trainTable = new TableView<TrainController>();
+        trainTable.setPlaceholder(new Label("No trains available"));
+
+        final TableColumn<TrainController, String> trainTableCol = new TableColumn<TrainController, String>("Select Train");
+        trainTableCol.setCellValueFactory(cellData -> cellData.getValue().getName());
+        trainTable.getColumns().add(trainTableCol);
+
+        //Error here trainTable.setItems(trainData);
+
+        
+        trainTable.setPrefWidth(width / 8);
+
+       // tc=attachedTrainControllerModule.getList().lastElement();
+
+        // testing: add a train to test
+        //trainData.add(attachedTrainControllerModule.getList().firstElement());
+        
+        /*attachedTrainControllerModule.getList().addListener(new ChangeListener<HashSet<TrainControllerModule.TrainController>>() {
+            public void changed(ObservableValue <? extends HashSet<TrainControllerModule.TrainController> > observable, HashSet<TrainControllerModule.TrainController> oldValue, HashSet<TrainControllerModule.TrainController> newValue) { 
+                
+            } 
+        });*/
+        
+        
+        
+        
+        
 
         trainControllerTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TrainController>() {
             @Override
@@ -104,7 +130,8 @@ public class TrainControllerUI extends Stage {
         final VBox fullScreen = new VBox(10, topHalf, mapTable);
 
         fullScreen.setPadding(new Insets(10));
-
+        //testing
+        //trainControllerModule.createTrainController(3);
         setScene(new Scene(fullScreen, width, height));
     }
 
@@ -178,6 +205,16 @@ public class TrainControllerUI extends Stage {
 
     private VBox createControlBox(StringProperty driverSpeed, StringProperty hvacSetpoint){
         ToggleButton manControlToggle=createToggleButton("Manual Mode",150,40);
+        manControlToggle.setSelected(trainControllerData.getManualModeOn().getValue());
+        trainControllerData.getManualModeOn().addListener(new ChangeListener<Boolean>() { 
+        
+            public void changed(ObservableValue <? extends Boolean > observable, Boolean oldValue, Boolean newValue) { 
+                manControlToggle.setSelected(newValue.booleanValue());
+                //System.out.println(trainControllerData.getDriverSpeed()); 
+           } 
+        });
+            
+        
         manControlToggle.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -194,7 +231,16 @@ public class TrainControllerUI extends Stage {
         Slider speedSlider = new Slider();
         speedSlider.setMin(0); 
         speedSlider.setMax(43); 
-        speedSlider.setValue(20); 
+        
+        speedSlider.setValue(Integer.parseInt(trainControllerData.getDriverSpeed().getValueSafe().split(" ")[0]));
+        trainControllerData.getDriverSpeed().addListener(new ChangeListener<String>() { 
+        
+            public void changed(ObservableValue <? extends String > observable, String oldValue, String newValue) { 
+                speedSlider.setValue(Integer.parseInt(newValue.split(" ")[0]));
+                //System.out.println(trainControllerData.getDriverSpeed()); 
+           } 
+        });
+
         VBox speedLabel = createLabelBox("0 mph", driverSpeed);
         //speedLabel.setPrefWidth(200);
         speedSlider.valueProperty().addListener( new ChangeListener<Number>() { 
@@ -213,8 +259,17 @@ public class TrainControllerUI extends Stage {
         VBox hvacTitle=createTextBox("HVAC");
 		Slider tempSlider = new Slider();
         tempSlider.setMin(60); 
-        tempSlider.setMax(80); 
-        tempSlider.setValue(68); 
+        tempSlider.setMax(80);
+
+        tempSlider.setValue(Integer.parseInt(trainControllerData.getHVACSetpoint().getValueSafe().split(" ")[0]));
+        trainControllerData.getHVACSetpoint().addListener(new ChangeListener<String>() { 
+        
+            public void changed(ObservableValue <? extends String > observable, String oldValue, String newValue) { 
+                tempSlider.setValue(Integer.parseInt(newValue.split(" ")[0]));
+                //System.out.println(trainControllerData.getDriverSpeed()); 
+           } 
+        });
+        
 		VBox hvacSetpointBox=createLabelBox("68 deg F",hvacSetpoint);
         tempSlider.valueProperty().addListener( new ChangeListener<Number>() { 
            
@@ -257,8 +312,15 @@ public class TrainControllerUI extends Stage {
         VBox lightBox = new VBox(30, createTextBox("Status"), light1, light2, light3, light4, light5, light6, light7);
 
         // TODO: working button
-                ToggleButton button1 = createToggleButton("Left Doors Closed", 200, 40);
-        button1.setOnAction(new EventHandler<ActionEvent>() {
+            ToggleButton button1 = createToggleButton("Left Doors Closed", 200, 40);
+            trainControllerData.getLeftDoorsControlClosed().addListener(new ChangeListener<Boolean>() { 
+        
+                public void changed(ObservableValue <? extends Boolean > observable, Boolean oldValue, Boolean newValue) { 
+                    button1.setSelected(newValue.booleanValue());
+                    //System.out.println(trainControllerData.getDriverSpeed()); 
+               } 
+            });
+            button1.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 // TODO: button handle
@@ -272,6 +334,13 @@ public class TrainControllerUI extends Stage {
         });
 
         ToggleButton button2 = createToggleButton("Right Doors Closed", 200, 40);
+        trainControllerData.getRightDoorsControlClosed().addListener(new ChangeListener<Boolean>() { 
+        
+            public void changed(ObservableValue <? extends Boolean > observable, Boolean oldValue, Boolean newValue) { 
+                button2.setSelected(newValue.booleanValue());
+                //System.out.println(trainControllerData.getDriverSpeed()); 
+           } 
+        });
         button2.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -286,6 +355,13 @@ public class TrainControllerUI extends Stage {
         });
 
         ToggleButton button3 = createToggleButton("Cabin Lights On", 200, 40);
+        trainControllerData.getCabinLightsControlOn().addListener(new ChangeListener<Boolean>() { 
+        
+            public void changed(ObservableValue <? extends Boolean > observable, Boolean oldValue, Boolean newValue) { 
+                button3.setSelected(newValue.booleanValue());
+                //System.out.println(trainControllerData.getDriverSpeed()); 
+           } 
+        });
         button3.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -301,6 +377,13 @@ public class TrainControllerUI extends Stage {
 
         
         ToggleButton button4 = createToggleButton("Headlights On", 200, 40);
+        trainControllerData.getHeadLightsControlOn().addListener(new ChangeListener<Boolean>() { 
+        
+            public void changed(ObservableValue <? extends Boolean > observable, Boolean oldValue, Boolean newValue) { 
+                button4.setSelected(newValue.booleanValue());
+                //System.out.println(trainControllerData.getDriverSpeed()); 
+           } 
+        });
         button4.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -315,6 +398,13 @@ public class TrainControllerUI extends Stage {
         });
 
         ToggleButton button5 = createToggleButton("Service Brake On", 200, 40);
+        trainControllerData.getServiceBrakeControlOn().addListener(new ChangeListener<Boolean>() { 
+        
+            public void changed(ObservableValue <? extends Boolean > observable, Boolean oldValue, Boolean newValue) { 
+                button5.setSelected(newValue.booleanValue());
+                //System.out.println(trainControllerData.getDriverSpeed()); 
+           } 
+        });
         button5.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -356,9 +446,26 @@ public class TrainControllerUI extends Stage {
         });
         */
         final ToggleButton eBrakeButton = createToggleButton("Emergency Brake", 200, 50);
-        eBrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: red;");
-        eBrakeButton.setSelected(false);
-       
+        eBrakeButton.setSelected(trainControllerData.getEmergencyBrakeControlOn().getValue());
+        if(!trainControllerData.getEmergencyBrakeControlOn().getValue()){
+            eBrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: red;");
+        }
+        else{
+            eBrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: firebrick;");
+        }
+        trainControllerData.getEmergencyBrakeControlOn().addListener(new ChangeListener<Boolean>() { 
+        
+            public void changed(ObservableValue <? extends Boolean > observable, Boolean oldValue, Boolean newValue) { 
+                eBrakeButton.setSelected(trainControllerData.getEmergencyBrakeControlOn().getValue());
+
+                if(!trainControllerData.getEmergencyBrakeControlOn().getValue()){
+                    eBrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: red;");
+                }
+                else{
+                    eBrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: firebrick;");
+                } 
+           } 
+        });
         eBrakeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -483,11 +590,21 @@ public class TrainControllerUI extends Stage {
         return circleBox;
     }
 
-    private VBox createCircleBox(int radius, Color color, Color color2, BooleanProperty booleanProperty) {
+    private VBox createCircleBox(int radius, Color color1, Color color2, BooleanProperty booleanProperty) {
         // all VBox create function are unified to 40px height
         // boolean true for color, false for color2
-        Circle circle = createCircle(radius, color);
-        Bindings.when(booleanProperty).then(color).otherwise(color2);
+        Circle circle = createCircle(radius, color1);
+        Bindings.when(booleanProperty).then(color1).otherwise(color2);
+        booleanProperty.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue o,Boolean oldVal, Boolean newVal){
+                if (newVal) {
+                    circle.setFill(color1);
+                } else {
+                    circle.setFill(color2);
+                }
+            }
+        });
         VBox circleBox = new VBox(circle);
         circleBox.setPrefHeight(40);
         circleBox.setAlignment(Pos.CENTER_LEFT);

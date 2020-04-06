@@ -32,14 +32,14 @@ public class TrainController {
     private float power;
     //float v_prev;
     //float TIMESTEP=(float)50.0; //ms
-    private float kp=(float)50.0;
-    private float ki=(float)50.0;
+    private float kp=(float)20.0;
+    private float ki=(float)20.0;
     /**
     
     */
-    public TrainController(){ //
+    public TrainController(int uuid){ //
         //attachedUI = new TrainControllerUI(this);
-        UUID=0;
+        UUID=uuid;
         leftDoorsControlClosed=new SimpleBooleanProperty(false);
         rightDoorsControlClosed=new SimpleBooleanProperty(false);
         manualModeOn=new SimpleBooleanProperty(false);
@@ -55,8 +55,8 @@ public class TrainController {
     }
 
     public void attachTrain(Train train) {
-        attachedTrain=train;
-        UUID=train.getUUID();
+        attachedTrain = train;
+        //UUID = train.getUUID();
     }
 
     public void update() {
@@ -65,12 +65,44 @@ public class TrainController {
             return;
         }
         
+        if(vitalCheck()){
+            setPower();
+        }
+        else{
+            attachedTrain.setPower(0);
+            setEmergencyBrakeControlOn(true);
+            setServiceBrakeControlOn(true);
+        }
+
+        
+    }
+    public boolean vitalCheck(){
+        if(!getEngineWorking().get()){
+             return false;
+        }
+        else if(!getEmergencyBrakeWorking().get()){
+            return false;
+        }
+        else if(!getServiceBrakeWorking().get()){
+            return false;
+        }
+        else if(!getLeftDoorWorking().get()){
+            return false;
+        }
+        else if(!getRightDoorWorking().get()){
+            return false;
+        }
+        return true;
+    }
+
+
+    public void setPower(){
         if(manualModeOn.getValue()){
             if(driverSpeed.getValueSafe().isEmpty()){
                 v_cmd=(float)0.0;
             }
             else{
-                v_cmd=Float.parseFloat(driverSpeed.getValueSafe().substring(0,2));
+                v_cmd=Float.parseFloat(driverSpeed.getValueSafe().split(" ")[0]);
             }
         }
         else {
@@ -100,10 +132,14 @@ public class TrainController {
             power=(float)(v_err*kp+v_curr*ki);
         }
         attachedTrain.setPower(power);
+
     }
 
+
     public void setTrain(float suggestedSpeed, float authority) {
-        // get set train information from train model
+        // get set train information from train mode
+        attachedTrain.setSpeed(suggestedSpeed);
+        attachedTrain.setAuthority(authority);
         
     }
     
