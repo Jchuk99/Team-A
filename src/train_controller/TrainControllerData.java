@@ -8,14 +8,14 @@ import javafx.beans.property.BooleanProperty;
 public class TrainControllerData {
 
     private TrainController currentTC;
-    private StringProperty driverSpeed = new SimpleStringProperty("");
+    private StringProperty driverSpeed = new SimpleStringProperty("0");
     private StringProperty beacon = new SimpleStringProperty("");
     private StringProperty suggestedSpeed = new SimpleStringProperty("");
     private StringProperty currentSpeed = new SimpleStringProperty("");
     private StringProperty authority = new SimpleStringProperty("");
     private StringProperty currentPower = new SimpleStringProperty("");
     private StringProperty currentAcceleration = new SimpleStringProperty("");
-    private StringProperty hvacSetpoint = new SimpleStringProperty("");
+    private StringProperty hvacSetpoint = new SimpleStringProperty("68");
 
     private BooleanProperty leftDoorsControlClosed=new SimpleBooleanProperty(false);
     private BooleanProperty rightDoorsControlClosed=new SimpleBooleanProperty(false);
