@@ -119,13 +119,30 @@ public class TrainController {
         else{
             v_curr=Float.parseFloat(attachedTrain.getCurrentSpeed().getValueSafe().split(" ")[0]);
         }
+        
+        //braking distance calc (does this violate non-constant-acceleration)
+        //aS+0.5*(V_curr-0)^2+g(h1-h2)=0
+        //S=(1/a)(-g(h1-h2)-0.5*V_curr^2)
+        //biggest grade=5% and -5%
+        //acceleration IS NOT A CONSTANT
+
+
+
         v_err=v_cmd-v_curr;
         //v_err_prev=v_cmd_prev-v_prev;
+        float authority;
 
+        if(getAuthority().getValueSafe().isEmpty()){
+            authority=(float)0.0;
+        }
+        else{
+            authority=Float.parseFloat(getAuthority().getValueSafe().split(" ")[0]);
+        }
+        
 
         //v_cmd_prev=v_cmd_curr;
         //v_prev=v_curr;
-        if(getAuthority().getValueSafe()=="0"){
+        if(authority<=0){
             power=(float)0.0;    
         }
         else{
