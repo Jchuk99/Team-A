@@ -2,6 +2,7 @@ package src.train_module;
 
 import src.Module;
 import src.track_module.Block;
+import src.track_module.BlockConstructor.*;
 import src.track_module.Edge;
 import src.train_controller.TrainController;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,6 +19,7 @@ public class Train {
     Block prevBlock = null;
     Block currentBlock = null;
     Boolean insideOneBlock = true;
+    Boolean removeFlag = false;
     float prevSpeed = 0;
     float currentSpeed = 0;
     float currentPower = 0;
@@ -50,20 +52,20 @@ public class Train {
     BooleanProperty emergencyBrakeState = new SimpleBooleanProperty(false);
 
     // in tons
-    final static float emptyWeight = (float) 40.9;
-    final static float passengerWeight = (float) 0.07;
+    public final static float emptyWeight = (float) 40.9;
+    public final static float passengerWeight = (float) 0.07;
     // in meter
-    final static float length = (float) 32.2;
+    public final static float length = (float) 32.2;
     // in kW
-    final static float maxPower = (float) 480;
+    public final static float maxPower = (float) 480;
     // in kN
-    final static float maxForce = (float) 480;
-    final static float serviceBrakeForce = (float) 61.7;
-    final static float emergencyBrakeForce = (float) 140.4;
+    public final static float maxForce = (float) 480;
+    public final static float serviceBrakeForce = (float) 61.7;
+    public final static float emergencyBrakeForce = (float) 140.4;
     // in m/s^2
-    final static float gravity = (float) 9.81;
+    public final static float gravity = (float) 9.81;
     // in m/s
-    final static float maxSpeed = (float) 19.44;
+    public final static float maxSpeed = (float) 19.44;
 
     private StringProperty suggestedSpeedString = new SimpleStringProperty("");
     private StringProperty currentSpeedString = new SimpleStringProperty("");
@@ -89,7 +91,7 @@ public class Train {
     }
 
     public void update() {
-        assert currentBlock != null;
+        if (currentBlock == null) return;
 
         // spec: max speed 70 km/h = 19.44 m/s
         // service brake (2/3 load / 51.43 tons) 1.2 m/s^2, 61.7kN
@@ -98,7 +100,7 @@ public class Train {
         // max power 120 * 4 = 480 kW
         // max emergency brake force 6 x 81kN = 486kN
 
-        // TODO: passenger method
+        // TODO: passenger method, beacon
 
         // update data
         currentWeight = emptyWeight + (passengerCount + crewCount) * passengerWeight;
@@ -129,12 +131,12 @@ public class Train {
         }
 
         // braking
-        if (emergencyBrakeState) {
+        if (emergencyBrakeState.getValue()) {
             force = 0;
             if (emergencyBrakeWorking.getValue()) {
                 brakingForce = emergencyBrakeForce;
             }
-        } else if (serviceBrakeState) {
+        } else if (serviceBrakeState.getValue()) {
             force = 0;
             if (serviceBrakeWorking.getValue()) {
                 brakingForce = serviceBrakeForce;
@@ -154,7 +156,7 @@ public class Train {
             currentSpeed = maxSpeed;
             currentAcceleration = 0;
         } else if (currentSpeed < 0) {
-            // only forward for this train model
+            // only forward direction for this train model
             currentSpeed = 0;
             currentAcceleration = 0;
         }
@@ -181,7 +183,6 @@ public class Train {
     }
 
     private void nextBlock() {
-        //currentBlock.setTrain(null);
         insideOneBlock = false;
         Block nextBlock = null;
 
@@ -195,6 +196,14 @@ public class Train {
 
         assert nextBlock != null;
         System.out.println("Next Block: " + nextBlock.getBlockNumber());
+
+        // check if we arrived in yard
+        if (nextBlock instanceof Yard) {
+            currentBlock.setTrain(null);
+            destroyTrain();
+        } else if (nextBlock instanceof Station) {
+            // TODO: pickup beacon
+        }
 
         prevBlock = currentBlock;
         currentBlock = nextBlock;
@@ -217,6 +226,7 @@ public class Train {
     public void destroyTrain() {
         // TODO: destroy train controller
         //controller.destroy();
+        removeFlag = true;
     }
 
 

@@ -172,4 +172,8 @@ public class TrainData {
         if (currentTrain != null) currentTrain.engineWorking.setValue(state);
     }
     
+    public void setEmergencyBrake(boolean state) {
+        if (currentTrain != null) currentTrain.setEmergencyBrake(state);
+    }
+    
 }
