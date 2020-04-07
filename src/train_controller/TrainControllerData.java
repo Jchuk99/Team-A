@@ -171,21 +171,27 @@ public class TrainControllerData {
     }
 
     public void setManualModeOn(boolean x){
-        currentTC.setManualModeOn(x);
+        if(currentTC!=null){
+            currentTC.setManualModeOn(x);
+        }
     }
     
     /**
     
     */
     public void setLeftDoorsControlClosed(boolean x){
+        if(currentTC!=null){
         currentTC.setLeftDoorsControlClosed(x);
+        }
     }
     
     /**
     
     */
     public void setRightDoorsControlClosed(boolean x){
-        currentTC.setRightDoorsControlClosed(x);
+        if(currentTC!=null){
+            currentTC.setRightDoorsControlClosed(x);
+        }
     }
     
     
@@ -193,42 +199,54 @@ public class TrainControllerData {
     
     */
     public void setCabinLightsControlOn(boolean x){
-        currentTC.setCabinLightsControlOn(x);
+        if(currentTC!=null){
+            currentTC.setCabinLightsControlOn(x);
+        }
     }
     
     /**
     
     */
     public void setHeadLightsControlOn(boolean x){
-        currentTC.setHeadLightsControlOn(x);
+        if(currentTC!=null){    
+         currentTC.setHeadLightsControlOn(x);
+        }
     }
     
     /**
     
     */
     public void setHVACSetpoint(int x){
+        if(currentTC!=null){
         currentTC.setHVACSetpoint(x);
+        }
     }
     
     /**
     
     */
     public void setDriverSpeed(int x){
+        if(currentTC!=null){
         currentTC.setDriverSpeed(x);
+       }
     }
     
     /**
     
     */
     public void setEmergencyBrakeControlOn(boolean x){
+        if(currentTC!=null){
         currentTC.setEmergencyBrakeControlOn(x);
+        }
     }
     
     /**
     
     */
     public void setServiceBrakeControlOn(boolean x){
+        if(currentTC!=null){
         currentTC.setServiceBrakeControlOn(x);
+        }
     }
 
     /**
