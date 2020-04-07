@@ -17,7 +17,6 @@ public class Train {
     TrainController controller;
     Block prevBlock = null;
     Block currentBlock = null;
-    Boolean goForward = false;
     Boolean insideOneBlock = true;
     float prevSpeed = 0;
     float currentSpeed = 0;
@@ -58,8 +57,9 @@ public class Train {
     // in kW
     final static float maxPower = (float) 480;
     // in kN
-    // TODO: check this number
     final static float maxForce = (float) 480;
+    final static float serviceBrakeForce = (float) 61.7;
+    final static float emergencyBrakeForce = (float) 140.4;
     // in m/s^2
     final static float gravity = (float) 9.81;
     // in m/s
@@ -85,27 +85,26 @@ public class Train {
         prevBlock = currentBlock;
         currentBlock = block;
         currentBlock.setTrain(this);
-        goForward = true;
         insideOneBlock = true;
-        // TODO: check direction
     }
 
     public void update() {
         assert currentBlock != null;
 
         // spec: max speed 70 km/h = 19.44 m/s
-        // service brake 1.2 m/s^2
-        // emergency brake 2.73 m/s^2
+        // service brake (2/3 load / 51.43 tons) 1.2 m/s^2, 61.7kN
+        // emergency brake (2/3 load / 51.43 tons) 2.73 m/s^2, 140.4kN
         // max passenger 74 + 148 = 222
         // max power 120 * 4 = 480 kW
+        // max emergency brake force 6 x 81kN = 486kN
 
-        // TODO: braking, passenger method
+        // TODO: passenger method
 
         // update data
         currentWeight = emptyWeight + (passengerCount + crewCount) * passengerWeight;
         currentGrade = currentBlock.getGrade();
-        
-        // power (in kW)
+
+        // power (kW)
         currentPower = targetPower;
         if (!engineWorking.getValue()) currentPower = 0;
         // limit power
@@ -115,9 +114,10 @@ public class Train {
             currentPower = 0;
         }
 
-        // force (in kN)
+        // force (kN)
         // P = Fv, F = P/v
         float force = 0;
+        float brakingForce = 0;
         if (currentSpeed == 0) {
             force = maxForce;
         } else {
@@ -128,20 +128,39 @@ public class Train {
             force = maxForce;
         }
 
-        // acceleration
+        // braking
+        if (emergencyBrakeState) {
+            force = 0;
+            if (emergencyBrakeWorking.getValue()) {
+                brakingForce = emergencyBrakeForce;
+            }
+        } else if (serviceBrakeState) {
+            force = 0;
+            if (serviceBrakeWorking.getValue()) {
+                brakingForce = serviceBrakeForce;
+            }
+        }
+
+        // acceleration (m / s^2)
         prevAcceleration = currentAcceleration;
         // F = ma, a = F/m
-        currentAcceleration = force / currentWeight - (gravity * currentGrade);
-        // TODO: limit acceleration
+        currentAcceleration = (force - brakingForce) / currentWeight - (gravity * currentGrade);
 
-        // velocity
+        // velocity (m / s)
         prevSpeed = currentSpeed;
-        currentSpeed += (Module.TIMESTEP / 2) * (currentAcceleration + prevAcceleration);
+        currentSpeed += (Module.TIMESTEP / 1000 / 2) * (currentAcceleration + prevAcceleration);
         // limit speed
-        if (currentSpeed > 19.44) currentSpeed = maxSpeed;
+        if (currentSpeed > 19.44) {
+            currentSpeed = maxSpeed;
+            currentAcceleration = 0;
+        } else if (currentSpeed < 0) {
+            // only forward for this train model
+            currentSpeed = 0;
+            currentAcceleration = 0;
+        }
         
-        // position
-        currentPosition += (Module.TIMESTEP / 2) * (currentSpeed + prevSpeed);
+        // position (m)
+        currentPosition += (Module.TIMESTEP / 1000 / 2) * (currentSpeed + prevSpeed);
 
         updateBlock();
         updateString();
@@ -149,19 +168,15 @@ public class Train {
 
     private void updateBlock() {
         // check still inside current block
+        // there is only forward direction
         if (currentPosition > currentBlock.getLength()) {
             currentPosition -= currentBlock.getLength();
             nextBlock();
-        } else if (currentPosition < 0) {
-            nextBlock();
-            currentPosition += currentBlock.getLength();
         }
         // check if the end of the train leaves previous block
-        if (insideOneBlock) return;
-        if (goForward) {
+        if (!insideOneBlock) {
             if (currentPosition - length > 0) prevBlock.setTrain(null);
-        } else {
-            if (currentPosition + length > currentBlock.getLength()) prevBlock.setTrain(null);
+            insideOneBlock = true;
         }
     }
 
@@ -184,7 +199,6 @@ public class Train {
         prevBlock = currentBlock;
         currentBlock = nextBlock;
         currentBlock.setTrain(this);
-        currentBlock = nextBlock;
     }
 
 
