@@ -347,7 +347,7 @@ public class CTCUI extends Stage {
         blockTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<Block, String> blocks = new TableColumn<>("Select Block");
-        blocks.setCellValueFactory(cellData -> cellData.getValue().getBlockNumberProperty());
+        blocks.setCellValueFactory(cellData -> new SimpleStringProperty(Integer.toString(cellData.getValue().getBlockNumber())));
         blockTable.getColumns().add(blocks);
 
         blockTable.setItems(ctcOffice.getObservableBlockList());

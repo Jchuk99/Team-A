@@ -6,19 +6,16 @@ import java.util.UUID;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableBooleanValue;
 import src.train_module.Train;
 
 abstract public class Block {
-    private UUID id;
     private Set<Edge> edges= new HashSet<Edge>();
-    private BooleanProperty occupied= new SimpleBooleanProperty();
     // https://stackoverflow.com/questions/42786313/javafx-eventhandler-new-alert-if-boolean-equals-true
-    private boolean functional= true;
-    private boolean heater= false;
+    private BooleanProperty occupied= new SimpleBooleanProperty(false);
+    private BooleanProperty functional= new SimpleBooleanProperty(true);
+    private BooleanProperty heater= new SimpleBooleanProperty(false);
     private Train train;
+    private final UUID id;
     private final String line;
     private final char section;
     private final int length;
@@ -46,16 +43,18 @@ abstract public class Block {
             this.xCorrdinate= xCorrdinate;
             this.yCorrdinate= yCorrdinate;
         }
+    public BooleanProperty occupiedProperty() {return occupied;};
+    public BooleanProperty functionalProperty() {return functional;};
+    public BooleanProperty heaterProperty() {return heater;};
 
     public String getLine() {return line;};
     public char getSection() {return section;};
     public UUID getUUID(){return id;};
     public int getBlockNumber() {return blockNumber;};
-    public BooleanProperty occupiedProperty() {return occupied;};
     public boolean getOccupied() {return occupiedProperty().get();};
-    public boolean getFunctional() {return functional;};
+    public boolean getFunctional() {return functionalProperty().get();};
+    public boolean getHeater() {return heaterProperty().get();};
     public boolean getUndeground() {return underground;};
-    public boolean getHeater() {return heater;};
     public int getLength() {return length;};
     public float getSpeedLimit() {return speedLimit;};
     public float getElevation() {return elevation;};
@@ -65,12 +64,9 @@ abstract public class Block {
     public int getX() {return xCorrdinate;};
     public int getY() {return yCorrdinate;};
 
-    public StringProperty getBlockNumberProperty() { return new SimpleStringProperty("" + blockNumber); }
-
     public void setOccupied(boolean occupied){occupiedProperty().set(occupied);};
-    public void setUUID(UUID uuid){id = uuid;};
-    public void setFunctional( boolean set) {functional= set;};
-    public void setHeater( boolean set) {heater= set;};
+    public void setHeater(boolean heater){heaterProperty().set(heater);};
+    public void setFunctional( boolean functional) {functionalProperty().set(functional);};
     public void setEdges(Set<Edge> set){edges = set;};
     public void addEdge( Block block, Boolean connected) {
         this.edges.add( new Edge( block, connected));
