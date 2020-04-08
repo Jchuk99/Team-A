@@ -32,8 +32,8 @@ public class TrainController {
     private float power;
     //float v_prev;
     //float TIMESTEP=(float)50.0; //ms
-    private float kp=(float)50.0;
-    private float ki=(float)50.0;
+    private float kp=(float)20.0;
+    private float ki=(float)20.0;
     /**
     
     */
@@ -65,12 +65,44 @@ public class TrainController {
             return;
         }
         
+        if(vitalCheck()){
+            setPower();
+        }
+        else{
+            attachedTrain.setPower(0);
+            setEmergencyBrakeControlOn(true);
+            setServiceBrakeControlOn(true);
+        }
+
+        
+    }
+    public boolean vitalCheck(){
+        if(!getEngineWorking().get()){
+             return false;
+        }
+        else if(!getEmergencyBrakeWorking().get()){
+            return false;
+        }
+        else if(!getServiceBrakeWorking().get()){
+            return false;
+        }
+        else if(!getLeftDoorWorking().get()){
+            return false;
+        }
+        else if(!getRightDoorWorking().get()){
+            return false;
+        }
+        return true;
+    }
+
+
+    public void setPower(){
         if(manualModeOn.getValue()){
             if(driverSpeed.getValueSafe().isEmpty()){
                 v_cmd=(float)0.0;
             }
             else{
-                v_cmd=Float.parseFloat(driverSpeed.getValueSafe().substring(0,2));
+                v_cmd=Float.parseFloat(driverSpeed.getValueSafe().split(" ")[0]);
             }
         }
         else {
@@ -87,20 +119,39 @@ public class TrainController {
         else{
             v_curr=Float.parseFloat(attachedTrain.getCurrentSpeed().getValueSafe().split(" ")[0]);
         }
+        
+        //braking distance calc (does this violate non-constant-acceleration)
+        //aS+0.5*(V_curr-0)^2+g(h1-h2)=0
+        //S=(1/a)(-g(h1-h2)-0.5*V_curr^2)
+        //biggest grade=5% and -5%
+        //acceleration IS NOT A CONSTANT
+
+
+
         v_err=v_cmd-v_curr;
         //v_err_prev=v_cmd_prev-v_prev;
+        float authority;
 
+        if(getAuthority().getValueSafe().isEmpty()){
+            authority=(float)0.0;
+        }
+        else{
+            authority=Float.parseFloat(getAuthority().getValueSafe().split(" ")[0]);
+        }
+        
 
         //v_cmd_prev=v_cmd_curr;
         //v_prev=v_curr;
-        if(getAuthority().getValueSafe()=="0"){
+        if(authority<=0){
             power=(float)0.0;    
         }
         else{
             power=(float)(v_err*kp+v_curr*ki);
         }
         attachedTrain.setPower(power);
+
     }
+
 
     public void setTrain(float suggestedSpeed, float authority) {
         // get set train information from train mode

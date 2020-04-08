@@ -52,10 +52,6 @@ public class TrainModuleUI extends Stage {
         final TableView<Train> trainTable = createTrainTable(trainModule.getTrainList());
         trainTable.setPrefWidth(width / 8);
 
-        // testing displaying info for selected train
-        //trainModule.createTrain();
-       // trainModule.createTrain();
-
         trainTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Train>() {
             @Override
             public void changed(ObservableValue observableValue, Train oldValue, Train newValue) {
@@ -64,7 +60,6 @@ public class TrainModuleUI extends Stage {
                 trainData.setTrain(train);
             }
         });
-
         /****** select train ******/
 
         /****** beacon ******/
@@ -241,7 +236,7 @@ public class TrainModuleUI extends Stage {
         ebrakeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                // TODO: button handle
+                trainData.setEmergencyBrake(true);
             }
         });
         // TODO: add effect when button is clicked
