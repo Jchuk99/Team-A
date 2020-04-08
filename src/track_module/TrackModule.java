@@ -107,10 +107,12 @@ public class TrackModule extends Module {
             }
             waysides.get( section).addBlock(block);    
         }
+        
         csvReader.close();
 
         yard= new Yard();
         myBlocks.put( 0, yard);
+        this.ctcModule.initMap();
         
         for( int[] edge : edges) {
             Block source= myBlocks.get( edge[0]);

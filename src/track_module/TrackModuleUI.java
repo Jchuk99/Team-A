@@ -85,6 +85,6 @@ public class TrackModuleUI extends Stage {
         Scene scene = new Scene(fullScreen, WIDTH, HEIGHT);
         scene.getStylesheets().add(Paths.get(System.getenv("cssStyleSheetPath")).toUri().toString());
         setScene(scene);
-        showAndWait();
+        //showAndWait();
     }
 }

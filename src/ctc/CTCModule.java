@@ -1,5 +1,7 @@
 package src.ctc;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -19,31 +21,12 @@ public class CTCModule extends Module{
 
     public void update(){
 
-        updateMap();
-        // Need method to get occupied blocks from map.
-        List<UUID> occupiedBlocks = map.getOccupiedBlocks();
-        
-        System.out.println("Occupied Blocks: ");
-        for(UUID blockID : occupiedBlocks) {
-            System.out.println(map.getBlock(blockID).getBlockNumber());
+        if (validMap()){
+            map.updateMap();
+            updateTrainPositions();
+            updateTrainAuthorities();
+            updateTrainStrings();
         }
-
-        // Need method to get all trains.
-        /*
-        Set<CTCTrain> trains = getTrains();
-        System.out.println("Trains: " + trains.size());
-        if(trains.size() > 0){
-            for (CTCTrain train: trains){
-                // if the trains next block is null then do work
-                if (map.getBlock(train.getNextBlockID()).getOccupied()) {
-                    train.setCurrPos(train.getNextBlockID());
-                    System.out.println("Train ID: " + train.getTrainID());
-                    System.out.println("currPos : " + train.getCurrPos());
-                }
-
-            }
-            
-        }*/// If the list size is 0 don't do anything.
 
         // LOGIC: check if the next block on the train's path is occupied. If it is there's two options:
         // 1. The train went to that next block. If so update it's position
@@ -70,17 +53,90 @@ public class CTCModule extends Module{
 
     // need an initMap method seperate.
     public void updateMap(){
+            map.updateMap();
+    }
+    //
+    public void initMap(){
         if (map == null){
             map = new CTCMap(trackControllerModule, trackModule);
             map.initMap();
         }
-        else{
-            map.updateMap();
+    }
+
+    public void updateTrainStrings(){
+        List<CTCTrain> trains = getTrains();
+        for (CTCTrain train: trains){
+            train.updateString();
+        }
+    }
+
+    public void updateTrainPositions(){
+        //TODO: should I use occupied blocks or should I feed the block into map?
+        List<UUID> occupiedBlocks = map.getOccupiedBlocks();
+        List<UUID> closedBlocks = map.getClosedBlocks();
+
+        // Need method to get all trains.  
+        List<CTCTrain> trains = getTrains();
+
+        if(trains.size() > 0){
+            for (CTCTrain train: trains){
+                //TODO: change all the blockID's to blocks, just get the ID from the block.
+                UUID nextBlock = train.getNextBlockID();
+                // if the trains next block is not null then do work
+                if (nextBlock != null){
+                    boolean isOccupied = occupiedBlocks.contains(nextBlock);
+                    boolean isClosed = closedBlocks.contains(nextBlock);
+
+                    if (isOccupied && !isClosed) {
+                        train.setCurrPos(train.getNextBlockID());
+                        System.out.println("Train ID: " + train.getTrainID());
+                        System.out.println("currPos : " + map.getBlock(train.getCurrPos()).getBlockNumber());
+                    }
+                }
+                else{
+                    // if the nextBlock is null then we should be @ our destination
+                    //TODO: think of edge cases.
+                    //TODO: only update the current Path after waiting 3 minutes at station.
+                    train.updateCurrPath();
+                    if (train.getRoute().size() == 0 ){
+                        System.out.println("Train route is done.");
+                        if (!train.inYard()){
+                            train.goToYard();
+                        }
+                    }
+                }
+
+            }
+            
+        }
+    }
+
+    public void updateTrainAuthorities(){
+        //TODO: Error Check, discuss train coming out of yard.
+        //TODO: need to make this an ordered list of trains according to trainID. 
+        List<CTCTrain> trains = getTrains();
+        List<UUID> occupiedBlocks = map.getOccupiedBlocks();
+        List<UUID> authorityBlocks = new ArrayList<UUID>();
+        List<UUID> closedBlocks = map.getClosedBlocks();
+
+        for (CTCTrain train: trains){
+            UUID nextBlockID = train.getNextBlockID();
+            int authority = 0;
+            while (nextBlockID != null){
+                boolean isOccupied = occupiedBlocks.contains(nextBlockID);
+                boolean isClosed = closedBlocks.contains(nextBlockID);
+                boolean hasAuthority = authorityBlocks.contains(nextBlockID);
+                if (!isOccupied && !isClosed && !hasAuthority){
+                    ++authority;
+                    authorityBlocks.add(nextBlockID);
+                }
+                nextBlockID = train.getNextBlockID(nextBlockID);
+            }
+            train.setAuthority(authority);
         }
     }
 
     public void dispatch(String trainID, float suggestedSpeed, UUID destination){
-        updateMap();
 
 
         // need to give speed in meters per second, authority, train ID, and route 
@@ -91,18 +147,18 @@ public class CTCModule extends Module{
 
     }
 
-    public Set<CTCTrain> getTrains(){
-        return schedule.getTrains();
+    public List<CTCTrain> getTrains(){
+        List<CTCTrain> trainList = schedule.getTrains();
+        Collections.sort(trainList, new trainComparator());
+        return trainList;
     }
     public HashMap<Integer, CTCTrain> getTrainMap(){
         return schedule.getTrainMap();
     }
 
-    // need a getTrain Set method.
-
     //public HashMap<UUID, Boolean> getSwitchStates{
     //}
-    //public ArrayList<UUID> getClosedBlocks
+    //public ArrayList<UUID> getClosedBlocks {return map.getClosedBlocks();}
 
     /****** for GUI ******/
 
@@ -113,16 +169,18 @@ public class CTCModule extends Module{
     }
 
     public ObservableList<Station> getObservableStationList(){
-        updateMap();
         ObservableList<Station> stationList = FXCollections.observableList(map.getStationList());
         return stationList;
    }
 
     public ObservableList<Block> getObservableBlockList(){
-         updateMap();
          ObservableList<Block> blockList = FXCollections.observableList(map.getBlockList());
          FXCollections.sort(blockList, new blockNumberComparator());
          return blockList;
+    }
+
+    private boolean validMap(){
+        return map != null;
     }
     
 }

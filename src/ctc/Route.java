@@ -23,8 +23,8 @@ public class Route {
         return paths.peekLast();
     }
 
-    public void addPath(UUID start, UUID end){
-        paths.add(new Path(start, end));
+    public void addPath(UUID start, UUID end, UUID prevBlock){
+        paths.add(new Path(start, end, prevBlock));
     }
 
     public int size(){ return paths.size();}

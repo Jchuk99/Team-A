@@ -2,7 +2,6 @@ package src.ctc;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -32,7 +31,6 @@ import src.track_module.BlockConstructor.Station;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.Set;
 
 
 

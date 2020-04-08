@@ -17,24 +17,32 @@ public class Path {
     private LinkedList<UUID> course;
     private UUID startBlock;
     private UUID endBlock;
+    private UUID prevBlock;
 
     
     public Path(){
     }
  
-    public Path(UUID startBlock, UUID endBlock){
+    public Path(UUID startBlock, UUID endBlock, UUID prevBlock){
         this.startBlock = startBlock;
         this.endBlock = endBlock;
-        course = findCourse(startBlock, endBlock);
+        this.prevBlock = prevBlock;
+        course = findCourse(startBlock, endBlock, prevBlock);
     }
 
     public LocalDateTime getStartTime() {return startTime;};
     public LocalDateTime getEndTime() {return endTime;};
     public UUID getStartBlock() {return startBlock;};
     public UUID getEndBlock() {return endBlock;};
+    public UUID getPrevBlock() {return prevBlock;};
 
+    public UUID getBeforeEndBlock() {
+        //TODO: error check.
+            return course.get(course.size() - 2);
+    } 
 
     public UUID getNextBlockID(UUID currBlockID) {
+        //TODO: error check.
             int currIndex = course.indexOf(currBlockID);
             if (currIndex == (course.size() - 1)){
                 return null;
@@ -49,12 +57,7 @@ public class Path {
     }
     
     //TODO: Make algorithim account for distance of blocks
-    //TODO: Doesn't account for biDirectionality, going in a circle.
-    // consider a block being sent to the block behind it, how would you account for this? (firstPath out of the yard and notFirstPath)
-    // will need startBlock and the block before it on the previous path
-    private LinkedList<UUID> findCourse(UUID start, UUID destination) {
-        // maybe i can initialize a hashmap for marked(UUID, boolean), edgeTo(UUID, UUID), and distTo(UUID, int), by using the map to gather a list of all UUID's currently within the map
-        // then let the algorithim proceed as it normally does, this should work
+    private LinkedList<UUID> findCourse(UUID start, UUID destination, UUID prevBlock) {
         CTCMap map = CTCModule.map;
         Set<UUID> blockIDs = map.getBlockIDs();
         HashMap<UUID, Boolean> marked = new HashMap<UUID, Boolean>();
@@ -78,7 +81,7 @@ public class Path {
             Block b = q.remove();
             for (Edge e : b.getEdges()) {
                 Block edgeBlock = e.getBlock();
-                if (!marked.get(edgeBlock.getUUID())) {
+                if (!marked.get(edgeBlock.getUUID()) && !edgeBlock.getUUID().equals(prevBlock)) {
                     edgeTo.put(edgeBlock.getUUID(), b.getUUID());
                     distTo.put(edgeBlock.getUUID(), distTo.get(b.getUUID()) + 1);
                     marked.put(edgeBlock.getUUID(), true);
@@ -86,7 +89,6 @@ public class Path {
                 }
             }
         }
-        
         
         LinkedList<UUID> course = new LinkedList<UUID>();
 		UUID curr = destination;

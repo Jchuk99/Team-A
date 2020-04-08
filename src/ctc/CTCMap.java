@@ -22,7 +22,8 @@ public class CTCMap{
    private TrackControllerModule trackControllerModule;
    private TrackModule trackModule;
    private UUID yardID;
-   // is there any reason for a stationMap here? Why can't I just have a list of Station blocks?
+   //TODO:Looked through and no dependencys for stationMap.
+   //TODO:Is there any reason for a stationMap here? Why can't I just have a list of Station blocks?
    private Map<UUID, Station> stationMap = new HashMap<UUID, Station>();
    private Map<UUID, Block> blockMap = new HashMap<UUID, Block>();
    private List<UUID> switchList = new ArrayList<UUID>();
@@ -79,7 +80,7 @@ public class CTCMap{
         there is no map to generate, causing compile errors.
 
         - Eric
-
+        */
 
          //length, number, edges
          //hashmap of blocks with they're blocknumber so that I can access any one.
@@ -120,7 +121,7 @@ public class CTCMap{
                 }   
         }
 
-        Yard myYard = new Yard();
+        Yard myYard = new Yard(); 
         yardID = trackModule.getYard().getUUID();
         myYard.setUUID(yardID);
         blockMap.put(yardID, myYard);
@@ -134,14 +135,14 @@ public class CTCMap{
                myBlock.setEdges(block.getEdges());
             }
         }
-        */
+        
 
     }
 
     // need to create second method that doesn't just reinitialize the map, but updates it's current attributes
     // AKA occupied and switch positions
     public void updateMap(){
-        /*
+        
         ArrayList<WaysideController> waysides = trackControllerModule.getWaysideControllers();
 
         for (WaysideController wayside : waysides) { 
@@ -158,7 +159,7 @@ public class CTCMap{
                 }
             }
         }
-        */
+        
         
     }
 
