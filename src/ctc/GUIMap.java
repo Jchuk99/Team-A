@@ -64,8 +64,10 @@ public class GUIMap extends BaseMap {
             
             //ADDED listener here to make occupancy dynamically update in CTC
             block.occupiedProperty().addListener((obs, oldText, newText) -> {
-                
                 this.circleMap.get(block).setFill(Color.BLUE);
+            });
+            block.functionalProperty().addListener((obs, oldText, newText) -> {
+                this.circleMap.get(block).setFill(Color.RED);
             });
 
             circle.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
@@ -237,7 +239,7 @@ public class GUIMap extends BaseMap {
             circleOrange.setFill(Color.ORANGE);
             circleBlue.setFill(Color.GRAY);
             circleGreen.setFill(Color.GRAY);
-            this.circleMap.get(block).setFill(Color.ORANGE);
+            this.circleMap.get(block).setFill(Color.GRAY);
         }
         else if(block.getOccupied() == true) {
             circleRed.setFill(Color.GRAY);
