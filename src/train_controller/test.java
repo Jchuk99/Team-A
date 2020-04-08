@@ -9,13 +9,13 @@ public class test {
     public static void main(String[] args){
         
         TrainControllerModule tcm=new TrainControllerModule();
-        //TrainControllerUI.setTCM(tcm);
+        
         TrainController tc=tcm.createTrainController();
         Normal b=new Normal("RED", 'Z', 0, 123456, (float)89.5, (float)0.0, 
         (float)0.0, (float)0.0, false, 0, 0);
         //Train t=new Train(3,tc);
         //tc.attachTrain(t);
-
+        
         Thread thread = new Thread() {
             @Override
             public void run() {

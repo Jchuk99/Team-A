@@ -21,13 +21,12 @@ public class CTCMap{
 
    private TrackControllerModule trackControllerModule;
    private TrackModule trackModule;
-   private UUID yardID;
+   private Yard myYard;
    //TODO:Looked through and no dependencys for stationMap.
    //TODO:Is there any reason for a stationMap here? Why can't I just have a list of Station blocks?
    private Map<UUID, Station> stationMap = new HashMap<UUID, Station>();
    private Map<UUID, Block> blockMap = new HashMap<UUID, Block>();
    private List<UUID> switchList = new ArrayList<UUID>();
-   private List<UUID> closedBlocks = new ArrayList<UUID>();
    
     public CTCMap(TrackControllerModule trackControllerModule, TrackModule trackModule){
         this.trackControllerModule = trackControllerModule;
@@ -35,7 +34,7 @@ public class CTCMap{
     }
 
     public Block getBlock(UUID block){return blockMap.get(block);}
-    public UUID getYardID(){return yardID;}
+    public Yard  getYard(){return myYard;}
     public int size(){return blockMap.size();}
     public Set<UUID> getBlockIDs(){ return blockMap.keySet();}
     public List<Block> getBlockList(){ return new ArrayList<Block>(blockMap.values());}
@@ -43,10 +42,13 @@ public class CTCMap{
     public List<Station> getStationList(){ return new ArrayList<Station>(stationMap.values());}
     public Map<UUID, Station> getStationMap(){ return stationMap;}
     public List<UUID> getSwitchList(){ return switchList;}
-    public List<UUID> getClosedBlocks(){return closedBlocks; }
 
     //TODO: gonna have to rework this when there's multiple lines, and multiple diffrent exits from the yard.
+    // WILL NOT WORK IF MULTIPLE LINES
     public UUID getStartingBlockID(){
+        
+        
+        
         // get the blocks right that come out of the yard, which will always be block number 0
         List<Block> blockList = getBlockList();
         Block startingBlock = null;
@@ -72,7 +74,22 @@ public class CTCMap{
         }
 
         return occupiedBlocks;
-    } 
+    }
+
+    public List<UUID> getClosedBlocks(){
+
+        List<UUID> closedBlocks = new ArrayList<UUID>(); // can be a set instead of a list.. doesn't really matter
+        for (Map.Entry<UUID, Block> entry : blockMap.entrySet()){
+            Block currBlock = entry.getValue();
+            if (currBlock.getClosed() == true){
+                closedBlocks.add(currBlock.getUUID());
+            }
+        }
+
+        return closedBlocks;
+    }
+    
+    
 
     public void initMap(){
         /*
@@ -109,9 +126,13 @@ public class CTCMap{
                     }
                     else if (block instanceof Shift){
                         switchList.add(block.getUUID());
+                        System.out.println(blockNumber);
+                        Shift shiftBlock = (Shift)block;
                         Shift myBlock = new Shift(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
-                        myBlock.setUUID(block.getUUID());
-                        blockMap.put(block.getUUID(), myBlock);
+                        myBlock.setUUID(shiftBlock.getUUID());
+                        myBlock.setSwitchPositions(shiftBlock.getSwitchPositions());
+                        myBlock.setPosition(shiftBlock.getPosition());
+                        blockMap.put(shiftBlock.getUUID(), myBlock);
                     }
                     else{
                         Normal myBlock = new Normal(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
@@ -121,8 +142,9 @@ public class CTCMap{
                 }   
         }
 
-        Yard myYard = new Yard(); 
-        yardID = trackModule.getYard().getUUID();
+        Yard trackYard =  trackModule.getYard();
+        myYard = new Yard(trackYard.getX(), trackYard.getY()); 
+        UUID yardID = trackYard.getUUID();
         myYard.setUUID(yardID);
         blockMap.put(yardID, myYard);
         

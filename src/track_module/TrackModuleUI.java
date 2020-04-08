@@ -11,6 +11,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import src.UICommon;
+import src.track_module.TrackModule.FileFormatException;
 
 public class TrackModuleUI extends Stage {
     static final int WIDTH = 900;
@@ -33,6 +35,7 @@ public class TrackModuleUI extends Stage {
 
     public TrackModuleUI() {
         setTitle("TrackModel UI");
+        TrackMap trackMap = new TrackMap();
 
         HBox topBox = new HBox(10);
 
@@ -58,11 +61,23 @@ public class TrackModuleUI extends Stage {
                 try {
                     trackModule.buildTrack(csvFile.getAbsolutePath());
                 }
-                catch( IOException e) {
-                    // TODO THIS
+                catch( IOException | FileFormatException e) {
+                    Label errorLabel = UICommon.createLabel(e.toString());
+                    errorLabel.setAlignment(Pos.CENTER);
+                    errorLabel.setStyle("-fx-font-size: 24; -fx-border-color: -fx-focus-color;");
+                    errorLabel.setPadding(new Insets(20));
+                    Scene scene = new Scene(errorLabel);
+                    scene.getStylesheets().add(Paths.get(System.getenv("cssStyleSheetPath")).toUri().toString());
+                    Stage stage = new Stage();
+                    stage.setTitle("File Error");
+                    stage.setScene(scene);
+                    stage.sizeToScene();
+                    stage.show();
+                    return;
                 }
-                TrackMap trackMap = new TrackMap();
+                
                 trackMap.buildMap(trackModule.blocks, graphPane);
+                // Removes the select track button and resizes temperature and time boxes
                 temperatureLabel.prefWidthProperty().bind(topBox.widthProperty().divide((2)));
                 timeLabel.prefWidthProperty().bind(topBox.widthProperty().divide((2)));
                 topBox.getChildren().setAll(temperatureLabel, timeLabel);
@@ -80,11 +95,18 @@ public class TrackModuleUI extends Stage {
         graphPane.setStyle("-fx-background-color: -fx-focus-color;");
         VBox.setVgrow(graphPane, Priority.ALWAYS);
         graphPane.setViewOrder(1);
+        trackMap.mapUnavailable(graphPane);
 
-        VBox fullScreen = new VBox(topBox, graphPane);
+        Region spacer = new Region();
+        spacer.setMinHeight(30);
+        spacer.setViewOrder(1);
+        spacer.setStyle("-fx-background-color: -fx-focus-color;");
+
+
+        VBox fullScreen = new VBox(topBox, spacer, graphPane);
         Scene scene = new Scene(fullScreen, WIDTH, HEIGHT);
         scene.getStylesheets().add(Paths.get(System.getenv("cssStyleSheetPath")).toUri().toString());
         setScene(scene);
-        //showAndWait();
+        showAndWait(); // TODO
     }
 }

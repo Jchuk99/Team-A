@@ -3,10 +3,6 @@ package src.track_module;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableBooleanValue;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,22 +19,14 @@ import src.BaseMap;
 public class TrackMap extends BaseMap {
     @Override
     public Scene buildPopUp(Block block) {
-        
-        Circle circleGreen = UICommon.createCircle(10, Color.WHITE);
-        Circle circleYellow = UICommon.createCircle(10, Color.WHITE);
-        Circle circleRed = UICommon.createCircle(10, Color.WHITE);
-        if(block.getFunctional() == false) {
-            circleRed.setFill(Color.RED);
-        }
-        else if(block.getOccupied() == true) {
-            circleYellow.setFill(Color.YELLOW);
-        }
-        else {
-            circleGreen.setFill(Color.GREEN);
-        }
+        Circle circleGreen = UICommon.createCircle(10, Color.GRAY);
+        Circle circleYellow = UICommon.createCircle(10, Color.GRAY);
+        Circle circleRed = UICommon.createCircle(10, Color.GRAY);
         Button failureMode = UICommon.createButton("Set Failure", 200, 10);
+        statusUpdate(block, circleRed, circleYellow, circleGreen);
+
         failureMode.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
-            block.setOccupied(!block.getOccupied());
+            block.setFunctional(!block.getFunctional());
         });
         Label statusLabel = UICommon.createLabel("Status");
         statusLabel.setStyle("-fx-font-size: 18;");
@@ -53,12 +41,31 @@ public class TrackMap extends BaseMap {
 
         VBox tableBox = new VBox();
 
-        String[] strs6 = {"Heater", UICommon.booleanToOnOff(block.getHeater())};
-        String[] strs7 = {"Functional", UICommon.booleanToYesNo(block.getFunctional())};
-        String[] strs8 = {"Occupied", UICommon.booleanToYesNo(block.getOccupied())};
+        // Occupied Box
+        HBox functionalBox= new HBox();
+        functionalBox.setAlignment(Pos.CENTER);
 
+        Label functionalLabel0 = UICommon.createLabel("Functional");
+        functionalLabel0.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+        functionalLabel0.setAlignment(Pos.CENTER_LEFT);
+        functionalLabel0.setPadding( new Insets(5));
+        functionalLabel0.prefWidthProperty().bind(functionalBox.widthProperty().divide((2)));
+        
+        Label functionalLabel1 = UICommon.createLabel( UICommon.booleanToOnOff(block.getFunctional()));
+        functionalLabel1.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+        functionalLabel1.setAlignment(Pos.CENTER_LEFT);
+        functionalLabel1.setPadding( new Insets(5));
+        functionalLabel1.prefWidthProperty().bind(functionalBox.widthProperty().divide((2)));
 
+        functionalBox.getChildren().addAll(functionalLabel0,functionalLabel1);
+        tableBox.getChildren().add(functionalBox);
 
+        block.functionalProperty().addListener((obs, oldText, newText) -> {
+                functionalLabel1.setText(UICommon.booleanToYesNo(newText));
+                statusUpdate(block, circleRed, circleYellow, circleGreen);
+        });
+
+        // Occupied Box
         HBox occupiedBox= new HBox();
         occupiedBox.setAlignment(Pos.CENTER);
 
@@ -79,10 +86,31 @@ public class TrackMap extends BaseMap {
 
         block.occupiedProperty().addListener((obs, oldText, newText) -> {
                 occupiedLabel1.setText(UICommon.booleanToYesNo(newText));
+                statusUpdate(block, circleRed, circleYellow, circleGreen);
         });
 
+        // Heater Box
+        HBox heaterBox= new HBox();
+        heaterBox.setAlignment(Pos.CENTER);
 
+        Label heaterLabel0 = UICommon.createLabel("Heater");
+        heaterLabel0.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+        heaterLabel0.setAlignment(Pos.CENTER_LEFT);
+        heaterLabel0.setPadding( new Insets(5));
+        heaterLabel0.prefWidthProperty().bind(heaterBox.widthProperty().divide((2)));
         
+        Label heaterLabel1 = UICommon.createLabel( UICommon.booleanToOnOff(block.getHeater()));
+        heaterLabel1.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+        heaterLabel1.setAlignment(Pos.CENTER_LEFT);
+        heaterLabel1.setPadding( new Insets(5));
+        heaterLabel1.prefWidthProperty().bind(heaterBox.widthProperty().divide((2)));
+
+        heaterBox.getChildren().addAll(heaterLabel0,heaterLabel1);
+        tableBox.getChildren().add(heaterBox);
+
+        block.heaterProperty().addListener((obs, oldText, newText) -> {
+                heaterLabel1.setText(UICommon.booleanToYesNo(newText));
+        });        
 
         // Final Values
 
@@ -123,5 +151,26 @@ public class TrackMap extends BaseMap {
         VBox totalBox = new VBox( headerBox, tableBox);
         Scene scene = new Scene(totalBox);
         return scene;
+    }
+
+    private void statusUpdate( Block block, Circle circleRed, Circle circleYellow, Circle circleGreen) {
+        if(block.getFunctional() == false) {
+            circleRed.setFill(Color.RED);
+            circleYellow.setFill(Color.GRAY);
+            circleGreen.setFill(Color.GRAY);
+            this.circleMap.get(block).setFill(Color.RED);
+        }
+        else if(block.getOccupied() == true) {
+            circleRed.setFill(Color.GRAY);
+            circleYellow.setFill(Color.YELLOW);
+            circleGreen.setFill(Color.GRAY);
+            this.circleMap.get(block).setFill(Color.YELLOW);
+        }
+        else {
+            circleRed.setFill(Color.GRAY);
+            circleYellow.setFill(Color.GRAY);
+            circleGreen.setFill(Color.GREEN);
+            this.circleMap.get(block).setFill(Color.GREEN);
+        }
     }
 }

@@ -25,7 +25,7 @@ public class CTCTrain {
 
     public CTCTrain(){
         // All trains start in the yard.
-        currPos = CTCModule.map.getYardID();
+        currPos = CTCModule.map.getYard().getUUID();
     }
 
     public void addPath(UUID dest){
@@ -79,13 +79,13 @@ public class CTCTrain {
     }
 
     public void goToYard(){
-        setDestination(CTCModule.map.getYardID());
-        route.addPath(currPos, CTCModule.map.getYardID(), prevBlock);
+        setDestination(CTCModule.map.getYard().getUUID());
+        route.addPath(currPos, CTCModule.map.getYard().getUUID(), prevBlock);
         prevBlock = null;
     }
 
     public boolean inYard(){
-        return currPos == CTCModule.map.getYardID();
+        return currPos == CTCModule.map.getYard().getUUID();
     }
     
     public void setAuthority(float authority){

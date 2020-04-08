@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - TestRunner",
+            "request": "launch",
+            "mainClass": "src.TestRunner",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - Main",
             "request": "launch",
             "mainClass": "src.Main",
@@ -10,8 +17,8 @@
             "env": {
                 "cssStyleSheetPath": "${workspaceFolder}/stylesheet.css",
                 "globalTemperature": "47",
-                "globalTime": "10:30 AM", //TODO
+                "globalTime": "10:30 AM",
             }
-        },
+        }
     ]
 }

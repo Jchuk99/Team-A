@@ -58,6 +58,8 @@ public class Path {
     
     //TODO: Make algorithim account for distance of blocks
     private LinkedList<UUID> findCourse(UUID start, UUID destination, UUID prevBlock) {
+        System.out.println("start: " + start);
+        System.out.println("end: " + destination);
         CTCMap map = CTCModule.map;
         Set<UUID> blockIDs = map.getBlockIDs();
         HashMap<UUID, Boolean> marked = new HashMap<UUID, Boolean>();

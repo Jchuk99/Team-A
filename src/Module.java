@@ -25,7 +25,7 @@ public abstract class Module{
     LocalDateTime date;
 
     // in millisecond
-    final int TIMESTEP = 50;
+    public final static int TIMESTEP = 50;
 
     public Module() {
         this.date= LocalDateTime.of(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND);
