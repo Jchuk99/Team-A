@@ -59,7 +59,6 @@ public class BlockConstructor {
             else{
                 setPosition(switchPositions.get(0));
             }
-
         }
 
         public StringProperty positionProperty() {return positionNumber;};
