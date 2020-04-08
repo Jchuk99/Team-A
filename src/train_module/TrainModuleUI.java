@@ -111,7 +111,7 @@ public class TrainModuleUI extends Stage {
     }
 
     private HBox createTopBox() {
-        VBox time = createLabelBox("11:00:23 am");
+        VBox time = createLabelBox("", trainModule.timeString);
         final HBox timeBox = new HBox(10, createTextBox("Time"), time);
 
         Circle circleG = createCircle(10, Color.GREEN);
