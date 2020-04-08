@@ -2,7 +2,6 @@ package src.ctc;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -21,6 +20,7 @@ import javafx.scene.text.Text;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
@@ -32,16 +32,17 @@ import src.track_module.BlockConstructor.Station;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.Set;
 
 
 
 public class CTCUI extends Stage {
     static ObservableList<Person> trainData = FXCollections.observableArrayList();
+    Pane graphPane;
     public static CTCModule ctcOffice;
     static int trainID = 0;
 
     public CTCUI() {
+        GUIMap trackMap = new GUIMap();
         setTitle("CTC UI");
 
         int length = 900;
@@ -88,14 +89,21 @@ public class CTCUI extends Stage {
         HBox topHalf1 = new HBox(10, ticketBox, createSpacer(), totalTicketBox, createSpacer(), manualMode,
                 createSpacer(), timeBox);
 
-        /****** bottom half ******/
-        TableView trainTable = createTrainTable();
+        TableView<CTCTrain> trainTable = createTrainTable();
         VBox topHalf = new VBox(10, topHalf1, trainTable);
-        TableView mapTable = new TableView();
+        /****** bottom half ******/
+
+
+
+        graphPane = new Pane();
+        graphPane.setStyle("-fx-background-color: -fx-focus-color;");
+        VBox.setVgrow(graphPane, Priority.ALWAYS);
+        graphPane.setViewOrder(1);
+        trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
 
         
         topHalf.setPrefHeight(height/2);
-        VBox fullScreen = new VBox(10, topHalf, mapTable);
+        VBox fullScreen = new VBox(10, topHalf, graphPane);
 
         
         /****full screen *****/
@@ -347,7 +355,7 @@ public class CTCUI extends Stage {
         blockTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<Block, String> blocks = new TableColumn<>("Select Block");
-        blocks.setCellValueFactory(cellData -> cellData.getValue().getBlockNumberProperty());
+        blocks.setCellValueFactory(cellData -> new SimpleStringProperty(Integer.toString(cellData.getValue().getBlockNumber())));
         blockTable.getColumns().add(blocks);
 
         blockTable.setItems(ctcOffice.getObservableBlockList());

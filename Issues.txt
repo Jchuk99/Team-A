@@ -1,0 +1,10 @@
+I had to disable the trainController UI. 
+The issue seems to be binded to the dummy trains that Chi added to the track model. ( Line 56 and 57 of TrainModuleUI)
+Running out of a vector list or something this is for Jacob to investigate.
+Had to comment out lines 91 and 94 of the code to get it to work.
+
+Do we want the yard to have a list of trains? Or should that be information known by the trainModule?
+
+put information known by the trackModule
+
+
