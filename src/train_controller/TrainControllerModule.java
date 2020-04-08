@@ -61,5 +61,14 @@ public class TrainControllerModule extends Module {
 		
 		return new SimpleStringProperty("12:04:20 AM");
 	}
+
+	public void destroy(int uuid) {
+		for (int i=0;i<controllerList.size();i++) {
+			if(Integer.parseInt(controllerList.get(i).getName().getValueSafe().split(" ")[1])==uuid){
+				controllerList.remove(i);
+				break;
+			}
+		}
+	}
 	
 }
