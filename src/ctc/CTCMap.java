@@ -45,20 +45,15 @@ public class CTCMap{
 
     //TODO: gonna have to rework this when there's multiple lines, and multiple diffrent exits from the yard.
     // WILL NOT WORK IF MULTIPLE LINES
-    public UUID getStartingBlockID(){
+    public UUID getStartingBlockID(String line){
         
-        
-        
-        // get the blocks right that come out of the yard, which will always be block number 0
-        List<Block> blockList = getBlockList();
+        //TODO: made sure line is either red or green
         Block startingBlock = null;
-        for (Block block: blockList){
-            for (Edge edge: block.getEdges()){
-                if ((edge.getBlock().getBlockNumber() == 0) && (!edge.getConnected())){
-                    startingBlock = block;
+            for (Edge edge: myYard.getEdges()){
+                if ((edge.getBlock().getLine().equalsIgnoreCase(line) && (edge.getConnected()))){
+                    startingBlock = edge.getBlock();
                 }
             }
-        }
         return startingBlock.getUUID();
     }
 
@@ -146,6 +141,11 @@ public class CTCMap{
         myYard = new Yard(trackYard.getX(), trackYard.getY()); 
         UUID yardID = trackYard.getUUID();
         myYard.setUUID(yardID);
+        myYard.setEdges(trackYard.getEdges());
+        for (Edge edge : trackYard.getEdges()){
+                System.out.println("Block Number: " + edge.getBlock().getBlockNumber());
+
+        }
         blockMap.put(yardID, myYard);
         
 

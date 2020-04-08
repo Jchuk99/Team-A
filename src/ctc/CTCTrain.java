@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import src.track_module.Block;
 
 public class CTCTrain {
 
@@ -29,12 +30,13 @@ public class CTCTrain {
     }
 
     public void addPath(UUID dest){
+        Block destination = CTCModule.map.getBlock(dest);
         UUID start;
 
         //If train does not have any queued paths then will be in yard.
         if (route.size() == 0){
             // block connected to yard depending on line
-            start = CTCModule.map.getStartingBlockID();
+            start = CTCModule.map.getStartingBlockID(destination.getLine());
             currPos = start;
             route.addPath(start, dest, prevBlock);
             prevBlock = route.getLastPath().getBeforeEndBlock();

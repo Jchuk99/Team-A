@@ -345,11 +345,11 @@ public class TrackModule extends Module {
             }
 
             source.addEdge( destination, edge[2] != 0);
-            if(source == yard) {
-                yard.addEdge(source, true);
-            }
-            else if(destination == yard) {
+            /*if(source == yard) {
                 yard.addEdge(destination, true);
+            }*/
+            if(destination == yard) {
+                yard.addEdge(source, edge[2] == 0);
             }
         }
         this.ctcModule.initMap();
