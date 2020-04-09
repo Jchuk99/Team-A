@@ -142,10 +142,11 @@ public class CTCMap{
         UUID yardID = trackYard.getUUID();
         myYard.setUUID(yardID);
         myYard.setEdges(trackYard.getEdges());
-        for (Edge edge : trackYard.getEdges()){
+        
+        /*for (Edge edge : trackYard.getEdges()){
                 System.out.println("Block Number: " + edge.getBlock().getBlockNumber());
 
-        }
+        }*/
         blockMap.put(yardID, myYard);
         
 
