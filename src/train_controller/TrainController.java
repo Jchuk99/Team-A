@@ -70,7 +70,7 @@ public class TrainController {
             return;
         }
         
-        getSA(); //use until regular updates from track Module are implemented
+        //getSA(); //use until regular updates from track Module are implemented
 
         if(vitalCheck()){
             setPower();
