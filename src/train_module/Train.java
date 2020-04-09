@@ -5,11 +5,12 @@ import src.track_module.Block;
 import src.track_module.BlockConstructor.*;
 import src.track_module.Edge;
 import src.train_controller.TrainController;
+import src.UICommon;
+import java.util.Random;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.BooleanProperty;
-import java.util.Random;
 
 public class Train {
     
@@ -94,7 +95,7 @@ public class Train {
     }
 
     public void update() {
-        if (currentBlock == null) return;
+        if (currentBlock == null || removeFlag) return;
 
         // spec: max speed 70 km/h = 19.44 m/s
         // service brake (2/3 load / 51.43 tons) 1.2 m/s^2, 61.7kN
@@ -108,6 +109,8 @@ public class Train {
         // update data
         currentWeight = emptyWeight + (passengerCount + crewCount) * passengerWeight;
         currentGrade = currentBlock.getGrade();
+        // in seconds
+        float timeStep = ((float)Module.TIMESTEP) / 1000;
 
         // pick up and drop passengers at station
         if (!stoppedAtStation && currentBlock instanceof Station && currentSpeed == 0) {
@@ -159,11 +162,11 @@ public class Train {
         // acceleration (m / s^2)
         prevAcceleration = currentAcceleration;
         // F = ma, a = F/m
-        currentAcceleration = (force - brakingForce) / currentWeight - (gravity * currentGrade);
+        currentAcceleration = (force - brakingForce) / currentWeight - (gravity * (currentGrade / 100));
 
         // velocity (m / s)
         prevSpeed = currentSpeed;
-        currentSpeed += (Module.TIMESTEP / 1000 / 2) * (currentAcceleration + prevAcceleration);
+        currentSpeed += (timeStep / 2) * (currentAcceleration + prevAcceleration);
         // limit speed
         if (currentSpeed > 19.44) {
             currentSpeed = maxSpeed;
@@ -175,7 +178,23 @@ public class Train {
         }
         
         // position (m)
-        currentPosition += (Module.TIMESTEP / 1000 / 2) * (currentSpeed + prevSpeed);
+        currentPosition += (timeStep / 2) * (currentSpeed + prevSpeed);
+
+        boolean debug = false;
+        if (debug) {
+            System.out.println("Train " + UUID + ": ");
+            System.out.println("currentGrade " + currentGrade + " %");
+            System.out.println("currentPower: " + currentPower + " kW");
+            System.out.println("force: " + force + " kN");
+            System.out.println("brakingForce: " + brakingForce + " kN");
+            System.out.println("currentAcceleration: " + currentAcceleration + " m/s^2");
+            System.out.println("acceleration due to engine: " + (force / currentWeight) + " m/s^2");
+            System.out.println("acceleration due to brakes: " + (brakingForce / currentWeight) + " m/s^2");
+            System.out.println("acceleration due to grade: " + ((gravity * (-currentGrade / 100))) + " m/s^2");
+            System.out.println("currentSpeed: " + currentSpeed + " m/s");
+            System.out.println("currentPosition: " + currentPosition + " m");
+            System.out.println("currentBlockLength: " + currentBlock.getLength() + " m");
+        }
 
         updateBlock();
         updateString();
@@ -215,6 +234,7 @@ public class Train {
         if (nextBlock instanceof Yard) {
             currentBlock.setTrain(null);
             destroyTrain();
+            return;
         } else if (nextBlock instanceof Station) {
             // TODO: pickup beacon
         }
@@ -222,7 +242,7 @@ public class Train {
         prevBlock = currentBlock;
         currentBlock = nextBlock;
         currentBlock.setTrain(this);
-        // controller.nextBlock();
+        controller.nextBlock();
     }
 
 
@@ -239,8 +259,7 @@ public class Train {
     }
 
     public void destroyTrain() {
-        // TODO: destroy train controller
-        //controller.destroy();
+        controller.destroy();
         removeFlag = true;
     }
 
@@ -256,6 +275,10 @@ public class Train {
     /****** called by train controller and GUI ******/
     public void setPower(float power) {
         targetPower = power;
+    }
+
+    public void setTemperature(float temperature) {
+        temperatureInside = temperature;
     }
 
     public void setLeftDoor(boolean state) {
@@ -327,13 +350,13 @@ public class Train {
 
     /****** for GUI ******/
     private void updateString() {
-        suggestedSpeedString.setValue(suggestedSpeed + " mph");
-        currentSpeedString.setValue(currentSpeed + " mph");
-        authorityString.setValue(authority + " ft");
+        suggestedSpeedString.setValue(UICommon.metersPerSecondToMilesPerHour(suggestedSpeed) + " mph");
+        currentSpeedString.setValue(UICommon.metersPerSecondToMilesPerHour(currentSpeed) + " mph");
+        authorityString.setValue(authority + " block");
         currentPowerString.setValue(currentPower + " kW");
         passengerCountString.setValue(passengerCount + "");
         currentWeightString.setValue(currentWeight + " tons");
-        currentAccelerationString.setValue(currentAcceleration + " ft/s^2");
+        currentAccelerationString.setValue(UICommon.metersPerSecondSquaredToFeetPerSecondSquared(currentAcceleration) + " ft/s^2");
         currentGradeString.setValue(currentGrade + " %");
         temperatureInsideString.setValue(temperatureInside + " F");
     }
