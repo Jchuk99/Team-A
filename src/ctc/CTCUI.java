@@ -27,55 +27,52 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import src.UICommon;
 import src.track_module.Block;
 import src.track_module.BlockConstructor.Station;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
 
-
+//TODO: IMPORT A STYLE GUIDE!!!
 
 public class CTCUI extends Stage {
     static ObservableList<Person> trainData = FXCollections.observableArrayList();
-    Pane graphPane;
     public static CTCModule ctcOffice;
     static int trainID = 0;
 
+    public static void setCTCModule(CTCModule ctcOffice0){
+        ctcOffice = ctcOffice0;
+    }
+
     public CTCUI() {
-        GUIMap trackMap = new GUIMap();
         setTitle("CTC UI");
 
         int length = 900;
         int height = 800;
 
         /****** top half ******/
-
-        Text timeText = new Text("Time");
-        Label timeLabel = new Label("11:00:23 am");
-        timeLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
-
-        HBox timeBox = new HBox(10, timeText, timeLabel);
-        timeBox.setAlignment(Pos.CENTER);
+        HBox timeBox = createTimeBox();
 
         Text ticketText = new Text("Ticket Sales");
+        //TODO: replace ticketLabel with actual value
         Label ticketLabel = new Label("205/h");
         ticketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
 
         HBox ticketBox = new HBox(10, ticketText, ticketLabel);
-        timeBox.setAlignment(Pos.CENTER);
+        ticketBox.setAlignment(Pos.CENTER);
 
         Text totalTicketText = new Text("Total Ticket Sales");
+        //TODO: replace ticketLabel with actual value
         Label totalTicketLabel = new Label("1000");
         totalTicketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
 
         HBox totalTicketBox = new HBox(10, totalTicketText, totalTicketLabel);
-        timeBox.setAlignment(Pos.CENTER);
+        totalTicketBox.setAlignment(Pos.CENTER);
 
-        Button manualMode = new Button();
-        manualMode.setText("Manual Input/Schedule");
-        manualMode.setPrefWidth(300);
-        manualMode.setPrefHeight(50);
+        Button manualMode = UICommon.createButton("Manual Input/Schedule", 300, 50);
 
+         //TODO: style
         manualMode.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
                                "-fx-font-size:20;" + "-fx-text-fill: black;");
 
@@ -87,33 +84,21 @@ public class CTCUI extends Stage {
         });
 
         HBox topHalf1 = new HBox(10, ticketBox, createSpacer(), totalTicketBox, createSpacer(), manualMode,
-                createSpacer(), timeBox);
-
+                                    createSpacer(), timeBox);
         TableView<CTCTrain> trainTable = createTrainTable();
+
         VBox topHalf = new VBox(10, topHalf1, trainTable);
         /****** bottom half ******/
 
-
-
-        graphPane = new Pane();
-        graphPane.setStyle("-fx-background-color: -fx-focus-color;");
-        VBox.setVgrow(graphPane, Priority.ALWAYS);
-        graphPane.setViewOrder(1);
-        trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
-
+        Pane mapPane = createMapPane();
         
         topHalf.setPrefHeight(height/2);
-        VBox fullScreen = new VBox(10, topHalf, graphPane);
+        VBox fullScreen = new VBox(10, topHalf, mapPane);
 
-        
         /****full screen *****/
         fullScreen.setPadding(new Insets(10));
         setScene(new Scene(fullScreen, length, height));
 
-    }
-    
-    public static void setCTCModule(CTCModule ctcOffice0){
-        ctcOffice = ctcOffice0;
     }
 
     public static void getManualDisplay(){
@@ -158,14 +143,7 @@ public class CTCUI extends Stage {
         VBox sliderBox = new VBox(10, speedSlider, speed);
         sliderBox.setAlignment(Pos.CENTER);
 
-        Text timeText = new Text("Time");
-        //TODO: set time to track global time
-        Label timeLabel = new Label("11:00:23 am");
-        timeLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
-
-        HBox timeBox = new HBox(10, timeText, timeLabel);
-        timeBox.setAlignment(Pos.CENTER);
-            
+        HBox timeBox = createTimeBox();
         Button dispatch = createDispatchButton(trainTable, blocksTable, stationTable, speedSlider);
 
         VBox box3 = new VBox(10, timeBox, createSpacer(), sliderBox, createSpacer(),  dispatch);
@@ -192,6 +170,18 @@ public class CTCUI extends Stage {
         fullScreen.setPadding(new Insets(10));
         popupwindow.setScene(new Scene(fullScreen, length, height));
         popupwindow.show();
+    }
+
+    private static Pane createMapPane(){
+        GUIMap trackMap = new GUIMap();
+        Pane graphPane = new Pane();
+
+        //TODO: ask eric about setting this stuff\
+        //graphPane.setStyle("-fx-background-color: -fx-focus-color;");
+        VBox.setVgrow(graphPane, Priority.ALWAYS);
+        graphPane.setViewOrder(1);
+        trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
+        return graphPane;
     }
     
     private static TableView<CTCTrain> createTrainTable(){
@@ -424,6 +414,7 @@ public class CTCUI extends Stage {
             return dispatch;
     }
 
+
     private static Slider createSpeedSlider(Label speed){
         Slider speedSlider = new Slider();
         speedSlider.setMin(0); 
@@ -467,6 +458,19 @@ public class CTCUI extends Stage {
         });
 
         return scheduleButton;
+    }
+
+    private static HBox createTimeBox(){
+
+        Text timeText = new Text("Time");
+        Label timeLabel = new Label("");
+        timeLabel.textProperty().bind(ctcOffice.timeString);
+        //TODO: add style guide for my buttons and my labels
+        timeLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+
+        HBox timeBox = new HBox(10, timeText, timeLabel);
+        timeBox.setAlignment(Pos.CENTER);
+        return timeBox;
     }
 
     private static Node createSpacer() {
