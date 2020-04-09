@@ -1,7 +1,5 @@
 package src.train_module;
 
-import javafx.application.Application;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,11 +10,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.effect.DropShadow;
@@ -25,13 +20,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -52,10 +42,6 @@ public class TrainModuleUI extends Stage {
         final TableView<Train> trainTable = createTrainTable(trainModule.getTrainList());
         trainTable.setPrefWidth(width / 8);
 
-        // testing displaying info for selected train
-        //trainModule.createTrain();
-       // trainModule.createTrain();
-
         trainTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Train>() {
             @Override
             public void changed(ObservableValue observableValue, Train oldValue, Train newValue) {
@@ -64,7 +50,6 @@ public class TrainModuleUI extends Stage {
                 trainData.setTrain(train);
             }
         });
-
         /****** select train ******/
 
         /****** beacon ******/
@@ -126,7 +111,7 @@ public class TrainModuleUI extends Stage {
     }
 
     private HBox createTopBox() {
-        VBox time = createLabelBox("11:00:23 am");
+        VBox time = createLabelBox("", trainModule.timeString);
         final HBox timeBox = new HBox(10, createTextBox("Time"), time);
 
         Circle circleG = createCircle(10, Color.GREEN);
@@ -241,7 +226,7 @@ public class TrainModuleUI extends Stage {
         ebrakeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                // TODO: button handle
+                trainData.setEmergencyBrake(true);
             }
         });
         // TODO: add effect when button is clicked

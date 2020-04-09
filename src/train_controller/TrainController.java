@@ -11,7 +11,8 @@ import src.train_module.Train;
 
 public class TrainController {
     private Train attachedTrain = null;
-    //public TrainControllerUI attachedUI;
+    public static TrainControllerModule trainControllerModule;
+    
     private BooleanProperty leftDoorsControlClosed;
     private BooleanProperty rightDoorsControlClosed;
     private BooleanProperty manualModeOn;
@@ -24,6 +25,8 @@ public class TrainController {
     private BooleanProperty serviceBrakeControlOn;
     private int UUID;
     //public BooleanProperty leftDoorStateTest=new SimpleBooleanProperty(false);
+    private float suggestedSpeed;
+    private float authority;
     private float v_cmd;
     //float v_cmd_prev;
     private float v_curr;
@@ -32,13 +35,14 @@ public class TrainController {
     private float power;
     //float v_prev;
     //float TIMESTEP=(float)50.0; //ms
-    private float kp=(float)50.0;
-    private float ki=(float)50.0;
+    private float kp=(float)20.0;
+    private float ki=(float)10.0;
     /**
     
     */
     public TrainController(){ //
         //attachedUI = new TrainControllerUI(this);
+        
         UUID=0;
         leftDoorsControlClosed=new SimpleBooleanProperty(false);
         rightDoorsControlClosed=new SimpleBooleanProperty(false);
@@ -51,7 +55,8 @@ public class TrainController {
         serviceBrakeControlOn=new SimpleBooleanProperty(true);
         //v_prev=(float)0.0;
         //v_cmd_prev=(float)0.0;
-        
+        authority=(float)0.0;
+        suggestedSpeed=(float)0.0;
     }
 
     public void attachTrain(Train train) {
@@ -65,42 +70,88 @@ public class TrainController {
             return;
         }
         
+        getSA();
+
+        if(vitalCheck()){
+            setPower();
+        }
+        else{
+            attachedTrain.setPower(0);
+            setEmergencyBrakeControlOn(true);
+            setServiceBrakeControlOn(true);
+        }
+
+        
+    }
+    public boolean vitalCheck(){
+        if(!getEngineWorking().get()){
+             return false;
+        }
+        else if(!getEmergencyBrakeWorking().get()){
+            return false;
+        }
+        else if(!getServiceBrakeWorking().get()){
+            return false;
+        }
+        else if(!getLeftDoorWorking().get()){
+            return false;
+        }
+        else if(!getRightDoorWorking().get()){
+            return false;
+        }
+        return true;
+    }
+
+
+    public void setPower(){
         if(manualModeOn.getValue()){
             if(driverSpeed.getValueSafe().isEmpty()){
                 v_cmd=(float)0.0;
             }
             else{
-                v_cmd=Float.parseFloat(driverSpeed.getValueSafe().substring(0,2));
+                v_cmd=Float.parseFloat(driverSpeed.getValueSafe().split(" ")[0]);
             }
         }
         else {
-            if(attachedTrain.getSuggestedSpeed().getValueSafe().isEmpty()){
-                v_cmd=(float)0.0;
-            }
-            else{
-                v_cmd=Float.parseFloat(attachedTrain.getSuggestedSpeed().getValueSafe().split(" ")[0]);
-            }
+            v_cmd=suggestedSpeed;
         }
+        
         if(attachedTrain.getCurrentSpeed().getValueSafe().isEmpty()){
             v_curr=(float)0.0;
         }
         else{
             v_curr=Float.parseFloat(attachedTrain.getCurrentSpeed().getValueSafe().split(" ")[0]);
         }
+        
+        //braking distance calc (does this violate non-constant-acceleration)
+        //aS+0.5*(V_curr-0)^2+g(h1-h2)=0
+        //S=(1/a)(-g(h1-h2)-0.5*V_curr^2)
+        //biggest grade=5% and -5%
+        //acceleration IS NOT A CONSTANT
+
+        //stupid soln (lubricated steel track, 5% grade downhill, 19.125 meter change in elevation)
+        //S=(1/(0.2-1.365))*(-9.81*(19.125)-0.5*V_curr^2)
+
+
         v_err=v_cmd-v_curr;
         //v_err_prev=v_cmd_prev-v_prev;
+        
 
+        
+        
 
         //v_cmd_prev=v_cmd_curr;
         //v_prev=v_curr;
-        if(getAuthority().getValueSafe()=="0"){
+        if(authority<=0){
             power=(float)0.0;    
         }
         else{
             power=(float)(v_err*kp+v_curr*ki);
         }
         attachedTrain.setPower(power);
+
     }
+
 
     public void setTrain(float suggestedSpeed, float authority) {
         // get set train information from train mode
@@ -108,7 +159,31 @@ public class TrainController {
         attachedTrain.setAuthority(authority);
         
     }
+
+    public void getSA(){
+        if(attachedTrain.getAuthority().getValueSafe().isEmpty()){
+            authority=(float)0.0;
+        }
+        else{
+            authority=Float.parseFloat(attachedTrain.getAuthority().getValueSafe().split(" ")[0]);
+        }
+
+        if(attachedTrain.getSuggestedSpeed().getValueSafe().isEmpty()){
+            suggestedSpeed=(float)0.0;
+        }
+        else{
+            suggestedSpeed=Float.parseFloat(attachedTrain.getSuggestedSpeed().getValueSafe().split(" ")[0]);
+        }
+    }
     
+    public void destroy(){
+        attachedTrain=null;
+        trainControllerModule.destroy(UUID);
+    }
+    public void nextBlock(){
+        authority--;
+    }
+
     /**
     
     */
@@ -260,14 +335,14 @@ public class TrainController {
         
         */
         public StringProperty getAuthority(){
-            return attachedTrain.getAuthority();
+            return new SimpleStringProperty(String.valueOf(authority)+" ft");
         }
         
         /**
         
         */
         public StringProperty getSuggestedSpeed(){
-            return attachedTrain.getSuggestedSpeed();
+            return new SimpleStringProperty(String.valueOf(suggestedSpeed)+" mph");
         }
         
         /**

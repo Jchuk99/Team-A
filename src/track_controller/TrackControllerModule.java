@@ -6,7 +6,7 @@ import src.ctc.*;
 import src.track_module.*;
 
 public class TrackControllerModule extends Module {
-	Set<CTCTrain> trains;
+	List<CTCTrain> trains;
 	//HashMap<UUID, position> switchPositions;
 	//ArrayList<Block> closedBlocks;
 	ArrayList<WaysideController> waysideControllers;

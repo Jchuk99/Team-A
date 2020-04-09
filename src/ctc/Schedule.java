@@ -34,7 +34,7 @@ public class Schedule{
         train.setDestination(destination);
         train.setSuggestedSpeed(suggestedSpeed);
 
-        train.updateRoute(destination);
+        train.addPath(destination);
 
         return train;
     }
@@ -42,8 +42,8 @@ public class Schedule{
     public HashMap<Integer, CTCTrain> getTrainMap(){
         return trains;
     }
-    public Set<CTCTrain> getTrains(){
-        return new HashSet<CTCTrain>(trains.values());
+    public List<CTCTrain> getTrains(){
+        return new ArrayList<CTCTrain>(trains.values());
     }
     /** FOR GUI */
     public ObservableList<CTCTrain> getObservableTrains(){
