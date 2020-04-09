@@ -37,7 +37,6 @@ import java.util.HashMap;
 //TODO: IMPORT A STYLE GUIDE!!!
 
 public class CTCUI extends Stage {
-    static ObservableList<Person> trainData = FXCollections.observableArrayList();
     public static CTCModule ctcOffice;
     static int trainID = 0;
 
@@ -202,7 +201,6 @@ public class CTCUI extends Stage {
         TableColumn<CTCTrain, String> speed = new TableColumn<>("Suggested Speed(mph)");
         speed.setCellValueFactory(cellData -> cellData.getValue().getSuggestedSpeedProperty());
 
-
         trainTable.getColumns().add(trains);
         trainTable.getColumns().add(currPos);
         trainTable.getColumns().add(destination);
@@ -248,6 +246,8 @@ public class CTCUI extends Stage {
     }
     
     private static Pair<VBox, TableView<Person>> createTrainBox(int length, int height, TableView<CTCTrain> statusTable){
+        ObservableList<Person> trainData = FXCollections.observableArrayList();
+        
         statusTable.setEditable(true);
         TableView<Person> trainTable = new TableView<Person>();
         trainTable.setPlaceholder(new Label("No trains available"));
@@ -295,6 +295,7 @@ public class CTCUI extends Stage {
 
     }
 
+    //TODO: add dynamic values for schedule
     private static TableView<SchedulerUI> createScheduleTable(){
 
         TableView<SchedulerUI> scheduleTable = new TableView<SchedulerUI>();
