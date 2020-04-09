@@ -1,5 +1,6 @@
 package src.ctc;
 
+import java.text.DecimalFormat;
 import java.util.UUID;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -127,7 +128,8 @@ public class CTCTrain {
     /*** FOR GUI ***/
 
     public void updateString() {
-        suggestedSpeedString.setValue((suggestedSpeed * 2.237) + " mph"); // IN M/s
+        DecimalFormat df = new DecimalFormat("##.##");
+        suggestedSpeedString.setValue(df.format((suggestedSpeed * 2.237)) + " mph"); // IN M/s
         currPosString.setValue("Block " + CTCModule.map.getBlock(currPos).getBlockNumber() );
         destinationString.setValue("Block " + CTCModule.map.getBlock(destination).getBlockNumber());
         trainIDString.setValue("Train " + trainID);

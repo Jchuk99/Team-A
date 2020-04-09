@@ -38,7 +38,7 @@ public class GUIMap extends BaseMap {
         Label statusLabel = UICommon.createLabel("Status");
         statusLabel.setStyle("-fx-font-size: 18;");
         statusLabel.setAlignment(Pos.BOTTOM_CENTER);
-        HBox statusBox = new HBox(10, statusLabel, circleGreen, circleBlue, circleRed, circleOrange);
+        HBox statusBox = new HBox(10, statusLabel, circleGreen, circleBlue, circleRed);
         statusBox.setAlignment(Pos.CENTER);
         VBox headerBox ;
         if (block instanceof Shift){
@@ -146,28 +146,24 @@ public class GUIMap extends BaseMap {
     private void statusUpdate( Block block, Circle circleRed,Circle circleOrange, Circle circleBlue, Circle circleGreen) {
         if(block.getFunctional() == false) {
             circleRed.setFill(Color.RED);
-            circleOrange.setFill(Color.GRAY);
             circleBlue.setFill(Color.GRAY);
             circleGreen.setFill(Color.GRAY);
             this.circleMap.get(block).setFill(Color.RED);
         }
         else if(CTCModule.map.getClosedBlocks().contains(block.getUUID())){
             circleRed.setFill(Color.GRAY);
-            circleOrange.setFill(Color.ORANGE);
             circleBlue.setFill(Color.GRAY);
             circleGreen.setFill(Color.GRAY);
             this.circleMap.get(block).setFill(Color.GRAY);
         }
         else if(block.getOccupied() == true) {
             circleRed.setFill(Color.GRAY);
-            circleOrange.setFill(Color.GRAY);
             circleBlue.setFill(Color.BLUE);
             circleGreen.setFill(Color.GRAY);
             this.circleMap.get(block).setFill(Color.BLUE);
         }
         else {
             circleRed.setFill(Color.GRAY);
-            circleOrange.setFill(Color.GRAY);
             circleBlue.setFill(Color.GRAY);
             circleGreen.setFill(Color.GREEN);
             this.circleMap.get(block).setFill(Color.GREEN);

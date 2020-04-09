@@ -137,7 +137,6 @@ public class CTCModule extends Module{
 
     public void dispatch(String trainID, float suggestedSpeed, UUID destination){
 
-
         // need to give speed in meters per second, authority, train ID, and route 
         suggestedSpeed = suggestedSpeed/(float)2.237; // METERS PER SECOND
         CTCTrain train = schedule.dispatchTrain(trainID, suggestedSpeed, destination);
