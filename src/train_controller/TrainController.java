@@ -70,7 +70,7 @@ public class TrainController {
             return;
         }
         
-        getSA();
+        getSA(); //use until regular updates from track Module are implemented
 
         if(vitalCheck()){
             setPower();
@@ -152,13 +152,18 @@ public class TrainController {
 
     }
 
+    public void setTrain(float sSpeed, float auth) {
+        suggestedSpeed=sSpeed;
+        authority=auth;
+    }
 
-    public void setTrain(float suggestedSpeed, float authority) {
+    public void setTestTrain(float sSpeed, float auth) {
         // get set train information from train mode
-        attachedTrain.setSpeed(suggestedSpeed);
-        attachedTrain.setAuthority(authority);
+        attachedTrain.setSpeed(sSpeed);
+        attachedTrain.setAuthority(auth);
         
     }
+
 
     public void getSA(){
         if(attachedTrain.getAuthority().getValueSafe().isEmpty()){
