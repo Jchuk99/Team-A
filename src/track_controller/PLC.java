@@ -42,7 +42,18 @@ public class PLC {
 
     public void runPLCLogicSwitch(LinkedList<Block> blocks, Set<CTCTrain> trains, ArrayList<Block> closedBlocks){
         parseAndCompile();
-        //toggle switches
+        /*char[] blockBits = new char[blocks.size()];
+        char[] authorityBits = new char[authority.size()];
+        int count = 0;
+        for(Block block : blocks){
+            blockBits[count++] = block.getOccupied();
+        }
+
+        for(CTCTrain train : trains){
+
+        }
+        
+        toggle switches*/
     }
 
     public void runPLCLogicCrossing(LinkedList<Block> blocks, Set<CTCTrain> trains, ArrayList<Block> closedBlocks){

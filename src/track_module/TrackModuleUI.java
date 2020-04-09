@@ -74,12 +74,12 @@ public class TrackModuleUI extends Stage {
         topBox.setStyle("-fx-background-color: -fx-title-color;");
         topBox.setEffect(new DropShadow(20, new Color(0,0,0,1)));
         topBox.setPadding(new Insets(10));
-        topBox.setViewOrder(0);
+        //topBox.setViewOrder(0);
 
         graphPane = new Pane();
         graphPane.setStyle("-fx-background-color: -fx-focus-color;");
         VBox.setVgrow(graphPane, Priority.ALWAYS);
-        graphPane.setViewOrder(1);
+        //graphPane.setViewOrder(1);
 
         VBox fullScreen = new VBox(topBox, graphPane);
         Scene scene = new Scene(fullScreen, WIDTH, HEIGHT);
