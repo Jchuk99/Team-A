@@ -35,9 +35,9 @@ public class Train {
     private float authority = 0;
     private float targetPower = 0;
 
-    private int passengerCount = 10;
+    private int passengerCount = 0;
     private int crewCount = 2;
-    private float currentWeight = (float) 52.2;
+    private float currentWeight = (float) 40.9;
 
     BooleanProperty leftDoorWorking = new SimpleBooleanProperty(true);
     BooleanProperty rightDoorWorking = new SimpleBooleanProperty(true);
@@ -63,11 +63,17 @@ public class Train {
     // in kN
     public final static float maxForce = (float) 480;
     public final static float serviceBrakeForce = (float) 61.7;
-    public final static float emergencyBrakeForce = (float) 140.4;
+    public final static float emergencyBrakeForce = (float) 486;
     // in m/s^2
     public final static float gravity = (float) 9.81;
     // in m/s
     public final static float maxSpeed = (float) 19.44;
+
+    // https://en.wikipedia.org/wiki/Rolling_resistance
+    public final static float coeOfRollingResistance = (float) 0.0020;
+
+    // https://en.wikipedia.org/wiki/Adhesion_railway
+    public final static float coeOfFriction = (float) 0.35;
 
     public final static int maxPassenger = 222;
 
@@ -106,12 +112,6 @@ public class Train {
 
         // TODO: beacon
 
-        // update data
-        currentWeight = emptyWeight + (passengerCount + crewCount) * passengerWeight;
-        currentGrade = currentBlock.getGrade();
-        // in seconds
-        float timeStep = ((float)Module.TIMESTEP) / 1000;
-
         // pick up and drop passengers at station
         if (!stoppedAtStation && currentBlock instanceof Station && currentSpeed == 0) {
             stoppedAtStation = true;
@@ -121,6 +121,15 @@ public class Train {
             passengerCount += boardingPassengers;
             ((Station) currentBlock).addTicketsSold(passengerCount);
         }
+
+        // update data
+        currentWeight = emptyWeight + (passengerCount + crewCount) * passengerWeight;
+        currentGrade = currentBlock.getGrade();
+        // in kN
+        float normalForce = currentWeight * gravity * (1 - Math.abs(currentGrade / 100));
+        float maxGripForce = normalForce * coeOfFriction;
+        // in seconds
+        float timeStep = ((float)Module.TIMESTEP) / 1000;
 
         // power (kW)
         currentPower = targetPower;
@@ -159,10 +168,22 @@ public class Train {
             }
         }
 
+        // rolling resistance (kN)
+        float rollingResistance = normalForce * coeOfRollingResistance;
+        // sum forces (kN)
+        // rollingResistance is always pointing backward because the train only goes forward
+        float totalForce = force - brakingForce - rollingResistance;
+        // limit to maximum gripping force
+        if (totalForce > maxGripForce) {
+            totalForce = maxGripForce;
+        } else if (totalForce < -maxGripForce) {
+            totalForce = -maxGripForce;
+        }
+
         // acceleration (m / s^2)
         prevAcceleration = currentAcceleration;
         // F = ma, a = F/m
-        currentAcceleration = (force - brakingForce) / currentWeight - (gravity * (currentGrade / 100));
+        currentAcceleration = totalForce / currentWeight - (gravity * (currentGrade / 100));
 
         // velocity (m / s)
         prevSpeed = currentSpeed;
@@ -187,10 +208,14 @@ public class Train {
             System.out.println("currentPower: " + currentPower + " kW");
             System.out.println("force: " + force + " kN");
             System.out.println("brakingForce: " + brakingForce + " kN");
+            System.out.println("rollingResistance: " + rollingResistance + " kN");
+            System.out.println("totalForce: " + totalForce + " kN");
+            System.out.println("maxGripForce: " + maxGripForce + " kN");
             System.out.println("currentAcceleration: " + currentAcceleration + " m/s^2");
             System.out.println("acceleration due to engine: " + (force / currentWeight) + " m/s^2");
             System.out.println("acceleration due to brakes: " + (brakingForce / currentWeight) + " m/s^2");
-            System.out.println("acceleration due to grade: " + ((gravity * (-currentGrade / 100))) + " m/s^2");
+            System.out.println("acceleration due to grade: -" + ((gravity * (currentGrade / 100))) + " m/s^2");
+            System.out.println("acceleration due to resistance: -" + (rollingResistance / currentWeight) + " m/s^2");
             System.out.println("currentSpeed: " + currentSpeed + " m/s");
             System.out.println("currentPosition: " + currentPosition + " m");
             System.out.println("currentBlockLength: " + currentBlock.getLength() + " m");
