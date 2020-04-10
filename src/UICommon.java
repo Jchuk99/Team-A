@@ -57,16 +57,14 @@ public class UICommon{
     }
     public static String metersToMiles(Float f) {
         f = f * (float)0.000621371;
-        f = (float)(Math.round(f * 100.0) / 100.0);
-        return Float.toString(f);
+        return Float.toString(roundToTwoDecimal(f));
     }
     public static String metersToMiles(Integer i) {
         return metersToMiles((float)i);
     }
     public static String metersToFeet(Float f) {
         f = f * (float)3.28083888;
-        f = (float)(Math.round(f * 10.0) / 10.0);
-        return Float.toString(f);
+        return Float.toString(roundToOneDecimal(f));
     }
     public static String metersToFeet(Integer i) {
         return metersToFeet((float)i);
@@ -74,26 +72,29 @@ public class UICommon{
     public static String metersToYards(Float f) {
         f = f * (float)3.28083888;
         f = (float)(f / 3.0);
-        f = (float)(Math.round(f * 10.0) / 10.0);
-        return Float.toString(f);
+        return Float.toString(roundToOneDecimal(f));
     }
     public static String metersToYards(Integer i) {
         return metersToYards((float)i);
     }
     public static String metersPerSecondToMilesPerHour(float f) {
         f = f * (float)2.23693629;
-        f = (float)(Math.round(f * 10.0) / 10.0);
-        return Float.toString(f);
+        return Float.toString(roundToOneDecimal(f));
     }
     public static String metersPerSecondToMilesPerHour(int i) {
         return metersPerSecondToMilesPerHour((float)i);
     }
     public static String metersPerSecondSquaredToFeetPerSecondSquared(float f) {
         f = f * (float)3.2808399;
-        f = (float)(Math.round(f * 100.0) / 100.0);
-        return Float.toString(f);
+        return Float.toString(roundToTwoDecimal(f));
     }
     public static String metersPerSecondSquaredToFeetPerSecondSquared(int i) {
         return metersPerSecondSquaredToFeetPerSecondSquared((float)i);
+    }
+    public static float roundToOneDecimal(float f) {
+        return (float)(Math.round(f * 10.0) / 10.0);
+    }
+    public static float roundToTwoDecimal(float f) {
+        return (float)(Math.round(f * 100.0) / 100.0);
     }
 }

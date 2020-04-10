@@ -137,7 +137,7 @@ public class Train {
         float force = 0;
         float brakingForce = 0;
         if (currentSpeed == 0) {
-            force = maxForce;
+            if (currentPower > 0) force = maxForce;
         } else {
             force = currentPower / currentSpeed;
         }
@@ -209,7 +209,8 @@ public class Train {
         }
         // check if the end of the train leaves previous block
         if (!insideOneBlock) {
-            if (currentPosition - length > 0) prevBlock.setTrain(null);
+            //if (currentPosition - length > 0) prevBlock.setTrain(null);
+            prevBlock.setTrain(null);
             insideOneBlock = true;
         }
     }
@@ -353,7 +354,7 @@ public class Train {
         suggestedSpeedString.setValue(UICommon.metersPerSecondToMilesPerHour(suggestedSpeed) + " mph");
         currentSpeedString.setValue(UICommon.metersPerSecondToMilesPerHour(currentSpeed) + " mph");
         authorityString.setValue(authority + " block");
-        currentPowerString.setValue(currentPower + " kW");
+        currentPowerString.setValue(UICommon.roundToOneDecimal(currentPower) + " kW");
         passengerCountString.setValue(passengerCount + "");
         currentWeightString.setValue(currentWeight + " tons");
         currentAccelerationString.setValue(UICommon.metersPerSecondSquaredToFeetPerSecondSquared(currentAcceleration) + " ft/s^2");
