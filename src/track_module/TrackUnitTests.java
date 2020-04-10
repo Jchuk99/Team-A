@@ -1,5 +1,5 @@
 package src.track_module;
-/*
+
 import static org.junit.Assert.fail;
 
 import java.util.HashSet;
@@ -294,6 +294,3 @@ public class TrackUnitTests {
         }
     }
 }
-    Currently not working for me
-        -Jason
-*/

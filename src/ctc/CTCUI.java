@@ -22,60 +22,61 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import src.UICommon;
 import src.track_module.Block;
 import src.track_module.BlockConstructor.Station;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
 
-
+//TODO: IMPORT A STYLE GUIDE!!!
 
 public class CTCUI extends Stage {
-    static ObservableList<Person> trainData = FXCollections.observableArrayList();
-    Pane graphPane;
     public static CTCModule ctcOffice;
     static int trainID = 0;
 
+    public static void setCTCModule(CTCModule ctcOffice0){
+        ctcOffice = ctcOffice0;
+    }
+
     public CTCUI() {
-        GUIMap trackMap = new GUIMap();
         setTitle("CTC UI");
 
-        int length = 900;
-        int height = 800;
+        int length = 1200;
+        int height = 1000; 
 
         /****** top half ******/
-
-        Text timeText = new Text("Time");
-        Label timeLabel = new Label("11:00:23 am");
-        timeLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
-
-        HBox timeBox = new HBox(10, timeText, timeLabel);
+        HBox timeBox = createTimeBox();
         timeBox.setAlignment(Pos.CENTER);
 
+        //TODO: rework this whole entire part
         Text ticketText = new Text("Ticket Sales");
+        //TODO: replace ticketLabel with actual value
         Label ticketLabel = new Label("205/h");
         ticketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
 
         HBox ticketBox = new HBox(10, ticketText, ticketLabel);
-        timeBox.setAlignment(Pos.CENTER);
+        ticketBox.setAlignment(Pos.CENTER);
 
         Text totalTicketText = new Text("Total Ticket Sales");
+        //TODO: replace ticketLabel with actual value
         Label totalTicketLabel = new Label("1000");
         totalTicketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
 
         HBox totalTicketBox = new HBox(10, totalTicketText, totalTicketLabel);
-        timeBox.setAlignment(Pos.CENTER);
+        totalTicketBox.setAlignment(Pos.CENTER);
 
-        Button manualMode = new Button();
-        manualMode.setText("Manual Input/Schedule");
-        manualMode.setPrefWidth(300);
-        manualMode.setPrefHeight(50);
+        Button manualMode = UICommon.createButton("Manual Input/Schedule", 300, 50);
+        manualMode.setAlignment(Pos.CENTER);
 
+         //TODO: style
         manualMode.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
                                "-fx-font-size:20;" + "-fx-text-fill: black;");
 
@@ -86,34 +87,30 @@ public class CTCUI extends Stage {
             }
         });
 
-        HBox topHalf1 = new HBox(10, ticketBox, createSpacer(), totalTicketBox, createSpacer(), manualMode,
-                createSpacer(), timeBox);
+        HBox topHalf1 = new HBox();
+        HBox.setHgrow(timeBox, Priority.ALWAYS);
+        HBox.setHgrow(ticketBox, Priority.ALWAYS);
+        HBox.setHgrow(totalTicketBox, Priority.ALWAYS);
+        HBox.setHgrow(manualMode, Priority.ALWAYS);
+        topHalf1.getChildren().addAll(ticketBox, totalTicketBox, manualMode, timeBox);
 
         TableView<CTCTrain> trainTable = createTrainTable();
+
         VBox topHalf = new VBox(10, topHalf1, trainTable);
         /****** bottom half ******/
 
-
-
-        graphPane = new Pane();
-        graphPane.setStyle("-fx-background-color: -fx-focus-color;");
-        VBox.setVgrow(graphPane, Priority.ALWAYS);
-        graphPane.setViewOrder(1);
-        trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
-
+        Pane mapPane = createMapPane();
+        
+        VBox mapStatus = createMapStatus(length);
+        HBox bottomHalf = new HBox(10, mapStatus, mapPane);
         
         topHalf.setPrefHeight(height/2);
-        VBox fullScreen = new VBox(10, topHalf, graphPane);
+        VBox fullScreen = new VBox(10, topHalf, bottomHalf);
 
-        
         /****full screen *****/
         fullScreen.setPadding(new Insets(10));
         setScene(new Scene(fullScreen, length, height));
 
-    }
-    
-    public static void setCTCModule(CTCModule ctcOffice0){
-        ctcOffice = ctcOffice0;
     }
 
     public static void getManualDisplay(){
@@ -121,8 +118,8 @@ public class CTCUI extends Stage {
         Stage popupwindow = new Stage();   
         popupwindow.setTitle("CTC UI");  
 
-        int length = 900;
-        int height = 800; 
+        int length = 1200;
+        int height = 1000; 
   
         /******top half******/
 
@@ -158,14 +155,7 @@ public class CTCUI extends Stage {
         VBox sliderBox = new VBox(10, speedSlider, speed);
         sliderBox.setAlignment(Pos.CENTER);
 
-        Text timeText = new Text("Time");
-        //TODO: set time to track global time
-        Label timeLabel = new Label("11:00:23 am");
-        timeLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
-
-        HBox timeBox = new HBox(10, timeText, timeLabel);
-        timeBox.setAlignment(Pos.CENTER);
-            
+        HBox timeBox = createTimeBox();
         Button dispatch = createDispatchButton(trainTable, blocksTable, stationTable, speedSlider);
 
         VBox box3 = new VBox(10, timeBox, createSpacer(), sliderBox, createSpacer(),  dispatch);
@@ -193,6 +183,49 @@ public class CTCUI extends Stage {
         popupwindow.setScene(new Scene(fullScreen, length, height));
         popupwindow.show();
     }
+    private static VBox createMapStatus(int length){
+        
+        Label mapTitle = UICommon.createLabel("Map Key");
+        mapTitle.setStyle("-fx-font-weight: bold;");
+        mapTitle.setAlignment(Pos.CENTER);
+        HBox titleBox = new HBox(10,  UICommon.createHSpacer(), mapTitle, UICommon.createHSpacer());
+
+        Circle circleGreen = UICommon.createCircle(10, Color.GREEN);
+        Label emptyLabel = UICommon.createLabel("Empty Block");
+        HBox emptyBox = new HBox(10, circleGreen, emptyLabel);
+
+        Circle circleBlue = UICommon.createCircle(10, Color.BLUE);
+        Label occupiedLabel = UICommon.createLabel("Occupied Block");
+        HBox occupiedBox = new HBox(10, circleBlue, occupiedLabel);
+
+        Circle circleRed = UICommon.createCircle(10, Color.RED);
+        Label brokenLabel = UICommon.createLabel("Broken Block");
+        HBox brokenBox = new HBox(10, circleRed, brokenLabel);
+
+        Circle circleGray = UICommon.createCircle(10, Color.GRAY);
+        Label closedLabel = UICommon.createLabel("Closed Block");
+        HBox closedBox = new HBox(10, circleGray, closedLabel);
+        
+        VBox statusBox = new VBox(10,titleBox , emptyBox, occupiedBox, brokenBox, closedBox);
+        statusBox.setPrefWidth(length/6);
+        statusBox.setStyle("-fx-padding: 10;" + "-fx-border-style: solid inside;"
+        + "-fx-border-width: 3;" + "-fx-border-insets: 5;"
+        + "-fx-border-radius: 5;" + "-fx-border-color: black;");
+        return statusBox;
+    
+    }
+
+    private static Pane createMapPane(){
+        GUIMap trackMap = new GUIMap();
+        Pane graphPane = new Pane();
+
+        //TODO: ask eric about setting this stuff
+        //graphPane.setStyle("-fx-background-color: -fx-focus-color;");
+        VBox.setVgrow(graphPane, Priority.ALWAYS);
+        graphPane.setViewOrder(1);
+        trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
+        return graphPane;
+    }
     
     private static TableView<CTCTrain> createTrainTable(){
 
@@ -212,7 +245,6 @@ public class CTCUI extends Stage {
         TableColumn<CTCTrain, String> speed = new TableColumn<>("Suggested Speed(mph)");
         speed.setCellValueFactory(cellData -> cellData.getValue().getSuggestedSpeedProperty());
 
-
         trainTable.getColumns().add(trains);
         trainTable.getColumns().add(currPos);
         trainTable.getColumns().add(destination);
@@ -226,12 +258,8 @@ public class CTCUI extends Stage {
 
     private static TableView<CTCTrain> createStatusTable(int length){
 
-        //TODO: This is going to be listening to trains. The trainBox will need this.
-        //whichever train is currently clicked @ the moment.
-        // if train does not exist on map, show blank, else show all it's information in specified columns
         TableView<CTCTrain> statusTable = new TableView<CTCTrain>();
-        statusTable.setPlaceholder(new Label("No information available"));
-        //statusTable.setPlaceholder(new Label("No trains selected"));
+        statusTable.setPlaceholder(new Label("Train does not exist."));
         statusTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<CTCTrain, String> trainIDStatus = new TableColumn<CTCTrain, String>("Train");
@@ -258,6 +286,9 @@ public class CTCUI extends Stage {
     }
     
     private static Pair<VBox, TableView<Person>> createTrainBox(int length, int height, TableView<CTCTrain> statusTable){
+        ObservableList<Person> trainData = FXCollections.observableArrayList();
+        // get size of trains in CTC and use that to create initial presentation of trains
+        
         statusTable.setEditable(true);
         TableView<Person> trainTable = new TableView<Person>();
         trainTable.setPlaceholder(new Label("No trains available"));
@@ -271,7 +302,6 @@ public class CTCUI extends Stage {
         trainTable.setPrefWidth(length/6);
 
 
-        
         trainTable.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
             ObservableList<CTCTrain> trainStatus = FXCollections.observableArrayList();
             statusTable.setItems(trainStatus);
@@ -284,7 +314,6 @@ public class CTCUI extends Stage {
         
         });
     
-        
         Button trainInput = new Button();
         trainInput.setText("Create new train");
 
@@ -302,9 +331,9 @@ public class CTCUI extends Stage {
 
         VBox trainBox = new VBox(10, trainTable, buttonGrouper);
         return new Pair<VBox, TableView<Person>>(trainBox, trainTable);
-
     }
 
+    //TODO: add dynamic values for schedule
     private static TableView<SchedulerUI> createScheduleTable(){
 
         TableView<SchedulerUI> scheduleTable = new TableView<SchedulerUI>();
@@ -360,7 +389,6 @@ public class CTCUI extends Stage {
 
         blockTable.setItems(ctcOffice.getObservableBlockList());
        
-       
         stationTable.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
             if (newItem != null) {
                 blockTable.getSelectionModel().clearSelection();
@@ -377,23 +405,18 @@ public class CTCUI extends Stage {
     }
 
     private static Button createDispatchButton(TableView<Person> trainTable, TableView<Block> blocksTable,TableView<Station> stationTable  ,Slider speedSlider){
-        Button dispatch = new Button();
-        dispatch.setText("DISPATCH");
-        dispatch.setPrefWidth(400);
-        dispatch.setPrefHeight(100);
-        //dispatch.setMaxSize(800, 800);
+        Button dispatch = UICommon.createButton("DISPATCH", 400, 100);
         dispatch.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
                                 "-fx-background-color: green;" + "-fx-font-size:30;" + "-fx-text-fill: white;");
 
         DropShadow shadow = new DropShadow();
-        //Adding the shadow when the mouse cursor is on
         dispatch.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
             @Override 
             public void handle(MouseEvent e) {
                 dispatch.setEffect(shadow);
             }
         });
-        //Removing the shadow when the mouse cursor is off
+
         dispatch.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
             @Override 
             public void handle(MouseEvent e) {
@@ -423,6 +446,7 @@ public class CTCUI extends Stage {
 
             return dispatch;
     }
+
 
     private static Slider createSpeedSlider(Label speed){
         Slider speedSlider = new Slider();
@@ -469,9 +493,20 @@ public class CTCUI extends Stage {
         return scheduleButton;
     }
 
+    private static HBox createTimeBox(){
+
+        Text timeText = new Text("Time");
+        Label timeLabel = new Label("");
+        timeLabel.textProperty().bind(ctcOffice.timeString);
+        timeLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+
+        HBox timeBox = new HBox(10, timeText, timeLabel);
+        timeBox.setAlignment(Pos.CENTER);
+        return timeBox;
+    }
+
     private static Node createSpacer() {
         final Region spacer = new Region();
-        // Make it always grow or shrink according to the available space
         VBox.setVgrow(spacer, Priority.ALWAYS);
         return spacer;
     }
