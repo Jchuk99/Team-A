@@ -85,7 +85,12 @@ public abstract class BaseMap {
             
             //ADDED listener here to make occupancy dynamically update in CTC
             block.occupiedProperty().addListener((obs, oldText, newText) -> {
-                this.circleMap.get(block).setFill(Color.BLUE);
+                if (block.getOccupied()){
+                    this.circleMap.get(block).setFill(Color.BLUE);
+                }
+                else {
+                    this.circleMap.get(block).setFill(Color.GREEN);
+                }
             });
             block.functionalProperty().addListener((obs, oldText, newText) -> {
                 this.circleMap.get(block).setFill(Color.RED);
