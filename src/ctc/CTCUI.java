@@ -154,6 +154,7 @@ public class CTCUI extends Stage {
     
         VBox sliderBox = new VBox(10, speedSlider, speed);
         sliderBox.setAlignment(Pos.CENTER);
+        sliderBox.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + "-fx-font-size:12;" + "-fx-text-fill: black;" + "-fx-padding: 5;");
 
         HBox timeBox = createTimeBox();
         Button dispatch = createDispatchButton(trainTable, blocksTable, stationTable, speedSlider);

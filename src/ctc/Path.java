@@ -83,7 +83,7 @@ public class Path {
             Block b = q.remove();
             for (Edge e : b.getEdges()) {
                 Block edgeBlock = e.getBlock();
-                if (!marked.get(edgeBlock.getUUID()) && !edgeBlock.getUUID().equals(prevBlock)) {
+                if (!marked.get(edgeBlock.getUUID()) && !edgeBlock.getUUID().equals(prevBlock) && e.getConnected()) {
                     edgeTo.put(edgeBlock.getUUID(), b.getUUID());
                     distTo.put(edgeBlock.getUUID(), distTo.get(b.getUUID()) + 1);
                     marked.put(edgeBlock.getUUID(), true);
@@ -99,10 +99,12 @@ public class Path {
 			curr = edgeTo.get(curr);
 		}
         course.add(0, curr);
+        /*
         for (UUID blockID: course){
             System.out.println("Block Number: " + map.getBlock(blockID).getBlockNumber());
             System.out.println("Block ID: " + blockID);
         }
+        */
 		return course;
     }
     

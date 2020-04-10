@@ -72,6 +72,12 @@ public class CTCModule extends Module{
     public void updateTrainPositions(){
         //TODO: should I use occupied blocks or should I feed the block into map?
         List<UUID> occupiedBlocks = map.getOccupiedBlocks();
+       
+        System.out.println("Ocuppied Blocks :");
+        for (UUID id: occupiedBlocks){
+            System.out.print(map.getBlock(id).getBlockNumber());
+        }
+
         List<UUID> closedBlocks = map.getClosedBlocks();
 
         // Need method to get all trains.  
