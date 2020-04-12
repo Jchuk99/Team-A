@@ -25,7 +25,7 @@ import src.track_module.BlockConstructor.Shift;
 import src.track_module.BlockConstructor.Yard;
 import src.BaseMap;
 
-public class TrackControllerMap extends BaseMap {
+/*public class TrackControllerMap extends BaseMap {
     
     @Override
     public void buildMap(Map<UUID, Block> blocks, Pane pane) {
@@ -256,4 +256,4 @@ public class TrackControllerMap extends BaseMap {
             this.circleMap.get(block).setFill(Color.GREEN);
         }
     }
-}
+}*/
