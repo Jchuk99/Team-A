@@ -4,11 +4,12 @@ import java.util.*;
 import src.Module;
 import src.ctc.*;
 import src.track_module.*;
+import src.track_module.BlockConstructor.Shift;
 
 public class TrackControllerModule extends Module {
 	List<CTCTrain> trains;
-	//HashMap<UUID, position> switchPositions;
-	//ArrayList<Block> closedBlocks;
+	List<Shift> switchPositions;
+	List<UUID> closedBlocks;
 	ArrayList<WaysideController> waysideControllers;
 
 	public void main() {
@@ -35,7 +36,7 @@ public class TrackControllerModule extends Module {
 	public void update(){
 		trains = this.ctcModule.getTrains();
 		/*switchPositions = this.ctcModule.getSwitchPositions();
-		closedBlocks = this.ctcModule.getClosedBlocks();
+		closedBlocksInJuris = this.ctcModule.getClosedBlocks();
 		for(WaysideController waysideController : waysideControllers){
 			Set<CTCTrain> trainsInJuris = getTrainsInJuris(waysideController.getBlocks());
 			HashMap<UUID, position> switchesInJuris = getSwitchesInJuris(waysideController.getBlocks());
@@ -48,14 +49,10 @@ public class TrackControllerModule extends Module {
 		*/
 	}
 	
-	public Set<CTCTrain> getTrainsInJuris(LinkedList<Block> blocks){
-		//I know this is O(n^2) but whatever
-		Set<CTCTrain> trainsInJuris = new HashSet<CTCTrain>();
+	public List<CTCTrain> getTrainsInJuris(LinkedList<Block> blocks){
+		List<CTCTrain> trainsInJuris = new ArrayList<CTCTrain>();
 		for(CTCTrain train : trains){
 			for(Block block : blocks){
-				/*if(train.getCurrPos() == block.getBlockNumber()){
-					trainsInJuris.add(train);
-				}*/
 				if(train.getCurrPos() == block.getUUID()){
 					trainsInJuris.add(train);
 				}
@@ -64,23 +61,36 @@ public class TrackControllerModule extends Module {
 		return trainsInJuris;
 	}
 
-	/*public HashMap<UUID, position> getSwitchesInJuris(LinkedList<Block> blocks){
-		HashMap<UUID, position> switchesInJuris = new HashMap<UUID, position>();	
-		for(Block block : blocks){
-			if(switchesInJuris.containsKey(block.getBlockNumber)){
-				switchesInJuris.put(blockNumber, switchesInJuris.get(block.getBlockNumber));
+	public List<Block> getSwitchesInJuris(LinkedList<Block> blocks){
+		List<Block> switchesInJuris = new ArrayList<Block>();
+		for(Shift switchBlock : switchPositions){
+			for(Block block1 : switchBlock.getSwitchPositions()){
+				for(Block block2 : blocks){
+					if(block1.getUUID() == block2.getUUID()){
+						if(switchBlock.getPosition().getBlockNumber() == block2.getBlockNumber()){
+							switchesInJuris.add(switchBlock);
+						}
+						/*else{
+							switchesInJuris.put(blocks[k], 0);
+						}*/
+					}
+				}
 			}
 		}
 		return switchesInJuris;
 	}
 
-	public ArrayList<Block> getClosedBlocksInJuris(LinkedList<Block> blocks){
-		ArrayList<Block> closedBlocksInJuris = new ArrayList<Block>();
-		for(Block block : blocks){
-			
+	public List<UUID> getClosedBlocksInJuris(LinkedList<Block> blocks){
+		List<UUID> closedBlocksInJuris = new ArrayList<UUID>();
+		for(UUID uuid : closedBlocksInJuris){
+			for(Block block : blocks){
+				if(uuid == block.getUUID()){
+					closedBlocksInJuris.add(uuid);
+				}
+			}
 		}
-		return trainsInJuris;
-	}*/
+		return closedBlocksInJuris;
+	}
 
 
 
