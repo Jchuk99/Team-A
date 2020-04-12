@@ -3,13 +3,6 @@
     "configurations": [
         {
             "type": "java",
-            "name": "CodeLens (Launch) - TrackControllerMain",
-            "request": "launch",
-            "mainClass": "src.track_controller.TrackControllerMain",
-            "projectName": "Team-A_53e449ba"
-        },
-        {
-            "type": "java",
             "name": "CodeLens (Launch) - TestRunner",
             "request": "launch",
             "mainClass": "src.TestRunner",
@@ -20,10 +13,11 @@
             "name": "CodeLens (Launch) - Main",
             "request": "launch",
             "mainClass": "src.Main",
+            "vmArgs": "--module-path \"${workspaceFolder}/deps/javafx-sdk-13.0.2/lib\" --add-modules javafx.controls,javafx.fxml",
             "env": {
                 "cssStyleSheetPath": "${workspaceFolder}/stylesheet.css",
                 "globalTemperature": "47",
-                "globalTime": "10:30 AM"
+                "globalTime": "10:30 AM",
             }
         }
     ]
