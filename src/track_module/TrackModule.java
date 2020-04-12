@@ -14,8 +14,7 @@ import src.track_controller.WaysideController;
 import src.track_module.BlockConstructor.*;
 import src.train_module.Train;
 import src.ctc.CTCTrain;
-import src.ctc.Path;
-import src.ctc.Route;
+
 
 public class TrackModule extends Module {
     HashMap<UUID, Block> blocks;

@@ -5,15 +5,42 @@ import src.track_module.Block;
 import src.track_module.BlockConstructor.*;
 import src.track_module.Edge;
 import src.train_controller.TrainController;
+import src.UICommon;
+import java.util.Random;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.BooleanProperty;
-import java.util.Random;
 
 public class Train {
     
     public Boolean removeFlag = false;
+
+    /****** constants ******/
+    // in tons
+    public final static float emptyWeight = (float) 40.9;
+    public final static float passengerWeight = (float) 0.07;
+    // in meter
+    public final static float length = (float) 32.2;
+    // in kW
+    public final static float maxPower = (float) 480;
+    // in kN
+    public final static float maxForce = (float) 480;
+    public final static float serviceBrakeForce = (float) 61.7;
+    public final static float emergencyBrakeForce = (float) 486;
+    // in m/s^2
+    public final static float gravity = (float) 9.81;
+    // in m/s
+    public final static float maxSpeed = (float) 19.44;
+
+    // https://en.wikipedia.org/wiki/Rolling_resistance
+    public final static float coeOfRollingResistance = (float) 0.0020;
+
+    // https://en.wikipedia.org/wiki/Adhesion_railway
+    public final static float coeOfFriction = (float) 0.35;
+
+    public final static int maxPassenger = 222;
+    /****** constants ******/
 
     private int UUID;
     private TrainController controller;
@@ -34,41 +61,25 @@ public class Train {
     private float authority = 0;
     private float targetPower = 0;
 
-    private int passengerCount = 10;
+    private int passengerCount = 0;
     private int crewCount = 2;
-    private float currentWeight = (float) 52.2;
+    private float currentWeight = (float) 40.9;
 
-    BooleanProperty leftDoorWorking = new SimpleBooleanProperty(true);
-    BooleanProperty rightDoorWorking = new SimpleBooleanProperty(true);
-    BooleanProperty lightWorking = new SimpleBooleanProperty(true);
-    BooleanProperty serviceBrakeWorking = new SimpleBooleanProperty(true);
-    BooleanProperty emergencyBrakeWorking = new SimpleBooleanProperty(true);
-    BooleanProperty engineWorking = new SimpleBooleanProperty(true);
+    private BooleanProperty leftDoorWorking = new SimpleBooleanProperty(true);
+    private BooleanProperty rightDoorWorking = new SimpleBooleanProperty(true);
+    private BooleanProperty lightWorking = new SimpleBooleanProperty(true);
+    private BooleanProperty serviceBrakeWorking = new SimpleBooleanProperty(true);
+    private BooleanProperty emergencyBrakeWorking = new SimpleBooleanProperty(true);
+    private  BooleanProperty engineWorking = new SimpleBooleanProperty(true);
 
     // true means on
-    BooleanProperty leftDoorState = new SimpleBooleanProperty(false);
-    BooleanProperty rightDoorState = new SimpleBooleanProperty(false);
-    BooleanProperty lightState = new SimpleBooleanProperty(false);
-    BooleanProperty serviceBrakeState = new SimpleBooleanProperty(false);
-    BooleanProperty emergencyBrakeState = new SimpleBooleanProperty(false);
-
-    // in tons
-    public final static float emptyWeight = (float) 40.9;
-    public final static float passengerWeight = (float) 0.07;
-    // in meter
-    public final static float length = (float) 32.2;
-    // in kW
-    public final static float maxPower = (float) 480;
-    // in kN
-    public final static float maxForce = (float) 480;
-    public final static float serviceBrakeForce = (float) 61.7;
-    public final static float emergencyBrakeForce = (float) 140.4;
-    // in m/s^2
-    public final static float gravity = (float) 9.81;
-    // in m/s
-    public final static float maxSpeed = (float) 19.44;
-
-    public final static int maxPassenger = 222;
+    private BooleanProperty leftDoorState = new SimpleBooleanProperty(false);
+    private BooleanProperty rightDoorState = new SimpleBooleanProperty(false);
+    private BooleanProperty lightState = new SimpleBooleanProperty(false);
+    private BooleanProperty serviceBrakeState = new SimpleBooleanProperty(false);
+    private BooleanProperty emergencyBrakeState = new SimpleBooleanProperty(false);
+    
+    private StringProperty beacon = new SimpleStringProperty("");
 
     private StringProperty suggestedSpeedString = new SimpleStringProperty("");
     private StringProperty currentSpeedString = new SimpleStringProperty("");
@@ -94,7 +105,7 @@ public class Train {
     }
 
     public void update() {
-        if (currentBlock == null) return;
+        if (currentBlock == null || removeFlag) return;
 
         // spec: max speed 70 km/h = 19.44 m/s
         // service brake (2/3 load / 51.43 tons) 1.2 m/s^2, 61.7kN
@@ -105,10 +116,6 @@ public class Train {
 
         // TODO: beacon
 
-        // update data
-        currentWeight = emptyWeight + (passengerCount + crewCount) * passengerWeight;
-        currentGrade = currentBlock.getGrade();
-
         // pick up and drop passengers at station
         if (!stoppedAtStation && currentBlock instanceof Station && currentSpeed == 0) {
             stoppedAtStation = true;
@@ -118,6 +125,21 @@ public class Train {
             passengerCount += boardingPassengers;
             ((Station) currentBlock).addTicketsSold(passengerCount);
         }
+
+        // update data
+        currentWeight = emptyWeight + (passengerCount + crewCount) * passengerWeight;
+        currentGrade = currentBlock.getGrade();
+
+        // in radian
+        // for seperating gravity direction
+        float angle = (float)Math.atan(currentGrade / 100);
+        float cosAngle = (float)Math.cos(angle);
+        float sinAngle = (float)Math.sin(angle);
+        // in kN
+        float normalForce = currentWeight * gravity * cosAngle;
+        float maxGripForce = normalForce * coeOfFriction;
+        // in seconds
+        float timeStep = ((float)Module.TIMESTEP) / 1000;
 
         // power (kW)
         currentPower = targetPower;
@@ -134,7 +156,7 @@ public class Train {
         float force = 0;
         float brakingForce = 0;
         if (currentSpeed == 0) {
-            force = maxForce;
+            if (currentPower > 0) force = maxForce;
         } else {
             force = currentPower / currentSpeed;
         }
@@ -156,14 +178,26 @@ public class Train {
             }
         }
 
+        // rolling resistance (kN)
+        float rollingResistance = normalForce * coeOfRollingResistance;
+        // sum forces (kN)
+        // rollingResistance is always pointing backward because the train only goes forward
+        float totalForce = force - brakingForce - rollingResistance;
+        // limit to maximum gripping force
+        if (totalForce > maxGripForce) {
+            totalForce = maxGripForce;
+        } else if (totalForce < -maxGripForce) {
+            totalForce = -maxGripForce;
+        }
+
         // acceleration (m / s^2)
         prevAcceleration = currentAcceleration;
         // F = ma, a = F/m
-        currentAcceleration = (force - brakingForce) / currentWeight - (gravity * currentGrade);
+        currentAcceleration = totalForce / currentWeight - (gravity * sinAngle);
 
         // velocity (m / s)
         prevSpeed = currentSpeed;
-        currentSpeed += (Module.TIMESTEP / 1000 / 2) * (currentAcceleration + prevAcceleration);
+        currentSpeed += (timeStep / 2) * (currentAcceleration + prevAcceleration);
         // limit speed
         if (currentSpeed > 19.44) {
             currentSpeed = maxSpeed;
@@ -175,7 +209,27 @@ public class Train {
         }
         
         // position (m)
-        currentPosition += (Module.TIMESTEP / 1000 / 2) * (currentSpeed + prevSpeed);
+        currentPosition += (timeStep / 2) * (currentSpeed + prevSpeed);
+
+        boolean debug = false;
+        if (debug) {
+            System.out.println("Train " + UUID + ": ");
+            System.out.println("currentGrade " + currentGrade + " %");
+            System.out.println("currentPower: " + currentPower + " kW");
+            System.out.println("force: " + force + " kN");
+            System.out.println("brakingForce: " + brakingForce + " kN");
+            System.out.println("rollingResistance: " + rollingResistance + " kN");
+            System.out.println("totalForce: " + totalForce + " kN");
+            System.out.println("maxGripForce: " + maxGripForce + " kN");
+            System.out.println("currentAcceleration: " + currentAcceleration + " m/s^2");
+            System.out.println("acceleration due to engine: " + (force / currentWeight) + " m/s^2");
+            System.out.println("acceleration due to brakes: " + (brakingForce / currentWeight) + " m/s^2");
+            System.out.println("acceleration due to grade: -" + (gravity * sinAngle) + " m/s^2");
+            System.out.println("acceleration due to resistance: -" + (rollingResistance / currentWeight) + " m/s^2");
+            System.out.println("currentSpeed: " + currentSpeed + " m/s");
+            System.out.println("currentPosition: " + currentPosition + " m");
+            System.out.println("currentBlockLength: " + currentBlock.getLength() + " m");
+        }
 
         updateBlock();
         updateString();
@@ -190,7 +244,8 @@ public class Train {
         }
         // check if the end of the train leaves previous block
         if (!insideOneBlock) {
-            if (currentPosition - length > 0) prevBlock.setTrain(null);
+            //if (currentPosition - length > 0) prevBlock.setTrain(null);
+            prevBlock.setTrain(null);
             insideOneBlock = true;
         }
     }
@@ -215,14 +270,18 @@ public class Train {
         if (nextBlock instanceof Yard) {
             currentBlock.setTrain(null);
             destroyTrain();
+            return;
         } else if (nextBlock instanceof Station) {
             // TODO: pickup beacon
+            // beacon.setValue(nextBlock.getBeacon());
+        } else {
+            beacon.setValue("");
         }
 
         prevBlock = currentBlock;
         currentBlock = nextBlock;
         currentBlock.setTrain(this);
-        // controller.nextBlock();
+        controller.nextBlock();
     }
 
 
@@ -239,8 +298,7 @@ public class Train {
     }
 
     public void destroyTrain() {
-        // TODO: destroy train controller
-        //controller.destroy();
+        controller.destroy();
         removeFlag = true;
     }
 
@@ -256,6 +314,10 @@ public class Train {
     /****** called by train controller and GUI ******/
     public void setPower(float power) {
         targetPower = power;
+    }
+
+    public void setTemperature(float temperature) {
+        temperatureInside = temperature;
     }
 
     public void setLeftDoor(boolean state) {
@@ -321,19 +383,23 @@ public class Train {
     public BooleanProperty getEngineWorking() {
         return engineWorking;
     }
+
+    public StringProperty getBeacon() {
+        return beacon;
+    }
     /****** called by train controller and GUI ******/
 
 
 
     /****** for GUI ******/
     private void updateString() {
-        suggestedSpeedString.setValue(suggestedSpeed + " mph");
-        currentSpeedString.setValue(currentSpeed + " mph");
-        authorityString.setValue(authority + " ft");
-        currentPowerString.setValue(currentPower + " kW");
+        suggestedSpeedString.setValue(UICommon.metersPerSecondToMilesPerHour(suggestedSpeed) + " mph");
+        currentSpeedString.setValue(UICommon.metersPerSecondToMilesPerHour(currentSpeed) + " mph");
+        authorityString.setValue(authority + " block");
+        currentPowerString.setValue(UICommon.roundToOneDecimal(currentPower) + " kW");
         passengerCountString.setValue(passengerCount + "");
         currentWeightString.setValue(currentWeight + " tons");
-        currentAccelerationString.setValue(currentAcceleration + " ft/s^2");
+        currentAccelerationString.setValue(UICommon.metersPerSecondSquaredToFeetPerSecondSquared(currentAcceleration) + " ft/s^2");
         currentGradeString.setValue(currentGrade + " %");
         temperatureInsideString.setValue(temperatureInside + " F");
     }

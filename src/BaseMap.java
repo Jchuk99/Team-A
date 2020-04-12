@@ -65,15 +65,36 @@ public abstract class BaseMap {
             for(Edge edge: block.getEdges()) {
                 Line line= new Line( block.getX(), block.getY(), edge.getBlock().getX(), edge.getBlock().getY());
                 if(block.getLine().equals("RED")) {
-                line.setStroke(Color.FIREBRICK);
+                    line.setStroke(Color.FIREBRICK);
                 }
                 else if(block.getLine().equals("GREEN")) {
                     line.setStroke(Color.LIMEGREEN);
+                }
+                else if(block instanceof Yard) {
+                    if(edge.getBlock().getLine().equals("RED")) {
+                        line.setStroke(Color.FIREBRICK);
+                        }
+                        else if((edge.getBlock().getLine().equals("GREEN"))) {
+                            line.setStroke(Color.LIMEGREEN);
+                        }
                 }
                 line.setStyle("-fx-stroke-width: 2");
                 line.setViewOrder(1);
                 pane.getChildren().add(line);
             }
+            
+            //ADDED listener here to make occupancy dynamically update in CTC
+            block.occupiedProperty().addListener((obs, oldText, newText) -> {
+                if (block.getOccupied()){
+                    this.circleMap.get(block).setFill(Color.BLUE);
+                }
+                else {
+                    this.circleMap.get(block).setFill(Color.GREEN);
+                }
+            });
+            block.functionalProperty().addListener((obs, oldText, newText) -> {
+                this.circleMap.get(block).setFill(Color.RED);
+            });
 
             circle.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
                 String title = block.getLine() + " Line: " + Integer.toString(block.getBlockNumber());

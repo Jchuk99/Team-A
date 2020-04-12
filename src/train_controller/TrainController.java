@@ -70,7 +70,7 @@ public class TrainController {
             return;
         }
         
-        getSA();
+        //getSA(); //use until regular updates from track Module are implemented
 
         if(vitalCheck()){
             setPower();
@@ -129,8 +129,13 @@ public class TrainController {
         //biggest grade=5% and -5%
         //acceleration IS NOT A CONSTANT
 
-        //stupid soln (lubricated steel track, 5% grade downhill, 19.125 meter change in elevation)
-        //S=(1/(0.2-1.365))*(-9.81*(19.125)-0.5*V_curr^2)
+        //stupid soln (dry track, 5% grade downhill, 19.125 meter change in elevation)
+        //S=1.7*(1/(-3.63-2.73))*(-9.81*(19.125)-0.5*V_curr^2)
+        //for slightly over top speed (20 m/s), slightly under 3 blocks to eBrake
+
+        int eBrakeDistance=(int)(1.7*(1/(-3.63-2.73))*(-9.81*(19.125)-0.5*v_curr*v_curr));
+        int sBrakeDistance=(int)(1.7*(1/(-3.63-1.2))*(-9.81*(19.125)-0.5*v_curr*v_curr));
+        int noPowerDistance= (int) ( 1.7 * (1 / (-3.63)) * (-9.81 * (19.125) - 0.5 * v_curr * v_curr));
 
 
         v_err=v_cmd-v_curr;
@@ -152,13 +157,18 @@ public class TrainController {
 
     }
 
+    public void setTrain(float sSpeed, float auth) {
+        suggestedSpeed=sSpeed;
+        authority=auth;
+    }
 
-    public void setTrain(float suggestedSpeed, float authority) {
+    public void setTestTrain(float sSpeed, float auth) {
         // get set train information from train mode
-        attachedTrain.setSpeed(suggestedSpeed);
-        attachedTrain.setAuthority(authority);
+        attachedTrain.setSpeed(sSpeed);
+        attachedTrain.setAuthority(auth);
         
     }
+
 
     public void getSA(){
         if(attachedTrain.getAuthority().getValueSafe().isEmpty()){
@@ -218,6 +228,7 @@ public class TrainController {
         */
         public void setLeftDoorsControlClosed(boolean x){
             leftDoorsControlClosed.setValue(x);
+            attachedTrain.setLeftDoor(x);
         }
         
         /**
@@ -232,6 +243,7 @@ public class TrainController {
         */
         public void setRightDoorsControlClosed(boolean x){
             rightDoorsControlClosed.setValue(x);
+            attachedTrain.setRightDoor(x);
         }
         
         /**
@@ -246,6 +258,7 @@ public class TrainController {
         */
         public void setCabinLightsControlOn(boolean x){
             cabinLightsControlOn.setValue(x);
+            attachedTrain.setLight(x);
         }
         
         /**
@@ -260,6 +273,7 @@ public class TrainController {
         */
         public void setHeadLightsControlOn(boolean x){
             headLightsControlOn.setValue(x);
+            attachedTrain.setLight(x);
         }
         
         /**
@@ -302,6 +316,7 @@ public class TrainController {
         */
         public void setEmergencyBrakeControlOn(boolean x){
             emergencyBrakeControlOn.setValue(x);
+            attachedTrain.setEmergencyBrake(x);
         }
         
         /**
@@ -316,6 +331,7 @@ public class TrainController {
         */
         public void setServiceBrakeControlOn(boolean x){
             serviceBrakeControlOn.setValue(x);
+            attachedTrain.setServiceBrake(x);
         }
     
         public StringProperty getBeacon(){

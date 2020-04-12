@@ -72,6 +72,12 @@ public class CTCModule extends Module{
     public void updateTrainPositions(){
         //TODO: should I use occupied blocks or should I feed the block into map?
         List<UUID> occupiedBlocks = map.getOccupiedBlocks();
+       
+        /*System.out.println("Ocuppied Blocks :");
+        for (UUID id: occupiedBlocks){
+            System.out.print(map.getBlock(id).getBlockNumber());
+        }*/
+
         List<UUID> closedBlocks = map.getClosedBlocks();
 
         // Need method to get all trains.  
@@ -136,7 +142,6 @@ public class CTCModule extends Module{
     }
 
     public void dispatch(String trainID, float suggestedSpeed, UUID destination){
-
 
         // need to give speed in meters per second, authority, train ID, and route 
         suggestedSpeed = suggestedSpeed/(float)2.237; // METERS PER SECOND
