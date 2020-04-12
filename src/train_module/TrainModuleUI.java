@@ -45,7 +45,7 @@ public class TrainModuleUI extends Stage {
         trainTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Train>() {
             @Override
             public void changed(ObservableValue observableValue, Train oldValue, Train newValue) {
-                //Check whether item is selected and set value of selected item to Label
+                // Check whether item is selected and set value of selected item to Label
                 Train train = trainTable.getSelectionModel().getSelectedItem();
                 trainData.setTrain(train);
             }
@@ -53,13 +53,12 @@ public class TrainModuleUI extends Stage {
         /****** select train ******/
 
         /****** beacon ******/
-        // TODO: beacon update
-        final HBox beaconBox = new HBox(10, createTextBox("Beacon"), createLabelBox("STATION; CASTLE SHANNON; BLOCK 96;"));
+        final HBox beaconBox = new HBox(10, createTextBox("Beacon"), createLabelBox("",trainData.getBeacon()));
         beaconBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
         /****** beacon ******/
 
         /****** top box - time and signal ******/
-        // TODO: top box update
+        // TODO: signal update
         final HBox topBox = createTopBox();
         topBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
         /****** top box - time and signal ******/

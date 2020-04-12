@@ -18,6 +18,8 @@ public class TrainData {
     StringProperty currentGrade = new SimpleStringProperty("");
     StringProperty temperatureInside = new SimpleStringProperty("");
 
+    StringProperty beacon = new SimpleStringProperty("");
+
     BooleanProperty leftDoorWorking = new SimpleBooleanProperty(false);
     BooleanProperty rightDoorWorking = new SimpleBooleanProperty(false);
     BooleanProperty lightWorking = new SimpleBooleanProperty(false);
@@ -51,6 +53,9 @@ public class TrainData {
             temperatureInside.unbind();
             temperatureInside.setValue("");
 
+            beacon.unbind();
+            beacon.setValue("");
+
             leftDoorWorking.unbind();
             leftDoorWorking.setValue(false);
             rightDoorWorking.unbind();
@@ -73,6 +78,8 @@ public class TrainData {
             currentAcceleration.bind(currentTrain.getCurrentAcceleration());
             currentGrade.bind(currentTrain.getCurrentGrade());
             temperatureInside.bind(currentTrain.getTemperatureInside());
+
+            beacon.bind(currentTrain.getBeacon());
 
             leftDoorWorking.bind(currentTrain.getLeftDoorWorking());
             rightDoorWorking.bind(currentTrain.getRightDoorWorking());
@@ -122,6 +129,9 @@ public class TrainData {
         return temperatureInside;
     }
 
+    public StringProperty getBeacon() {
+        return beacon;
+    }
 
     public BooleanProperty getLeftDoorWorking() {
         return leftDoorWorking;
@@ -149,27 +159,27 @@ public class TrainData {
 
 
     public void setLeftDoorWorking(boolean state) {
-        if (currentTrain != null) currentTrain.leftDoorWorking.setValue(state);
+        if (currentTrain != null) currentTrain.getLeftDoorWorking().setValue(state);
     }
 
     public void setRightDoorWorking(boolean state) {
-        if (currentTrain != null) currentTrain.rightDoorWorking.setValue(state);
+        if (currentTrain != null) currentTrain.getRightDoorWorking().setValue(state);
     }
 
     public void setLightWorking(boolean state) {
-        if (currentTrain != null) currentTrain.lightWorking.setValue(state);
+        if (currentTrain != null) currentTrain.getLightWorking().setValue(state);
     }
     
     public void setServiceBrakeWorking(boolean state) {
-        if (currentTrain != null) currentTrain.serviceBrakeWorking.setValue(state);
+        if (currentTrain != null) currentTrain.getServiceBrakeWorking().setValue(state);
     }
     
     public void setEmergencyBrakeWorking(boolean state) {
-        if (currentTrain != null) currentTrain.emergencyBrakeWorking.setValue(state);
+        if (currentTrain != null) currentTrain.getEmergencyBrakeWorking().setValue(state);
     }
     
     public void setEngineWorking(boolean state) {
-        if (currentTrain != null) currentTrain.engineWorking.setValue(state);
+        if (currentTrain != null) currentTrain.getEngineWorking().setValue(state);
     }
     
     public void setEmergencyBrake(boolean state) {
