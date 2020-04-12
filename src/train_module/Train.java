@@ -125,8 +125,14 @@ public class Train {
         // update data
         currentWeight = emptyWeight + (passengerCount + crewCount) * passengerWeight;
         currentGrade = currentBlock.getGrade();
+
+        // in radian
+        // for seperating gravity direction
+        float angle = (float)Math.atan(currentGrade / 100);
+        float cosAngle = (float)Math.cos(angle);
+        float sinAngle = (float)Math.sin(angle);
         // in kN
-        float normalForce = currentWeight * gravity * (1 - Math.abs(currentGrade / 100));
+        float normalForce = currentWeight * gravity * cosAngle;
         float maxGripForce = normalForce * coeOfFriction;
         // in seconds
         float timeStep = ((float)Module.TIMESTEP) / 1000;
@@ -183,7 +189,7 @@ public class Train {
         // acceleration (m / s^2)
         prevAcceleration = currentAcceleration;
         // F = ma, a = F/m
-        currentAcceleration = totalForce / currentWeight - (gravity * (currentGrade / 100));
+        currentAcceleration = totalForce / currentWeight - (gravity * sinAngle);
 
         // velocity (m / s)
         prevSpeed = currentSpeed;
@@ -214,7 +220,7 @@ public class Train {
             System.out.println("currentAcceleration: " + currentAcceleration + " m/s^2");
             System.out.println("acceleration due to engine: " + (force / currentWeight) + " m/s^2");
             System.out.println("acceleration due to brakes: " + (brakingForce / currentWeight) + " m/s^2");
-            System.out.println("acceleration due to grade: -" + ((gravity * (currentGrade / 100))) + " m/s^2");
+            System.out.println("acceleration due to grade: -" + (gravity * sinAngle) + " m/s^2");
             System.out.println("acceleration due to resistance: -" + (rollingResistance / currentWeight) + " m/s^2");
             System.out.println("currentSpeed: " + currentSpeed + " m/s");
             System.out.println("currentPosition: " + currentPosition + " m");
