@@ -34,11 +34,10 @@ public class TrackControllerModule extends Module {
 
 	@Override
 	public void update(){
-		trains = this.ctcModule.getTrains();
-		/*
+		trains = this.ctcModule.getTrains();	
 		switchPositions = this.ctcModule.getSwitchPositions();
 		closedBlocks = this.ctcModule.getClosedBlocks();
-		for(WaysideController waysideController : waysideControllers){
+		/*for(WaysideController waysideController : waysideControllers){
 			Set<CTCTrain> trainsInJuris = getTrainsInJuris(waysideController.getBlocks());
 			HashMap<UUID, position> switchesInJuris = getSwitchesInJuris(waysideController.getBlocks());
 			ArrayList<Block> closedBlocksInJuris = getClosedBlocksInJuris(waysideController.getBlocks());
