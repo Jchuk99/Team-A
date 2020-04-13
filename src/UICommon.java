@@ -4,13 +4,19 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.text.Text;
+import src.track_module.Block;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 
 public class UICommon{
     public static Button createButton(String text, int width, int height) {

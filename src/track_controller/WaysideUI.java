@@ -61,14 +61,17 @@ public class WaysideUI extends Stage{
         blockID.setCellValueFactory(new PropertyValueFactory<>("blockNumber"));
         TableColumn<String, BlockProperties> blockStatus = new TableColumn<>("Block Status");
         blockStatus.setCellValueFactory(new PropertyValueFactory<>("occupied"));
-        /*TableColumn<String, Normal> blockOpenClose= new TableColumn<>("Block Open/Close");
+        TableColumn<String, BlockProperties> blockOpenClose= new TableColumn<>("Block Open/Close");
         blockOpenClose.setCellValueFactory(new PropertyValueFactory<>("blockOpenClose"));
-        TableColumn<String, Block> suggestedSpeed = new TableColumn<>("Suggested Speed (mph)");
+        TableColumn<String, BlockProperties> suggestedSpeed = new TableColumn<>("Suggested Speed (mph)");
         suggestedSpeed.setCellValueFactory(new PropertyValueFactory<>("suggestedSpeed"));
-        TableColumn<String, Block> authority = new TableColumn<>("Authority (ft)");
-        authority.setCellValueFactory(new PropertyValueFactory<>("authority"));*/
+        TableColumn<String, BlockProperties> authority = new TableColumn<>("Authority (ft)");
+        authority.setCellValueFactory(new PropertyValueFactory<>("authority"));
         blockTable.getColumns().add(blockID);
         blockTable.getColumns().add(blockStatus);
+        blockTable.getColumns().add(blockOpenClose);
+        blockTable.getColumns().add(suggestedSpeed);
+        blockTable.getColumns().add(authority);
         blockTable.setPrefWidth(length/3);
         
 
@@ -93,7 +96,7 @@ public class WaysideUI extends Stage{
                         if(block.getOccupied()){
                             occupiedText = "Occupied";
                         }
-                        BlockProperties blockFix = new BlockProperties(block.getBlockNumber(), occupiedText);
+                        BlockProperties blockFix = new BlockProperties(block.getBlockNumber(), occupiedText, "Closed", 50, 5, 1);
                         System.out.println("Block ID: " + block.getBlockNumber() + " Block Occupied: " + block.getOccupied() + " Suggested Speed: 50 Authority: 60");
                         blockTable.getItems().add(blockFix);
                     }        
@@ -153,20 +156,20 @@ public class WaysideUI extends Stage{
         statusGrouper.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 1;" + "-fx-padding: 5;");
 
         TableView switchTable = new TableView();
-        /*
-        TODO what is the person class still ehre for
         
-        TableColumn<String, Person> switchID = new TableColumn<>("Switch ID");
-        switchID.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        TableColumn<String, Person> switchPosition = new TableColumn<>("Switch Position");
-        switchPosition.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        //TODO what is the person class still ehre for
+        
+        TableColumn<String, BlockProperties> switchID = new TableColumn<>("Switch ID");
+        switchID.setCellValueFactory(new PropertyValueFactory<>("blockNumber"));
+        TableColumn<String, BlockProperties> switchPosition = new TableColumn<>("Switch Position");
+        switchPosition.setCellValueFactory(new PropertyValueFactory<>("position"));
         switchTable.getColumns().add(switchID);
         switchTable.getColumns().add(switchPosition);
-        switchTable.getItems().add(new Person("3", "1"));
-        switchTable.getItems().add(new Person("3", "1"));
+        switchTable.getItems().add(new BlockProperties(1, "", "", 1, 3, 2));
+        switchTable.getItems().add(new BlockProperties(5, "", "", 1, 3, 6));
         switchTable.setPrefWidth(length/6);
         switchTable.setPrefHeight(height/6);
-        */
+        
 
         VBox box2 = new VBox(10, lightGrouper, statusGrouper, switchTable);
         box2.setPrefWidth(length/3);

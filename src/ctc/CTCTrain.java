@@ -12,9 +12,10 @@ public class CTCTrain {
     private float authority;
     private float suggestedSpeed; // IN METERS PER SECOND INTENRALLY
     private int trainID;
-    private UUID prevBlock = null;
+    private UUID prevPathBlock = null;
     private UUID destination;
     private UUID currPos;
+    private UUID prevPos = null;
     //private int errorStatus; //TODO: make this an enum.
     private Route route = new Route();
 
@@ -38,44 +39,43 @@ public class CTCTrain {
         if (route.size() == 0){
             // block connected to yard depending on line
             start = CTCModule.map.getStartingBlockID(destination.getLine());
-            currPos = start;
-            route.addPath(start, dest, prevBlock);
-            prevBlock = route.getLastPath().getBeforeEndBlock();
+            setCurrPos(start);
+            //TODO: look @ add path logic
+            route.addPath(start, dest, prevPathBlock);
+            prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
         else{
             start = route.getLastPath().getEndBlock();
-            route.addPath(start, dest, prevBlock);
-            prevBlock = route.getLastPath().getBeforeEndBlock();
+            route.addPath(start, dest, prevPathBlock);
+            prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
 
         //TODO: calculate authorities the real wau.
         authority = (float) route.getCurrPath().getCourse().size();
     }
     public void update(){
+        updateCurrPath();
         updateString();
     }
-
-    public UUID getNextBlockID(){
-        if (route.size() > 0){
-            return route.getCurrPath().getNextBlockID(currPos);
-        }
-        else{
-            return null;
-        }
-    }
-
-    public UUID getNextBlockID(UUID nextBlockID){
-        if (route.size() > 0){
-            return route.getCurrPath().getNextBlockID(nextBlockID);
-        }
-        else{
-            return null;
-        }
-    }
-
-
     public void updateCurrPath(){
-        route.updateCurrPath();
+        Path currPath = route.getCurrPath();
+        if (currPath != null){
+            currPath.updateCourse(currPos, prevPos);
+        }
+
+    }
+
+    public UUID getNextBlockID(UUID currBlock){
+        if (route.size() > 0){
+            return route.getCurrPath().getNextBlockID(currBlock);
+        }
+        else{
+            return null;
+        }
+    }
+
+    public void getNextPath(){
+        route.getNextPath();
         if (route.getCurrPath() != null){
             setDestination(route.getCurrPath().getEndBlock());
         }
@@ -83,10 +83,13 @@ public class CTCTrain {
 
     public void goToYard(){
         setDestination(CTCModule.map.getYard().getUUID());
-        route.addPath(currPos, CTCModule.map.getYard().getUUID(), prevBlock);
-        prevBlock = null;
+        route.addPath(currPos, CTCModule.map.getYard().getUUID(), prevPathBlock);
+        prevPathBlock = null;
     }
 
+    public boolean atDestination(){
+        return currPos.equals(destination);
+    }
     public boolean inYard(){
         return currPos == CTCModule.map.getYard().getUUID();
     }
@@ -104,6 +107,7 @@ public class CTCTrain {
         this.destination = destination;
     }
     public void setCurrPos(UUID currPos){
+        prevPos = this.currPos;
         this.currPos = currPos;
     }
     public Route getRoute(){

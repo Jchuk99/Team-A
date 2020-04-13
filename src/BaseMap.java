@@ -19,10 +19,11 @@ import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import src.track_module.Block;
 import src.track_module.Edge;
+import src.track_module.BlockConstructor.Shift;
 import src.track_module.BlockConstructor.Yard;
-
 public abstract class BaseMap { 
     public Map<Block, Circle> circleMap;
+    public Map<Edge, Line> edgeMap;
 
     public void mapUnavailable(Pane pane) {
         pane.getChildren().setAll();
@@ -44,12 +45,13 @@ public abstract class BaseMap {
     public void buildMap(Map<UUID, Block> blocks, Pane pane) {
         pane.getChildren().setAll();
         circleMap = new HashMap<Block, Circle>();
+        edgeMap = new HashMap<Edge, Line>();
 
         for(Block block : blocks.values()) {
-            Circle circle = new Circle(block.getX(), block.getY(), 8);
+            Circle circle = new Circle(block.getX(), block.getY(), 6);
             circle.setFill(Color.GREEN);
             circle.setViewOrder(0);
-            circle.setStrokeWidth(6);
+            circle.setStrokeWidth(4);
             if(block.getLine().equals("RED")) {
                 circle.setStroke(Color.FIREBRICK);
             }
@@ -60,10 +62,14 @@ public abstract class BaseMap {
                 circle.setFill(Color.BLACK);
                 circle.setStroke(Color.BLACK);
             }
-
+            
             pane.getChildren().add( circle);
             for(Edge edge: block.getEdges()) {
                 Line line= new Line( block.getX(), block.getY(), edge.getBlock().getX(), edge.getBlock().getY());
+                edgeMap.put(edge, line);
+                line.setViewOrder(2);
+                line.setStyle("-fx-stroke-width: 2");
+
                 if(block.getLine().equals("RED")) {
                     line.setStroke(Color.FIREBRICK);
                 }
@@ -74,16 +80,22 @@ public abstract class BaseMap {
                     if(edge.getBlock().getLine().equals("RED")) {
                         line.setStroke(Color.FIREBRICK);
                         }
-                        else if((edge.getBlock().getLine().equals("GREEN"))) {
+                    else if((edge.getBlock().getLine().equals("GREEN"))) {
                             line.setStroke(Color.LIMEGREEN);
                         }
                 }
-                line.setStyle("-fx-stroke-width: 2");
-                line.setViewOrder(1);
+                if(block instanceof Shift) {
+                    Shift shift = (Shift)block;
+                    if (edge.getBlock().equals(shift.getPosition())){
+                        line = edgeMap.get(edge);
+                        line.setStroke(Color.YELLOW);
+                        line.setViewOrder(1);
+                        line.setStyle("-fx-stroke-width: 4");
+                    }
+                }
                 pane.getChildren().add(line);
             }
             
-            //ADDED listener here to make occupancy dynamically update in CTC
             block.occupiedProperty().addListener((obs, oldText, newText) -> {
                 if (block.getOccupied()){
                     this.circleMap.get(block).setFill(Color.BLUE);
@@ -95,9 +107,35 @@ public abstract class BaseMap {
             block.functionalProperty().addListener((obs, oldText, newText) -> {
                 this.circleMap.get(block).setFill(Color.RED);
             });
-
+            
+            if (block instanceof Shift){
+                Shift shiftBlock = (Shift)block;
+                shiftBlock.positionProperty().addListener((obs, oldText, newText) -> {
+                    Block position = shiftBlock.getPosition();
+                
+                    for(Edge edge: block.getEdges()){
+                        Line line = edgeMap.get(edge);
+                        line.setStyle("-fx-stroke-width: 2");
+                        if (edge.getBlock().equals(position)) {
+                            line.setStroke(Color.YELLOW);
+                            line.setViewOrder(1);
+                            line.setStyle("-fx-stroke-width: 4");
+                        }
+                        else{
+                            if(edge.getBlock().getLine().equals("RED")) {
+                                line.setStroke(Color.FIREBRICK);
+                                }
+                            else if(edge.getBlock().getLine().equals("GREEN")) {
+                                    line.setStroke(Color.LIMEGREEN);
+                                }
+                            line.setViewOrder(2);
+                        }
+                    }
+            });
+        }
+    
             circle.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                String title = block.getLine() + " Line: " + Integer.toString(block.getBlockNumber());
+                String title = block.getLine().charAt(0) + block.getLine().toLowerCase().substring(1) + " Line | Section " + block.getSection() + " | Block " + Integer.toString(block.getBlockNumber());
                 Scene scene = buildPopUp( block);
                 scene.getStylesheets().add(Paths.get(System.getenv("cssStyleSheetPath")).toUri().toString());
                 Stage stage = new Stage();
@@ -108,6 +146,7 @@ public abstract class BaseMap {
             });
             circleMap.put(block, circle);
         }
+
     }
     public abstract Scene buildPopUp(Block block);
 }

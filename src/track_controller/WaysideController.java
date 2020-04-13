@@ -1,6 +1,7 @@
 package src.track_controller;
 
 import src.track_module.Block;
+import src.track_module.BlockConstructor.Shift;
 import java.util.*;
 import java.io.File;
 import src.ctc.*;
@@ -11,9 +12,10 @@ public class WaysideController {
 	private LinkedList<Block> blocks;
 	private String id = null;
 	private PLC plc;
-	Set<CTCTrain> trains;
-	//HashMap<UUID, position> switchPositions;
-	ArrayList<Block> closedBlocks;
+	List<CTCTrain> trains;
+	List<Shift> switchPositions;
+	List<UUID> closedBlocks;
+	UUID crossingBlock;
 
 	public WaysideController(){
 		this.blocks= new LinkedList<Block>();
@@ -41,33 +43,37 @@ public class WaysideController {
 	}
 
 	public void runPLC(){
-		plc.runPLCLogicSwitch(blocks, trains, closedBlocks);
-		plc.runPLCLogicCrossing(blocks, trains, closedBlocks);
-		plc.runPLCLogicCrossingLights(blocks, trains, closedBlocks);
+		plc.makeBits(blocks, trains, switchPositions, closedBlocks, crossingBlock);
 	}
 
-	public void setTrains(Set<CTCTrain> trainsInJuris){
+	public void setTrains(List<CTCTrain> trainsInJuris){
 		this.trains = trainsInJuris;
 	}
 
-	public Set<CTCTrain> getTrains(){
+	public List<CTCTrain> getTrains(){
 		return trains;
 	}
 
-	/*public void setSwitchPosition(){
-
+	public void setSwitchPosition(List<Shift> switchesInJuris){
+		this.switchPositions = switchesInJuris;
 	}
-	public HashMap<UUID, position> getSwitchPositions(){
-		return
-	}*/
 
-	public void setClosedBlocks(ArrayList<Block> closedBlocksInJuris){
+	public List<Shift> getSwitchPositions(){
+		return switchPositions;
+	}
+
+	public void setClosedBlocks(List<UUID> closedBlocksInJuris){
 		this.closedBlocks = closedBlocksInJuris;
 	}
 
-	public ArrayList<Block> getClosedBlocks(){
+	public List<UUID> getClosedBlocks(){
 		return closedBlocks;
 	}
+
+	public void setCrossingBlock(UUID uuid){
+		crossingBlock = uuid;
+	}
+
 
 
 }

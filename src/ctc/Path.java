@@ -15,26 +15,24 @@ public class Path {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private LinkedList<UUID> course;
-    private UUID startBlock;
     private UUID endBlock;
-    private UUID prevBlock;
 
     
     public Path(){
     }
  
     public Path(UUID startBlock, UUID endBlock, UUID prevBlock){
-        this.startBlock = startBlock;
         this.endBlock = endBlock;
-        this.prevBlock = prevBlock;
         course = findCourse(startBlock, endBlock, prevBlock);
     }
 
     public LocalDateTime getStartTime() {return startTime;};
     public LocalDateTime getEndTime() {return endTime;};
-    public UUID getStartBlock() {return startBlock;};
     public UUID getEndBlock() {return endBlock;};
-    public UUID getPrevBlock() {return prevBlock;};
+
+    public void updateCourse(UUID start, UUID prev){
+        course = findCourse(start, endBlock, prev);
+    }
 
     public UUID getBeforeEndBlock() {
         //TODO: error check.
@@ -58,8 +56,6 @@ public class Path {
     
     //TODO: Make algorithim account for distance of blocks
     private LinkedList<UUID> findCourse(UUID start, UUID destination, UUID prevBlock) {
-        System.out.println("start: " + start);
-        System.out.println("end: " + destination);
         CTCMap map = CTCModule.map;
         Set<UUID> blockIDs = map.getBlockIDs();
         HashMap<UUID, Boolean> marked = new HashMap<UUID, Boolean>();
@@ -81,22 +77,28 @@ public class Path {
 
         while (!q.isEmpty()) {
             Block b = q.remove();
-            for (Edge e : b.getEdges()) {
-                Block edgeBlock = e.getBlock();
-                if (!marked.get(edgeBlock.getUUID()) && !edgeBlock.getUUID().equals(prevBlock) && e.getConnected()) {
-                    edgeTo.put(edgeBlock.getUUID(), b.getUUID());
-                    distTo.put(edgeBlock.getUUID(), distTo.get(b.getUUID()) + 1);
-                    marked.put(edgeBlock.getUUID(), true);
-                    q.add(edgeBlock);
+                for (Edge e : b.getEdges()) {
+                    Block edgeBlock = e.getBlock();
+                    if (!marked.get(edgeBlock.getUUID()) && !edgeBlock.getUUID().equals(prevBlock) && e.getConnected()) {
+                        edgeTo.put(edgeBlock.getUUID(), b.getUUID());
+                        distTo.put(edgeBlock.getUUID(), distTo.get(b.getUUID()) + 1);
+                        marked.put(edgeBlock.getUUID(), true);
+                        q.add(edgeBlock);
+                    }
                 }
-            }
         }
         
         LinkedList<UUID> course = new LinkedList<UUID>();
 		UUID curr = destination;
 		while (!curr.equals(start)){
-			course.add(0, curr);
-			curr = edgeTo.get(curr);
+            course.add(0, curr);
+            //System.out.println("Curr: " + CTCModule.map.getBlock(curr).getBlockNumber());
+            curr = edgeTo.get(curr);
+            //TODO: what if I can't find a path?
+            if (curr == null){
+                break;
+            }
+            
 		}
         course.add(0, curr);
         /*
@@ -105,6 +107,7 @@ public class Path {
             System.out.println("Block ID: " + blockID);
         }
         */
+        
 		return course;
     }
     

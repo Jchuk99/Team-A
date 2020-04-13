@@ -1,1 +1,5 @@
-text text text
+STEP-SH: authority << 1
+STEP-SH: authority << 6
+STEP-AU: OP-LOOP !((authority << 1 & blocks) & 1)
+STEP-SW: !switchOccupied & OP-LOOP !((authority & blocks) & 1)
+STEP-CR:

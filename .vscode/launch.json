@@ -3,13 +3,6 @@
     "configurations": [
         {
             "type": "java",
-            "name": "CodeLens (Launch) - TestRunner",
-            "request": "launch",
-            "mainClass": "src.TestRunner",
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "type": "java",
             "name": "CodeLens (Launch) - Main",
             "request": "launch",
             "mainClass": "src.Main",

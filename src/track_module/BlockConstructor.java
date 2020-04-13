@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import src.ctc.CTCTrain;
@@ -34,25 +36,15 @@ public class BlockConstructor {
     }
 
     public static class Shift extends Block {  
-        private StringProperty positionNumber = new SimpleStringProperty("");  
-        Block position= null;
-        List<Integer> switchIDs= new ArrayList<Integer>();
-        List<Block> switchPositions = new ArrayList<Block>();
+        private SimpleObjectProperty<Block> position= new SimpleObjectProperty<Block>();
+        private List<Block> switchPositions = new ArrayList<Block>();
 
         public Shift( String line, char section, int blockNumber, int length, float speedLimit, float grade,
             float elevation, float cummElevation, boolean underground, int xCoordinate, int yCoordinate) {
             super( line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
         }
-        public List<Integer> getSwitchIDs(){return switchIDs;}
-        public List<Block> getSwitchPositions(){return switchPositions;}
-        public void setPosition( Block block) {
-            position= block;
-            positionNumber.setValue("" + position.getBlockNumber());
-        }
-        public Block getPosition() {return position;};
-
         public void togglePosition(){
-            int switchIndex = switchPositions.indexOf(position);
+            int switchIndex = switchPositions.indexOf(getPosition());
             if (switchIndex == 0){
                 setPosition(switchPositions.get(1));
             }
@@ -61,17 +53,23 @@ public class BlockConstructor {
             }
         }
 
-        public StringProperty positionProperty() {return positionNumber;};
+        public SimpleObjectProperty<Block> positionProperty() {return position;};
+
+        public List<Block> getSwitchPositions(){return switchPositions;}
+        public Block getPosition() {return position.get();};
 
         public void setSwitchPositions(List<Block> switchPositions){
-            this.switchPositions = switchPositions;
+            for(Block block : switchPositions) {
+                addSwitchPosition(block);
+            }
+        }
+        public void setPosition( Block block) {
+            positionProperty().set(block);
         }
         public void addSwitchPosition(Block position){
             switchPositions.add(position);
+            setPosition(position);
         }   
-        public void addSwitchID(int position){
-            switchIDs.add(position);
-        }
     }
 
     public static class Crossing extends Block {
