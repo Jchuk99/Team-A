@@ -36,14 +36,12 @@ public class BlockConstructor {
     public static class Shift extends Block {  
         private StringProperty positionNumber = new SimpleStringProperty("");  
         Block position= null;
-        List<Integer> switchIDs= new ArrayList<Integer>();
         List<Block> switchPositions = new ArrayList<Block>();
 
         public Shift( String line, char section, int blockNumber, int length, float speedLimit, float grade,
             float elevation, float cummElevation, boolean underground, int xCoordinate, int yCoordinate) {
             super( line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
         }
-        public List<Integer> getSwitchIDs(){return switchIDs;}
         public List<Block> getSwitchPositions(){return switchPositions;}
         public void setPosition( Block block) {
             position= block;
@@ -69,9 +67,6 @@ public class BlockConstructor {
         public void addSwitchPosition(Block position){
             switchPositions.add(position);
         }   
-        public void addSwitchID(int position){
-            switchIDs.add(position);
-        }
     }
 
     public static class Crossing extends Block {

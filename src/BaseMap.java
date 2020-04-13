@@ -97,7 +97,7 @@ public abstract class BaseMap {
             });
 
             circle.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-                String title = block.getLine() + " Line: " + Integer.toString(block.getBlockNumber());
+                String title = block.getLine().charAt(0) + block.getLine().toLowerCase().substring(1) + " Line | Section " + block.getSection() + " | Block " + Integer.toString(block.getBlockNumber());
                 Scene scene = buildPopUp( block);
                 scene.getStylesheets().add(Paths.get(System.getenv("cssStyleSheetPath")).toUri().toString());
                 Stage stage = new Stage();
