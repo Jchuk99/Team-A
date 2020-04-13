@@ -29,8 +29,10 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import src.BaseMap;
 import src.UICommon;
 import src.track_module.Block;
+import src.track_module.TrackMap;
 import src.track_module.BlockConstructor.Station;
 
 import java.text.DecimalFormat;
@@ -217,7 +219,9 @@ public class CTCUI extends Stage {
     }
 
     private static Pane createMapPane(){
-        GUIMap trackMap = new GUIMap();
+        TrackMap trackMap = new TrackMap();
+        // TODO this isn't working right now and I cannot diagnose why easily.
+        // Let me know on the fix - Eric
         Pane graphPane = new Pane();
 
         //TODO: ask eric about setting this stuff

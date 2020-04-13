@@ -14,8 +14,6 @@ import src.UICommon;
 import src.track_module.Block;
 import src.track_module.BlockConstructor.Shift;
 import src.BaseMap;
-import src.GraphCircle;
-import src.GraphLine;
 
 public class GUIMap extends BaseMap {
     
@@ -35,6 +33,26 @@ public class GUIMap extends BaseMap {
         Button switchMode = UICommon.createButton("Toggle Switch", 200, 10);
         switchMode.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
             Shift shiftBlock = (Shift) block;
+            
+            /*
+            *
+            * TODO add this method to your extended block class
+            *
+            /*
+                public void updateConnected() {
+                    for (Edge e: this.getEdges()){
+                        if(switchPositions.contains(e.getBlock())){
+                            if(position.equals(e.getBlock())){
+                                e.setConnected(true);
+                            }
+                            else{
+                                e.setConnected(false);
+                            }
+                        }
+                    }
+                }
+            */
+
             shiftBlock.togglePosition();
 
         });
@@ -126,7 +144,7 @@ public class GUIMap extends BaseMap {
             switchBox.getChildren().addAll(switchLabel0, switchLabel1);
             tableBox.getChildren().add(switchBox);
             
-            
+            /*
            shiftBlock.positionProperty().addListener((obs, oldText, newText) -> {
                     switchLabel1.setText("" + newText);
                     Block dest = shiftBlock.getPosition();
@@ -147,6 +165,7 @@ public class GUIMap extends BaseMap {
                         }
                     }
             });
+            */
         }
 
 

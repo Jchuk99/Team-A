@@ -10,8 +10,10 @@ public class PLC {
     private String id = null;
     private File file;
     private String blockBits = "";
-    private boolean switchOn;
+    private boolean switchOn = false;
+    private boolean crossingOn = false;
     private String authorityBits = "";
+    private List<String> authorityBitsMultiple;
     
 	public PLC(File file){
         this.file = file;
@@ -45,7 +47,8 @@ public class PLC {
 
     }
 
-    public void makeBits(LinkedList<Block> blocks, List<CTCTrain> trains, List<Shift> switchPositions, List<UUID> closedBlocks){
+    public void makeBits(LinkedList<Block> blocks, List<CTCTrain> trains, List<Shift> switchPositions, List<UUID> closedBlocks, UUID crossingBlock){
+        //go through each block and make a bitstring based on occupied ("1") or unoccupied ("0")
         for(Block block : blocks){
             if(block.getOccupied()){
                 blockBits = blockBits + "1";
@@ -54,8 +57,9 @@ public class PLC {
                 blockBits = blockBits + "0";
             }
         }
+        
+        //compare the uuids of the list of closed blocks and replace
         int blockIndex = 0;
-
         for(Block block : blocks){
             for(UUID uuid : closedBlocks){
                 if(block.getUUID() == uuid){
@@ -65,25 +69,32 @@ public class PLC {
             blockIndex++;
         }
 
+        //get the authority of the trains in the jurisdiction and make a bitstring of max size 111 (3 authority)
         for(CTCTrain train : trains){
             authorityBits = binAndPad(Math.round(train.getAuthority()));
+            authorityBitsMultiple.add(authorityBits);
         }
 
+        //check if there is a switch in this jurisdiction that has been set by CTC
         if(switchPositions.size() > 0){
             switchOn = true; 
         }
 
+        //check if there is a crossing in this jurisdiction
+        if(crossingBlock != null){
+            crossingOn = true;
+        }
 
     }
 
-    public void runPLCLogicSwitch(LinkedList<Block> blocks, List<CTCTrain> trains, List<Shift> switchPositions, List<UUID> closedBlocks){
+    public void runPLCLogicSwitch(){
        
     }
 
-    public void runPLCLogicCrossing(LinkedList<Block> blocks, List<CTCTrain> trains, List<Shift> switchPositions, List<UUID> closedBlocks){
+    public void runPLCLogicCrossing(){
 
     }
-    public void runPLCLogicLights(LinkedList<Block> blocks, List<CTCTrain> trains, List<Shift> switchPositions, List<UUID> closedBlocks){
+    public void runPLCLogicLights(){
 
     }
     public static String shiftLeft(String bits, int number){

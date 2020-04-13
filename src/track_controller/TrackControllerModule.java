@@ -10,6 +10,7 @@ public class TrackControllerModule extends Module {
 	List<CTCTrain> trains;
 	List<Shift> switchPositions;
 	List<UUID> closedBlocks;
+	UUID crossingBlock = null;
 	ArrayList<WaysideController> waysideControllers;
 
 	public void main() {
@@ -38,12 +39,11 @@ public class TrackControllerModule extends Module {
 		//switchPositions = this.ctcModule.getSwitchPositions();
 		//closedBlocks = this.ctcModule.getClosedBlocks();
 		/*for(WaysideController waysideController : waysideControllers){
-			Set<CTCTrain> trainsInJuris = getTrainsInJuris(waysideController.getBlocks());
-			HashMap<UUID, position> switchesInJuris = getSwitchesInJuris(waysideController.getBlocks());
-			ArrayList<Block> closedBlocksInJuris = getClosedBlocksInJuris(waysideController.getBlocks());
-			waysideController.setTrains(trainsInJuris);
-			waysideController.setSwitches(switchesInJuris);
-			waysideController.setClosedBlocks(closedBlocksInJuris);
+			LinkedList<Blocks> blocks = waysideController.getBlocks();
+			waysideController.setTrains(getTrainsInJuris(blocks));
+			waysideController.setSwitches(getSwitchesInJuris(blocks));
+			waysideController.setClosedBlocks(getClosedBlocksInJuris(blocks));
+			waysideController.setCrossingBlock(getCrossingBlockInJuris(blocks));
 			waysideController.runPLC();
 		}
 		*/
@@ -92,6 +92,16 @@ public class TrackControllerModule extends Module {
 		return closedBlocksInJuris;
 	}
 
+	/*public UUID getCrossingBlocksInJuris(LinkedList<Block> blocks){
+		
+		for(Block block : blocks){
+			if(block.getType().equals("crossing")){
+				crossingBlock = block.getUUID();
+			
+		}	
+		return closedBlocksInJuris;
+	}*/
+
 	public List<CTCTrain> getCTCTrains(){
 		return trains; 
 	}
@@ -103,6 +113,18 @@ public class TrackControllerModule extends Module {
 	public List<Shift> getCTCSwitchPositions(){
 		return switchPositions; 
 	}
+
+	/*public void setCTCTrains(){
+
+	}
+
+	public void setCTCTrains(){
+		
+	}
+
+	public void setCTCTrains(){
+		
+	}*/
 
 
 

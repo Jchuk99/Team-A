@@ -1,0 +1,14 @@
+public static CTCBlock extends Block{
+
+    private BooleanProperty closed = new SimpleBooleanProperty(false);
+
+    public CTCBlock(String line, char section, int blockNumber, int length, float speedLimit, float grade, 
+            float elevation, float cummElevation, boolean underground, int xCorrdinate, int yCorrdinate){
+    super(String line, char section, int blockNumber, int length, float speedLimit, float grade, 
+            float elevation, float cummElevation, boolean underground, int xCorrdinate, int yCorrdinate);
+    }
+
+    public boolean getClosed() { return closedProperty().get();}
+    public void setClosed(boolean closed){closedProperty().set(closed);};
+
+}

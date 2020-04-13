@@ -36,10 +36,17 @@ public class TrackModule extends Module {
     }
 
     public void buildTrack(String csvFile) throws IOException, FileFormatException {
-        // TODO deal with my blocks being a separate class than blocks
-        HashMap<Integer, Block> myBlocks= new HashMap<Integer, Block>();
-        HashMap<Character, WaysideController> waysides= new HashMap<Character, WaysideController>();
-        HashSet<int[]> edges= new HashSet<int[]>();
+        HashMap<String, HashMap<Integer, Block>> myBlocks = new HashMap<String, HashMap<Integer, Block>>();
+        myBlocks.put("GREEN", new HashMap<Integer, Block>());
+        myBlocks.put("RED", new HashMap<Integer, Block>());
+
+        HashMap<String, HashMap<Integer, WaysideController>> myWaysides = new HashMap<String, HashMap<Integer, WaysideController>>();
+        myWaysides.put("GREEN", new HashMap<Integer, WaysideController>());
+        myWaysides.put("RED", new HashMap<Integer, WaysideController>());
+
+        HashMap<String, HashSet<int[]>> myEdges = new HashMap<String, HashSet<int[]>>();
+        myEdges.put("GREEN", new HashSet<int[]>());
+        myEdges.put("RED", new HashSet<int[]>());
 
         if(!csvFile.substring(csvFile.length() - 4, csvFile.length()).equals(".csv"))
             throw new FileFormatException("Incorrect File Type");
@@ -63,7 +70,8 @@ public class TrackModule extends Module {
             throw new FileFormatException("Parsing Issue In Yard Row");
         }
         yard = new Yard(Integer.parseInt( data[15].trim()), Integer.parseInt( data[16].trim()));
-        myBlocks.put(0, yard);
+        myBlocks.get("GREEN").put(0, yard);
+        myBlocks.get("RED").put(0, yard);
         
         int rowNumber = 2;
         for(String row : rows) {
@@ -281,7 +289,7 @@ public class TrackModule extends Module {
             }
 
             int[] edge1= {blockNumber, connection1, (directions.contains( connection1)) ? 1 : 0, 0};
-            edges.add( edge1);
+            myEdges.get(line).add( edge1);
 
             Block block;
             if( crossing) {
@@ -298,10 +306,10 @@ public class TrackModule extends Module {
                 grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
                 
                 int[] edge2= {blockNumber, connection2, (directions.contains( connection2)) ? 1 : 0, 1};
-                edges.add( edge2);
+                myEdges.get(line).add( edge2);
                 try{ 
                     int[] edge3= {blockNumber, connection3, (directions.contains( connection3)) ? 1 : 0, 1};
-                    edges.add( edge3);
+                    myEdges.get(line).add( edge3);
                 }
                 catch( Exception e) {
                     throw new FileFormatException("Parsing Issue In Switch Column, Row " + Integer.toString(rowNumber));
@@ -314,47 +322,53 @@ public class TrackModule extends Module {
 
             if(!shift) {
                 int[] edge2= {blockNumber, connection2, (directions.contains( connection2)) ? 1 : 0, 0};
-                edges.add( edge2);
+                myEdges.get(line).add( edge2);
             }
-            myBlocks.put( blockNumber, block);
+            myBlocks.get(line).put( blockNumber, block);
             
+            /*
             if( !waysides.containsKey( section)) {
                 waysides.put( section, this.trackControllerModule.createWayside());
             }
-            waysides.get( section).addBlock(block);    
+            waysides.get( section).addBlock(block);
+            */
         }
         csvReader.close();
         
-        for( int[] edge : edges) {
-            Block source;
-            Block destination;
-            try{ 
-                source= myBlocks.get( edge[0]);
-                destination= myBlocks.get( edge[1]);
-                if( destination == null) {
-                    throw new Exception();
+        for(String line : myEdges.keySet()) {
+            for( int[] edge : myEdges.get(line)) {
+                Block source;
+                Block destination;
+                try{ 
+                    source= myBlocks.get(line).get( edge[0]);
+                    destination= myBlocks.get(line).get( edge[1]);
+                    if( destination == null) {
+                        throw new Exception();
+                    }
+
+                }
+                catch( Exception e) {
+                    throw new FileFormatException("Connection Does Not Exist, Row " + Integer.toString(rowNumber));
                 }
 
-            }
-            catch( Exception e) {
-                throw new FileFormatException("Connection Does Not Exist, Row " + Integer.toString(rowNumber));
-            }
-
-            source.addEdge( destination, edge[2] != 0);
-            // If this is a switch position node
-            if(edge[3] == 1) {
-                ((Shift) source).addSwitchPosition(destination);
-            }
-            /*if(source == yard) {
-                yard.addEdge(destination, true);
-            }*/
-            if(destination == yard) {
-                yard.addEdge(source, edge[2] == 0);
+                source.addEdge( destination, edge[2] != 0);
+                // If this is a switch position node
+                if(edge[3] == 1) {
+                    ((Shift) source).addSwitchPosition(destination);
+                }
+                /*if(source == yard) {
+                    yard.addEdge(destination, true);
+                }*/
+                if(destination == yard) {
+                    yard.addEdge(source, edge[2] == 0);
+                }
             }
         }
         this.ctcModule.initMap();
-        for( Block block : myBlocks.values()) {
-            blocks.put( block.getUUID(), block);
+        for(String line: myBlocks.keySet()) {
+            for( Block block : myBlocks.get(line).values()) {
+                blocks.put( block.getUUID(), block);
+            }
         }
     }
 
