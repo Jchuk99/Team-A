@@ -43,7 +43,7 @@ public class WaysideController {
 	}
 
 	public void runPLC(){
-		plc.makeBits(blocks, trains, switchPositions, closedBlocks, crossingBlock)
+		plc.makeBits(blocks, trains, switchPositions, closedBlocks, crossingBlock);
 	}
 
 	public void setTrains(List<CTCTrain> trainsInJuris){
