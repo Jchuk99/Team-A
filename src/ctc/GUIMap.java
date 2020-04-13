@@ -14,6 +14,8 @@ import src.UICommon;
 import src.track_module.Block;
 import src.track_module.BlockConstructor.Shift;
 import src.BaseMap;
+import src.GraphCircle;
+import src.GraphLine;
 
 public class GUIMap extends BaseMap {
     
@@ -25,6 +27,7 @@ public class GUIMap extends BaseMap {
         Circle circleRed = UICommon.createCircle(10, Color.WHITE);
         Circle circleOrange = UICommon.createCircle(10, Color.WHITE);
         statusUpdate(block, circleRed, circleOrange, circleBlue, circleGreen);
+
         Button failureMode = UICommon.createButton("Set Closed", 200, 10);
         failureMode.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
             block.setClosed(!block.getClosed());
@@ -108,7 +111,7 @@ public class GUIMap extends BaseMap {
                 statusUpdate(block, circleRed, circleOrange, circleBlue, circleGreen);
         });
 
-        if (block instanceof Shift){   
+       if (block instanceof Shift){   
             // Switch Box
             Shift shiftBlock = (Shift)block;
             HBox switchBox= new HBox();
@@ -122,10 +125,27 @@ public class GUIMap extends BaseMap {
 
             switchBox.getChildren().addAll(switchLabel0, switchLabel1);
             tableBox.getChildren().add(switchBox);
-
-            shiftBlock.positionProperty().addListener((obs, oldText, newText) -> {
+            
+            
+           shiftBlock.positionProperty().addListener((obs, oldText, newText) -> {
                     switchLabel1.setText("" + newText);
-                    statusUpdate(block, circleRed, circleOrange, circleBlue, circleGreen);
+                    Block dest = shiftBlock.getPosition();
+                
+                    GraphCircle circleBlock = this.circleMap.get(block);
+                    for(GraphLine line: circleBlock.getEdges()){
+                        if (line.getDestination().equals(dest)){
+                            line.setStroke(Color.DARKVIOLET);
+                            line.setStroke(Color.DARKVIOLET);
+                        }
+                        else{
+                            if(line.getDestination().getLine().equals("RED")) {
+                                line.setStroke(Color.FIREBRICK);
+                                }
+                            else if(line.getDestination().getLine().equals("GREEN")) {
+                                    line.setStroke(Color.LIMEGREEN);
+                                }
+                        }
+                    }
             });
         }
 

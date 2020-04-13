@@ -73,7 +73,7 @@ public class ApplicationUI extends Application {
                 while (true) {
                     try {
                         // TODO: variable clock speed
-                        Thread.sleep(10);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                     }
 

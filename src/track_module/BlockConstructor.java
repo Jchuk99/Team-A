@@ -46,8 +46,9 @@ public class BlockConstructor {
         public List<Integer> getSwitchIDs(){return switchIDs;}
         public List<Block> getSwitchPositions(){return switchPositions;}
         public void setPosition( Block block) {
-            position= block;
+            position = block;
             positionNumber.setValue("" + position.getBlockNumber());
+            updateConnected();
         }
         public Block getPosition() {return position;};
 
@@ -61,6 +62,19 @@ public class BlockConstructor {
             }
         }
 
+        public void updateConnected(){
+            for (Edge e: this.getEdges()){
+                if(switchPositions.contains(e.getBlock())){
+                    if(position.equals(e.getBlock())){
+                        e.setConnected(true);
+                    }
+                    else{
+                        e.setConnected(false);
+                    }
+                }
+            }
+        }
+
         public StringProperty positionProperty() {return positionNumber;};
 
         public void setSwitchPositions(List<Block> switchPositions){
@@ -68,6 +82,7 @@ public class BlockConstructor {
         }
         public void addSwitchPosition(Block position){
             switchPositions.add(position);
+            setPosition(position);
         }   
         public void addSwitchID(int position){
             switchIDs.add(position);

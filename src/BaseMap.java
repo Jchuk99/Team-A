@@ -19,10 +19,12 @@ import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import src.track_module.Block;
 import src.track_module.Edge;
+import src.track_module.BlockConstructor.Shift;
+import src.track_module.BlockConstructor.Station;
 import src.track_module.BlockConstructor.Yard;
 
 public abstract class BaseMap { 
-    public Map<Block, Circle> circleMap;
+    public Map<Block, GraphCircle> circleMap;
 
     public void mapUnavailable(Pane pane) {
         pane.getChildren().setAll();
@@ -43,10 +45,10 @@ public abstract class BaseMap {
 
     public void buildMap(Map<UUID, Block> blocks, Pane pane) {
         pane.getChildren().setAll();
-        circleMap = new HashMap<Block, Circle>();
+        circleMap = new HashMap<Block, GraphCircle>();
 
         for(Block block : blocks.values()) {
-            Circle circle = new Circle(block.getX(), block.getY(), 8);
+            GraphCircle circle = new GraphCircle(block.getX(), block.getY(), 8);
             circle.setFill(Color.GREEN);
             circle.setViewOrder(0);
             circle.setStrokeWidth(6);
@@ -63,7 +65,10 @@ public abstract class BaseMap {
 
             pane.getChildren().add( circle);
             for(Edge edge: block.getEdges()) {
-                Line line= new Line( block.getX(), block.getY(), edge.getBlock().getX(), edge.getBlock().getY());
+                GraphLine line= new GraphLine( block.getX(), block.getY(), edge.getBlock().getX(), edge.getBlock().getY());
+                line.setDestination(edge.getBlock());
+                circle.addLine(line);
+
                 if(block.getLine().equals("RED")) {
                     line.setStroke(Color.FIREBRICK);
                 }
@@ -74,16 +79,29 @@ public abstract class BaseMap {
                     if(edge.getBlock().getLine().equals("RED")) {
                         line.setStroke(Color.FIREBRICK);
                         }
-                        else if((edge.getBlock().getLine().equals("GREEN"))) {
+                    else if((edge.getBlock().getLine().equals("GREEN"))) {
                             line.setStroke(Color.LIMEGREEN);
                         }
                 }
+                
+                
+                line.getStrokeDashArray().addAll();
+                
+                 //TODO: Figure out why can't initialize switch line
+                if (block instanceof Shift){
+                    Shift shiftBlock = (Shift)block;
+                    Block dest = shiftBlock.getPosition();
+                    if (line.getDestination().equals(dest)){
+                        line.setStroke(Color.DARKVIOLET);
+                    }
+
+                }
+
                 line.setStyle("-fx-stroke-width: 2");
                 line.setViewOrder(1);
                 pane.getChildren().add(line);
             }
             
-            //ADDED listener here to make occupancy dynamically update in CTC
             block.occupiedProperty().addListener((obs, oldText, newText) -> {
                 if (block.getOccupied()){
                     this.circleMap.get(block).setFill(Color.BLUE);
@@ -95,6 +113,30 @@ public abstract class BaseMap {
             block.functionalProperty().addListener((obs, oldText, newText) -> {
                 this.circleMap.get(block).setFill(Color.RED);
             });
+            if (block instanceof Shift){
+                Shift shiftBlock = (Shift)block;
+                 // Not working whenever the switch starts on block 8, slightly updates but doesn't change color.
+                 // IDK what's causing this issue, works fine for one of the switch lines.
+                shiftBlock.positionProperty().addListener((obs, oldText, newText) -> {
+                    Block dest = shiftBlock.getPosition();
+                
+                    GraphCircle circleBlock = this.circleMap.get(block);
+                    for(GraphLine line: circleBlock.getEdges()){
+                        if (line.getDestination().equals(dest)){
+                            line.setStroke(Color.DARKVIOLET);;
+                        }
+                        else{
+                            if(line.getDestination().getLine().equals("RED")) {
+                                line.setStroke(Color.FIREBRICK);
+                                }
+                            else if(line.getDestination().getLine().equals("GREEN")) {
+                                    line.setStroke(Color.LIMEGREEN);
+                                }
+                        }
+                    }
+            });
+        }
+        
 
             circle.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
                 String title = block.getLine() + " Line: " + Integer.toString(block.getBlockNumber());
@@ -108,6 +150,20 @@ public abstract class BaseMap {
             });
             circleMap.put(block, circle);
         }
+        //TODO: switch listening isn't working in this method.
+            /*
+                shiftBlock.positionProperty().addListener((obs, oldText, newText) -> {
+                    for(GraphLine line: circle.getEdges()){
+                        if (line.getDestination().equals(dest)){
+                            line.getStrokeDashArray().addAll(25d, 20d, 5d, 20d);
+                        }
+                        else{
+                            line.getStrokeDashArray().removeAll(25d, 20d, 5d, 20d);
+                        }
+                    }
+                });
+            }
+        }*/
     }
     public abstract Scene buildPopUp(Block block);
 }

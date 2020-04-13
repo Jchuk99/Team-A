@@ -335,7 +335,6 @@ public class TrackModule extends Module {
                     Shift shiftBlock = (Shift) source;
                     if(shiftBlock.getSwitchIDs().contains(edge[1])){
                         shiftBlock.addSwitchPosition(destination);
-                        shiftBlock.setPosition(destination);
                     }
                 }
             }
@@ -358,7 +357,7 @@ public class TrackModule extends Module {
     }
 
     public void dispatchTrain(CTCTrain ctcTrain) {
-        UUID uuid = ctcTrain.getRoute().getCurrPath().getStartBlock();
+        UUID uuid = ctcTrain.getCurrPos();
         Block startingBlock= trackModule.getBlockByUUID(uuid);
 
         Train train = trainModule.createTrain();
