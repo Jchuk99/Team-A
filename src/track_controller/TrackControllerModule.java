@@ -35,9 +35,9 @@ public class TrackControllerModule extends Module {
 
 	@Override
 	public void update(){
-		trains = this.ctcModule.getTrains();	
-		switchPositions = this.ctcModule.getSwitchPositions();
-		closedBlocks = this.ctcModule.getClosedBlocks();
+		//trains = this.ctcModule.getTrains();	
+		//switchPositions = this.ctcModule.getSwitchPositions();
+		//closedBlocks = this.ctcModule.getClosedBlocks();
 		/*for(WaysideController waysideController : waysideControllers){
 			LinkedList<Blocks> blocks = waysideController.getBlocks();
 			waysideController.setTrains(getTrainsInJuris(blocks));
