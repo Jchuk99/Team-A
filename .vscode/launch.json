@@ -1,13 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
-        {
-            "type": "java",
-            "name": "CodeLens (Launch) - Main",
-            "request": "launch",
-            "mainClass": "src.Main",
-            "cwd": "${workspaceFolder}"
-        },
+        
         {
             "type": "java",
             "name": "CodeLens (Launch) - Main",
