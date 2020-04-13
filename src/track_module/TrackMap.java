@@ -22,19 +22,30 @@ public class TrackMap extends BaseMap {
         Circle circleGreen = UICommon.createCircle(10, Color.GRAY);
         Circle circleYellow = UICommon.createCircle(10, Color.GRAY);
         Circle circleRed = UICommon.createCircle(10, Color.GRAY);
-        Button failureMode = UICommon.createButton("Set Failure", 200, 10);
+        Button powerFailureMode = UICommon.createButton("Power Fail", 100, 10);
+        Button brokenFailureMode = UICommon.createButton("Rail Fail", 100, 10);
+        Button circuitFailureMode = UICommon.createButton("Circuit Fail", 100, 10);
         statusUpdate(block, circleRed, circleYellow, circleGreen);
 
-        failureMode.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+        powerFailureMode.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
             block.setFunctional(!block.getFunctional());
         });
+        brokenFailureMode.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+            block.setFunctional(!block.getFunctional());
+        });
+        circuitFailureMode.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+            block.setOccupied(!block.getOccupied());
+        });
+
+        HBox failureModes = new HBox(powerFailureMode, brokenFailureMode, circuitFailureMode);
+        
         Label statusLabel = UICommon.createLabel("Status");
         statusLabel.setStyle("-fx-font-size: 18;");
         statusLabel.setAlignment(Pos.BOTTOM_CENTER);
         HBox statusBox = new HBox(10, statusLabel, circleGreen, circleYellow, circleRed);
         statusBox.setAlignment(Pos.CENTER);
 
-        VBox headerBox = new VBox(5, statusBox, failureMode);
+        VBox headerBox = new VBox(5, statusBox, failureModes);
         headerBox.setStyle("-fx-background-color: -fx-title-color;");
         headerBox.setPadding( new Insets(5));
         headerBox.setAlignment(Pos.CENTER);

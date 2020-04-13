@@ -20,11 +20,10 @@ import javafx.stage.Stage;
 import src.track_module.Block;
 import src.track_module.Edge;
 import src.track_module.BlockConstructor.Shift;
-import src.track_module.BlockConstructor.Station;
 import src.track_module.BlockConstructor.Yard;
-
 public abstract class BaseMap { 
-    public Map<Block, GraphCircle> circleMap;
+    public Map<Block, Circle> circleMap;
+    public Map<Edge, Line> edgeMap;
 
     public void mapUnavailable(Pane pane) {
         pane.getChildren().setAll();
@@ -45,13 +44,14 @@ public abstract class BaseMap {
 
     public void buildMap(Map<UUID, Block> blocks, Pane pane) {
         pane.getChildren().setAll();
-        circleMap = new HashMap<Block, GraphCircle>();
+        circleMap = new HashMap<Block, Circle>();
+        edgeMap = new HashMap<Edge, Line>();
 
         for(Block block : blocks.values()) {
-            GraphCircle circle = new GraphCircle(block.getX(), block.getY(), 8);
+            Circle circle = new Circle(block.getX(), block.getY(), 6);
             circle.setFill(Color.GREEN);
             circle.setViewOrder(0);
-            circle.setStrokeWidth(6);
+            circle.setStrokeWidth(4);
             if(block.getLine().equals("RED")) {
                 circle.setStroke(Color.FIREBRICK);
             }
@@ -62,12 +62,13 @@ public abstract class BaseMap {
                 circle.setFill(Color.BLACK);
                 circle.setStroke(Color.BLACK);
             }
-
+            
             pane.getChildren().add( circle);
             for(Edge edge: block.getEdges()) {
-                GraphLine line= new GraphLine( block.getX(), block.getY(), edge.getBlock().getX(), edge.getBlock().getY());
-                line.setDestination(edge.getBlock());
-                circle.addLine(line);
+                Line line= new Line( block.getX(), block.getY(), edge.getBlock().getX(), edge.getBlock().getY());
+                edgeMap.put(edge, line);
+                line.setViewOrder(2);
+                line.setStyle("-fx-stroke-width: 2");
 
                 if(block.getLine().equals("RED")) {
                     line.setStroke(Color.FIREBRICK);
@@ -83,22 +84,15 @@ public abstract class BaseMap {
                             line.setStroke(Color.LIMEGREEN);
                         }
                 }
-                
-                
-                line.getStrokeDashArray().addAll();
-                
-                 //TODO: Figure out why can't initialize switch line
-                if (block instanceof Shift){
-                    Shift shiftBlock = (Shift)block;
-                    Block dest = shiftBlock.getPosition();
-                    if (line.getDestination().equals(dest)){
-                        line.setStroke(Color.DARKVIOLET);
+                if(block instanceof Shift) {
+                    Shift shift = (Shift)block;
+                    if (edge.getBlock().equals(shift.getPosition())){
+                        line = edgeMap.get(edge);
+                        line.setStroke(Color.YELLOW);
+                        line.setViewOrder(1);
+                        line.setStyle("-fx-stroke-width: 4");
                     }
-
                 }
-
-                line.setStyle("-fx-stroke-width: 2");
-                line.setViewOrder(1);
                 pane.getChildren().add(line);
             }
             
@@ -113,25 +107,30 @@ public abstract class BaseMap {
             block.functionalProperty().addListener((obs, oldText, newText) -> {
                 this.circleMap.get(block).setFill(Color.RED);
             });
+            
             if (block instanceof Shift){
                 Shift shiftBlock = (Shift)block;
                  // Not working whenever the switch starts on block 8, slightly updates but doesn't change color.
                  // IDK what's causing this issue, works fine for one of the switch lines.
                 shiftBlock.positionProperty().addListener((obs, oldText, newText) -> {
-                    Block dest = shiftBlock.getPosition();
+                    Block position = shiftBlock.getPosition();
                 
-                    GraphCircle circleBlock = this.circleMap.get(block);
-                    for(GraphLine line: circleBlock.getEdges()){
-                        if (line.getDestination().equals(dest)){
-                            line.setStroke(Color.DARKVIOLET);;
+                    for(Edge edge: block.getEdges()){
+                        Line line = edgeMap.get(edge);
+                        line.setStyle("-fx-stroke-width: 2");
+                        if (edge.getBlock().equals(position)) {
+                            line.setStroke(Color.YELLOW);
+                            line.setViewOrder(1);
+                            line.setStyle("-fx-stroke-width: 4");
                         }
                         else{
-                            if(line.getDestination().getLine().equals("RED")) {
+                            if(edge.getBlock().getLine().equals("RED")) {
                                 line.setStroke(Color.FIREBRICK);
                                 }
-                            else if(line.getDestination().getLine().equals("GREEN")) {
+                            else if(edge.getBlock().getLine().equals("GREEN")) {
                                     line.setStroke(Color.LIMEGREEN);
                                 }
+                            line.setViewOrder(2);
                         }
                     }
             });
