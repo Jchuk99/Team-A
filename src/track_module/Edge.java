@@ -5,9 +5,10 @@ public class Edge {
     private Boolean connected;
 
     public Edge( Block block, Boolean connected) {
-        this.block= block;
-        this.connected= connected;
+        this.block = block;
+        this.connected = connected;
     }
     public Block getBlock(){return block;};
     public Boolean getConnected(){return connected;};
+    public void setConnected(Boolean connected){this.connected = connected;};
 }
