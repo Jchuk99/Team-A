@@ -2,6 +2,7 @@ package src;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.text.Text;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -14,6 +15,13 @@ import javafx.scene.shape.Circle;
 public class UICommon{
     public static Button createButton(String text, int width, int height) {
         Button button = new Button();
+        button.setText(text);
+        button.setPrefWidth(width);
+        button.setPrefHeight(height);
+        return button;
+    }
+    public static ToggleButton createToggleButton(String text, int width, int height) {
+        ToggleButton button = new ToggleButton();
         button.setText(text);
         button.setPrefWidth(width);
         button.setPrefHeight(height);
