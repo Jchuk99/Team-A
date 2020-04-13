@@ -93,6 +93,14 @@ public class TrackControllerModule extends Module {
 		return closedBlocksInJuris;
 	}
 
+	public List<UUID> getClosedBlocks(){
+		return closedBlocks; 
+	}
+
+	public List<Shift> getSwitchPositions(){
+		return switchPositions; 
+	}
+
 
 
 
