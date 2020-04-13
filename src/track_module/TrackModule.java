@@ -352,7 +352,7 @@ public class TrackModule extends Module {
                 yard.addEdge(source, edge[2] == 0);
             }
         }
-        //this.ctcModule.initMap();
+        this.ctcModule.initMap();
         for( Block block : myBlocks.values()) {
             blocks.put( block.getUUID(), block);
         }

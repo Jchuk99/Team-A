@@ -87,6 +87,9 @@ public class CTCTrain {
         prevPathBlock = null;
     }
 
+    public boolean atDestination(){
+        return currPos.equals(destination);
+    }
     public boolean inYard(){
         return currPos == CTCModule.map.getYard().getUUID();
     }

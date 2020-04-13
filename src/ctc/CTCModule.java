@@ -29,10 +29,6 @@ public class CTCModule extends Module{
             updateTrainAuthorities();
         }
 
-        // LOGIC: check if the next block on the train's path is occupied. If it is there's two options:
-        // 1. The train went to that next block. If so update it's position
-        // 2. It's closed. If so, don't update it's position.
-
         // use this module to get/set data from wayside every cycle which includes
         // track state (includes occupied blocks)
         // ticket sales for each line
@@ -40,7 +36,7 @@ public class CTCModule extends Module{
 
         // gives off list of CTC trains(Suggested Speed(M/s), Authority, currPosition of each train)
         // gives off switches(Integer Boolean Hashmap)
-        // gives off occupied blocks
+        // gives off closed blocks
     }
     
 
@@ -76,7 +72,6 @@ public class CTCModule extends Module{
         List<UUID> occupiedBlocks = map.getOccupiedBlocks();
         List<UUID> closedBlocks = map.getClosedBlocks();
 
-        // Need method to get all trains.  
         List<CTCTrain> trains = getTrains();
 
         if(trains.size() > 0){
@@ -97,13 +92,15 @@ public class CTCModule extends Module{
                     // if the nextBlock is null then we should be @ our destination
                     //TODO: think of edge cases.
                     //TODO: only update the current Path after waiting 3 minutes at station.
-                    train.getNextPath();
-                    if (train.getRoute().size() == 0 ){
-                        System.out.println("Train route is done.");
-                        if (!train.inYard()){
-                            train.goToYard();
-                        }else{
-                           // schedule.destroyTrain(train);
+                    if (train.atDestination()){
+                        train.getNextPath();
+                        if (train.getRoute().size() == 0 ){
+                            System.out.println("Train route is done.");
+                            if (!train.inYard()){
+                                train.goToYard();
+                            }else{
+                            // schedule.destroyTrain(train);
+                            }
                         }
                     }
                 }

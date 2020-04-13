@@ -94,6 +94,10 @@ public class Path {
             course.add(0, curr);
             //System.out.println("Curr: " + CTCModule.map.getBlock(curr).getBlockNumber());
             curr = edgeTo.get(curr);
+            //TODO: what if I can't find a path?
+            if (curr == null){
+                break;
+            }
             
 		}
         course.add(0, curr);
