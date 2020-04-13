@@ -1,4 +1,9 @@
-package src.ctc;
+package src.track_controller;
+
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -7,18 +12,78 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.stage.Stage;
 import src.UICommon;
 import src.track_module.Block;
+import src.track_module.Edge;
 import src.track_module.BlockConstructor.Shift;
+import src.track_module.BlockConstructor.Yard;
 import src.BaseMap;
-import src.GraphCircle;
-import src.GraphLine;
 
-public class GUIMap extends BaseMap {
+/*public class TrackControllerMap extends BaseMap {
     
+    @Override
+    public void buildMap(Map<UUID, Block> blocks, Pane pane) {
+        pane.getChildren().setAll();
+        circleMap = new HashMap<Block, Circle>();
+
+        for(Block block : blocks.values()) {
+            Circle circle = new Circle(block.getX(), block.getY(), 8);
+            circle.setFill(Color.GREEN);
+            //circle.setViewOrder(0);
+            circle.setStrokeWidth(6);
+            if(block.getLine().equals("RED")) {
+                circle.setStroke(Color.FIREBRICK);
+            }
+            else if(block.getLine().equals("GREEN")) {
+                circle.setStroke(Color.LIMEGREEN);
+            }
+            else if(block instanceof Yard) {
+                circle.setFill(Color.BLACK);
+                circle.setStroke(Color.BLACK);
+            }
+
+            pane.getChildren().add( circle);
+            for(Edge edge: block.getEdges()) {
+                Line line= new Line( block.getX(), block.getY(), edge.getBlock().getX(), edge.getBlock().getY());
+                if(block.getLine().equals("RED")) {
+                line.setStroke(Color.FIREBRICK);
+                }
+                else if(block.getLine().equals("GREEN")) {
+                    line.setStroke(Color.LIMEGREEN);
+                }
+                line.setStyle("-fx-stroke-width: 2");
+                //line.setViewOrder(1);
+                pane.getChildren().add(line);
+            }
+            
+            //ADDED listener here to make occupancy dynamically update in CTC
+            block.occupiedProperty().addListener((obs, oldText, newText) -> {
+                this.circleMap.get(block).setFill(Color.BLUE);
+            });
+            block.functionalProperty().addListener((obs, oldText, newText) -> {
+                this.circleMap.get(block).setFill(Color.RED);
+            });
+
+            circle.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+                String title = block.getLine() + " Line: " + Integer.toString(block.getBlockNumber());
+                Scene scene = buildPopUp( block);
+                scene.getStylesheets().add(Paths.get(System.getenv("cssStyleSheetPath")).toUri().toString());
+                Stage stage = new Stage();
+                stage.setTitle(title);
+                stage.setScene(scene);
+                stage.sizeToScene();
+                stage.show();
+            });
+            circleMap.put(block, circle);
+        }
+    }
+
     @Override
     public Scene buildPopUp(Block block) {
         
@@ -27,7 +92,6 @@ public class GUIMap extends BaseMap {
         Circle circleRed = UICommon.createCircle(10, Color.WHITE);
         Circle circleOrange = UICommon.createCircle(10, Color.WHITE);
         statusUpdate(block, circleRed, circleOrange, circleBlue, circleGreen);
-
         Button failureMode = UICommon.createButton("Set Closed", 200, 10);
         failureMode.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
             block.setClosed(!block.getClosed());
@@ -41,7 +105,7 @@ public class GUIMap extends BaseMap {
         Label statusLabel = UICommon.createLabel("Status");
         statusLabel.setStyle("-fx-font-size: 18;");
         statusLabel.setAlignment(Pos.BOTTOM_CENTER);
-        HBox statusBox = new HBox(10, statusLabel, circleGreen, circleBlue, circleRed);
+        HBox statusBox = new HBox(10, statusLabel, circleGreen, circleBlue, circleRed, circleOrange);
         statusBox.setAlignment(Pos.CENTER);
         VBox headerBox ;
         if (block instanceof Shift){
@@ -61,10 +125,16 @@ public class GUIMap extends BaseMap {
         functionalBox.setAlignment(Pos.CENTER);
 
         Label functionalLabel0 = UICommon.createLabel("Functional");
-        customizeLabel(functionalLabel0, functionalBox);
-
+        functionalLabel0.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+        functionalLabel0.setAlignment(Pos.CENTER_LEFT);
+        functionalLabel0.setPadding( new Insets(5));
+        functionalLabel0.prefWidthProperty().bind(functionalBox.widthProperty().divide((2)));
+        
         Label functionalLabel1 = UICommon.createLabel( UICommon.booleanToOnOff(block.getFunctional()));
-        customizeLabel(functionalLabel1, functionalBox);
+        functionalLabel1.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+        functionalLabel1.setAlignment(Pos.CENTER_LEFT);
+        functionalLabel1.setPadding( new Insets(5));
+        functionalLabel1.prefWidthProperty().bind(functionalBox.widthProperty().divide((2)));
 
         functionalBox.getChildren().addAll(functionalLabel0,functionalLabel1);
         tableBox.getChildren().add(functionalBox);
@@ -79,10 +149,16 @@ public class GUIMap extends BaseMap {
         occupiedBox.setAlignment(Pos.CENTER);
 
         Label occupiedLabel0 = UICommon.createLabel("Occupied");
-        customizeLabel(occupiedLabel0, occupiedBox);
+        occupiedLabel0.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+        occupiedLabel0.setAlignment(Pos.CENTER_LEFT);
+        occupiedLabel0.setPadding( new Insets(5));
+        occupiedLabel0.prefWidthProperty().bind(occupiedBox.widthProperty().divide((2)));
         
         Label occupiedLabel1 = UICommon.createLabel( UICommon.booleanToOnOff(block.getOccupied()));
-        customizeLabel(occupiedLabel1, occupiedBox);
+        occupiedLabel1.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+        occupiedLabel1.setAlignment(Pos.CENTER_LEFT);
+        occupiedLabel1.setPadding( new Insets(5));
+        occupiedLabel1.prefWidthProperty().bind(occupiedBox.widthProperty().divide((2)));
 
         occupiedBox.getChildren().addAll(occupiedLabel0,occupiedLabel1);
         tableBox.getChildren().add(occupiedBox);
@@ -98,10 +174,16 @@ public class GUIMap extends BaseMap {
         closedBox.setAlignment(Pos.CENTER);
 
         Label closedLabel0 = UICommon.createLabel("Closed");
-        customizeLabel(closedLabel0, closedBox);
+        closedLabel0.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+        closedLabel0.setAlignment(Pos.CENTER_LEFT);
+        closedLabel0.setPadding( new Insets(5));
+        closedLabel0.prefWidthProperty().bind(closedBox.widthProperty().divide((2)));
         
         Label closedLabel1 = UICommon.createLabel( UICommon.booleanToOnOff(block.getOccupied()));
-        customizeLabel(closedLabel1, closedBox);
+        closedLabel1.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+        closedLabel1.setAlignment(Pos.CENTER_LEFT);
+        closedLabel1.setPadding( new Insets(5));
+        closedLabel1.prefWidthProperty().bind(closedBox.widthProperty().divide((2)));
 
         closedBox.getChildren().addAll(closedLabel0, closedLabel1);
         tableBox.getChildren().add(closedBox);
@@ -111,41 +193,30 @@ public class GUIMap extends BaseMap {
                 statusUpdate(block, circleRed, circleOrange, circleBlue, circleGreen);
         });
 
-       if (block instanceof Shift){   
+        if (block instanceof Shift){   
             // Switch Box
             Shift shiftBlock = (Shift)block;
             HBox switchBox= new HBox();
             switchBox.setAlignment(Pos.CENTER);
 
             Label switchLabel0 = UICommon.createLabel("Switch Position");
-            customizeLabel(switchLabel0, switchBox);
+            switchLabel0.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+            switchLabel0.setAlignment(Pos.CENTER_LEFT);
+            switchLabel0.setPadding( new Insets(5));
+            switchLabel0.prefWidthProperty().bind(switchBox.widthProperty().divide((2)));
             
             Label switchLabel1 = UICommon.createLabel("" + shiftBlock.getPosition().getBlockNumber());
-            customizeLabel(switchLabel1, switchBox);
+            switchLabel1.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+            switchLabel1.setAlignment(Pos.CENTER_LEFT);
+            switchLabel1.setPadding( new Insets(5));
+            switchLabel1.prefWidthProperty().bind(switchBox.widthProperty().divide((2)));
 
             switchBox.getChildren().addAll(switchLabel0, switchLabel1);
             tableBox.getChildren().add(switchBox);
-            
-            
-           shiftBlock.positionProperty().addListener((obs, oldText, newText) -> {
+
+            shiftBlock.positionProperty().addListener((obs, oldText, newText) -> {
                     switchLabel1.setText("" + newText);
-                    Block dest = shiftBlock.getPosition();
-                
-                    GraphCircle circleBlock = this.circleMap.get(block);
-                    for(GraphLine line: circleBlock.getEdges()){
-                        if (line.getDestination().equals(dest)){
-                            line.setStroke(Color.DARKVIOLET);
-                            line.setStroke(Color.DARKVIOLET);
-                        }
-                        else{
-                            if(line.getDestination().getLine().equals("RED")) {
-                                line.setStroke(Color.FIREBRICK);
-                                }
-                            else if(line.getDestination().getLine().equals("GREEN")) {
-                                    line.setStroke(Color.LIMEGREEN);
-                                }
-                        }
-                    }
+                    statusUpdate(block, circleRed, circleOrange, circleBlue, circleGreen);
             });
         }
 
@@ -155,38 +226,34 @@ public class GUIMap extends BaseMap {
         return scene;
     }
 
-    private void customizeLabel(Label label, HBox box){
-        label.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
-        label.setAlignment(Pos.CENTER_LEFT);
-        label.setPadding( new Insets(5));
-        label.prefWidthProperty().bind(box.widthProperty().divide((2)));
-
-    }
-    
     private void statusUpdate( Block block, Circle circleRed,Circle circleOrange, Circle circleBlue, Circle circleGreen) {
         if(block.getFunctional() == false) {
             circleRed.setFill(Color.RED);
+            circleOrange.setFill(Color.GRAY);
             circleBlue.setFill(Color.GRAY);
             circleGreen.setFill(Color.GRAY);
             this.circleMap.get(block).setFill(Color.RED);
         }
         else if(CTCModule.map.getClosedBlocks().contains(block.getUUID())){
             circleRed.setFill(Color.GRAY);
+            circleOrange.setFill(Color.ORANGE);
             circleBlue.setFill(Color.GRAY);
             circleGreen.setFill(Color.GRAY);
             this.circleMap.get(block).setFill(Color.GRAY);
         }
         else if(block.getOccupied() == true) {
             circleRed.setFill(Color.GRAY);
+            circleOrange.setFill(Color.GRAY);
             circleBlue.setFill(Color.BLUE);
             circleGreen.setFill(Color.GRAY);
             this.circleMap.get(block).setFill(Color.BLUE);
         }
         else {
             circleRed.setFill(Color.GRAY);
+            circleOrange.setFill(Color.GRAY);
             circleBlue.setFill(Color.GRAY);
             circleGreen.setFill(Color.GREEN);
             this.circleMap.get(block).setFill(Color.GREEN);
         }
     }
-}
+}*/

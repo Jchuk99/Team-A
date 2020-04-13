@@ -359,7 +359,7 @@ public class TrackModule extends Module {
     }
 
     public void dispatchTrain(CTCTrain ctcTrain) {
-        UUID uuid = ctcTrain.getRoute().getCurrPath().getStartBlock();
+        UUID uuid = ctcTrain.getCurrPos();
         Block startingBlock= trackModule.getBlockByUUID(uuid);
 
         Train train = trainModule.createTrain();

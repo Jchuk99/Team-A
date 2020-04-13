@@ -9,7 +9,7 @@ public class Route {
     public Route(){
     }
     
-    public void updateCurrPath(){
+    public void getNextPath(){
         if (!paths.isEmpty()){
             paths.poll();
         }

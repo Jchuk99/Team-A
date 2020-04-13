@@ -38,6 +38,11 @@ public class Schedule{
 
         return train;
     }
+
+    public void destroyTrain(CTCTrain train){
+        trains.remove(train.getTrainID(), train);
+        observableTrains.remove(train);
+    }
     
     public HashMap<Integer, CTCTrain> getTrainMap(){
         return trains;

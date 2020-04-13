@@ -16,43 +16,7 @@ public class Train {
     
     public Boolean removeFlag = false;
 
-    private int UUID;
-    private TrainController controller;
-    private Block prevBlock = null;
-    private Block currentBlock = null;
-    private Boolean insideOneBlock = true;
-    private Boolean stoppedAtStation = false;
-    private float prevSpeed = 0;
-    private float currentSpeed = 0;
-    private float currentPower = 0;
-    private float currentPosition = 0;
-    private float prevAcceleration = 0;
-    private float currentAcceleration = 0;
-    private float currentGrade = 0;
-    private float temperatureInside = 70;
-
-    private float suggestedSpeed = 0;
-    private float authority = 0;
-    private float targetPower = 0;
-
-    private int passengerCount = 0;
-    private int crewCount = 2;
-    private float currentWeight = (float) 40.9;
-
-    BooleanProperty leftDoorWorking = new SimpleBooleanProperty(true);
-    BooleanProperty rightDoorWorking = new SimpleBooleanProperty(true);
-    BooleanProperty lightWorking = new SimpleBooleanProperty(true);
-    BooleanProperty serviceBrakeWorking = new SimpleBooleanProperty(true);
-    BooleanProperty emergencyBrakeWorking = new SimpleBooleanProperty(true);
-    BooleanProperty engineWorking = new SimpleBooleanProperty(true);
-
-    // true means on
-    BooleanProperty leftDoorState = new SimpleBooleanProperty(false);
-    BooleanProperty rightDoorState = new SimpleBooleanProperty(false);
-    BooleanProperty lightState = new SimpleBooleanProperty(false);
-    BooleanProperty serviceBrakeState = new SimpleBooleanProperty(false);
-    BooleanProperty emergencyBrakeState = new SimpleBooleanProperty(false);
-
+    /****** constants ******/
     // in tons
     public final static float emptyWeight = (float) 40.9;
     public final static float passengerWeight = (float) 0.07;
@@ -76,6 +40,46 @@ public class Train {
     public final static float coeOfFriction = (float) 0.35;
 
     public final static int maxPassenger = 222;
+    /****** constants ******/
+
+    private int UUID;
+    private TrainController controller;
+    private Block prevBlock = null;
+    private Block currentBlock = null;
+    private Boolean insideOneBlock = true;
+    private Boolean stoppedAtStation = false;
+    private float prevSpeed = 0;
+    private float currentSpeed = 0;
+    private float currentPower = 0;
+    private float currentPosition = 0;
+    private float prevAcceleration = 0;
+    private float currentAcceleration = 0;
+    private float currentGrade = 0;
+    private float temperatureInside = 70;
+
+    private float suggestedSpeed = 0;
+    private float authority = 0;
+    private float targetPower = 0;
+
+    private int passengerCount = 0;
+    private int crewCount = 2;
+    private float currentWeight = (float) 40.9;
+
+    private BooleanProperty leftDoorWorking = new SimpleBooleanProperty(true);
+    private BooleanProperty rightDoorWorking = new SimpleBooleanProperty(true);
+    private BooleanProperty lightWorking = new SimpleBooleanProperty(true);
+    private BooleanProperty serviceBrakeWorking = new SimpleBooleanProperty(true);
+    private BooleanProperty emergencyBrakeWorking = new SimpleBooleanProperty(true);
+    private  BooleanProperty engineWorking = new SimpleBooleanProperty(true);
+
+    // true means on
+    private BooleanProperty leftDoorState = new SimpleBooleanProperty(false);
+    private BooleanProperty rightDoorState = new SimpleBooleanProperty(false);
+    private BooleanProperty lightState = new SimpleBooleanProperty(false);
+    private BooleanProperty serviceBrakeState = new SimpleBooleanProperty(false);
+    private BooleanProperty emergencyBrakeState = new SimpleBooleanProperty(false);
+    
+    private StringProperty beacon = new SimpleStringProperty("");
 
     private StringProperty suggestedSpeedString = new SimpleStringProperty("");
     private StringProperty currentSpeedString = new SimpleStringProperty("");
@@ -125,8 +129,14 @@ public class Train {
         // update data
         currentWeight = emptyWeight + (passengerCount + crewCount) * passengerWeight;
         currentGrade = currentBlock.getGrade();
+
+        // in radian
+        // for seperating gravity direction
+        float angle = (float)Math.atan(currentGrade / 100);
+        float cosAngle = (float)Math.cos(angle);
+        float sinAngle = (float)Math.sin(angle);
         // in kN
-        float normalForce = currentWeight * gravity * (1 - Math.abs(currentGrade / 100));
+        float normalForce = currentWeight * gravity * cosAngle;
         float maxGripForce = normalForce * coeOfFriction;
         // in seconds
         float timeStep = ((float)Module.TIMESTEP) / 1000;
@@ -183,7 +193,7 @@ public class Train {
         // acceleration (m / s^2)
         prevAcceleration = currentAcceleration;
         // F = ma, a = F/m
-        currentAcceleration = totalForce / currentWeight - (gravity * (currentGrade / 100));
+        currentAcceleration = totalForce / currentWeight - (gravity * sinAngle);
 
         // velocity (m / s)
         prevSpeed = currentSpeed;
@@ -214,7 +224,7 @@ public class Train {
             System.out.println("currentAcceleration: " + currentAcceleration + " m/s^2");
             System.out.println("acceleration due to engine: " + (force / currentWeight) + " m/s^2");
             System.out.println("acceleration due to brakes: " + (brakingForce / currentWeight) + " m/s^2");
-            System.out.println("acceleration due to grade: -" + ((gravity * (currentGrade / 100))) + " m/s^2");
+            System.out.println("acceleration due to grade: -" + (gravity * sinAngle) + " m/s^2");
             System.out.println("acceleration due to resistance: -" + (rollingResistance / currentWeight) + " m/s^2");
             System.out.println("currentSpeed: " + currentSpeed + " m/s");
             System.out.println("currentPosition: " + currentPosition + " m");
@@ -263,6 +273,9 @@ public class Train {
             return;
         } else if (nextBlock instanceof Station) {
             // TODO: pickup beacon
+            // beacon.setValue(nextBlock.getBeacon());
+        } else {
+            beacon.setValue("");
         }
 
         prevBlock = currentBlock;
@@ -369,6 +382,10 @@ public class Train {
     
     public BooleanProperty getEngineWorking() {
         return engineWorking;
+    }
+
+    public StringProperty getBeacon() {
+        return beacon;
     }
     /****** called by train controller and GUI ******/
 

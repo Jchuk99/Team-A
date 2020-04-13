@@ -10,10 +10,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import src.Module;
 import src.track_module.Block;
+import src.track_module.BlockConstructor.Shift;
 import src.track_module.BlockConstructor.Station;
 
 
 public class CTCModule extends Module{
+    public static final int MAX_AUTHORITY = 3;
     public static CTCMap map = null;
     private Schedule schedule = new Schedule();
     
@@ -23,8 +25,8 @@ public class CTCModule extends Module{
         if (validMap()){
             map.updateMap();
             updateTrainPositions();
+            updateTrains();
             updateTrainAuthorities();
-            updateTrainStrings();
         }
 
         // LOGIC: check if the next block on the train's path is occupied. If it is there's two options:
@@ -62,22 +64,16 @@ public class CTCModule extends Module{
         }
     }
 
-    public void updateTrainStrings(){
+    public void updateTrains(){
         List<CTCTrain> trains = getTrains();
         for (CTCTrain train: trains){
-            train.updateString();
+            train.update();
         }
     }
 
     public void updateTrainPositions(){
         //TODO: should I use occupied blocks or should I feed the block into map?
         List<UUID> occupiedBlocks = map.getOccupiedBlocks();
-       
-        /*System.out.println("Ocuppied Blocks :");
-        for (UUID id: occupiedBlocks){
-            System.out.print(map.getBlock(id).getBlockNumber());
-        }*/
-
         List<UUID> closedBlocks = map.getClosedBlocks();
 
         // Need method to get all trains.  
@@ -86,27 +82,28 @@ public class CTCModule extends Module{
         if(trains.size() > 0){
             for (CTCTrain train: trains){
                 //TODO: change all the blockID's to blocks, just get the ID from the block.
-                UUID nextBlock = train.getNextBlockID();
-                // if the trains next block is not null then do work
+                UUID nextBlock = train.getNextBlockID(train.getCurrPos());
                 if (nextBlock != null){
                     boolean isOccupied = occupiedBlocks.contains(nextBlock);
                     boolean isClosed = closedBlocks.contains(nextBlock);
 
                     if (isOccupied && !isClosed) {
-                        train.setCurrPos(train.getNextBlockID());
-                        System.out.println("Train ID: " + train.getTrainID());
-                        System.out.println("currPos : " + map.getBlock(train.getCurrPos()).getBlockNumber());
+                        train.setCurrPos(nextBlock);
+                       // System.out.println("Train ID: " + train.getTrainID());
+                       // System.out.println("currPos : " + map.getBlock(train.getCurrPos()).getBlockNumber());
                     }
                 }
                 else{
                     // if the nextBlock is null then we should be @ our destination
                     //TODO: think of edge cases.
                     //TODO: only update the current Path after waiting 3 minutes at station.
-                    train.updateCurrPath();
+                    train.getNextPath();
                     if (train.getRoute().size() == 0 ){
                         System.out.println("Train route is done.");
                         if (!train.inYard()){
                             train.goToYard();
+                        }else{
+                           // schedule.destroyTrain(train);
                         }
                     }
                 }
@@ -118,16 +115,15 @@ public class CTCModule extends Module{
 
     public void updateTrainAuthorities(){
         //TODO: Error Check, discuss train coming out of yard.
-        //TODO: need to make this an ordered list of trains according to trainID. 
         List<CTCTrain> trains = getTrains();
         List<UUID> occupiedBlocks = map.getOccupiedBlocks();
         List<UUID> authorityBlocks = new ArrayList<UUID>();
         List<UUID> closedBlocks = map.getClosedBlocks();
 
         for (CTCTrain train: trains){
-            UUID nextBlockID = train.getNextBlockID();
+            UUID nextBlockID = train.getNextBlockID(train.getCurrPos());
             int authority = 0;
-            while (nextBlockID != null){
+            while (nextBlockID != null  && authority < MAX_AUTHORITY){
                 boolean isOccupied = occupiedBlocks.contains(nextBlockID);
                 boolean isClosed = closedBlocks.contains(nextBlockID);
                 boolean hasAuthority = authorityBlocks.contains(nextBlockID);
@@ -137,6 +133,8 @@ public class CTCModule extends Module{
                 }
                 nextBlockID = train.getNextBlockID(nextBlockID);
             }
+           // System.out.println("Train ID: " + train.getTrainID());
+           // System.out.println("Train authority: "+ authority);
             train.setAuthority(authority);
         }
     }
@@ -146,7 +144,6 @@ public class CTCModule extends Module{
         // need to give speed in meters per second, authority, train ID, and route 
         suggestedSpeed = suggestedSpeed/(float)2.237; // METERS PER SECOND
         CTCTrain train = schedule.dispatchTrain(trainID, suggestedSpeed, destination);
-        //TODO: should probably name this method dispatchTrain
         this.trackModule.dispatchTrain(train);
 
     }
@@ -160,9 +157,8 @@ public class CTCModule extends Module{
         return schedule.getTrainMap();
     }
 
-    //public HashMap<UUID, Boolean> getSwitchStates{
-    //}
-    //public ArrayList<UUID> getClosedBlocks {return map.getClosedBlocks();}
+    public List<Shift> getSwitchPositions(){return map.getSwitchList();}
+    public List<UUID> getClosedBlocks() {return map.getClosedBlocks();}
 
     /****** for GUI ******/
 
