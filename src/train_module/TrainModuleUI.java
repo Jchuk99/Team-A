@@ -1,5 +1,6 @@
 package src.train_module;
 
+import src.UICommon;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,14 +13,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.text.Text;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.Node;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -58,7 +57,6 @@ public class TrainModuleUI extends Stage {
         /****** beacon ******/
 
         /****** top box - time and signal ******/
-        // TODO: signal update
         final HBox topBox = createTopBox();
         topBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
         /****** top box - time and signal ******/
@@ -113,16 +111,17 @@ public class TrainModuleUI extends Stage {
         VBox time = createLabelBox("", trainModule.timeString);
         final HBox timeBox = new HBox(10, createTextBox("Time"), time);
 
-        Circle circleG = createCircle(10, Color.GREEN);
-        Circle circleY = createCircle(10, Color.YELLOW);
-        Circle circleR = createCircle(10, Color.RED);
+        // TODO: signal update
+        Circle circleG = UICommon.createCircle(10, Color.GREEN);
+        Circle circleY = UICommon.createCircle(10, Color.YELLOW);
+        Circle circleR = UICommon.createCircle(10, Color.RED);
         final HBox circleBox = new HBox(10, circleG, circleY, circleR);
         circleBox.setAlignment(Pos.CENTER);
         circleBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 2; -fx-padding: 10;");
 
         final HBox signalBox = new HBox(10, createTextBox("Signal Light"), circleBox);
 
-        final HBox topBox = new HBox(10, createHSpacer(), timeBox, createHSpacer(), signalBox, createHSpacer());
+        final HBox topBox = new HBox(10, UICommon.createHSpacer(), timeBox, UICommon.createHSpacer(), signalBox, UICommon.createHSpacer());
         return topBox;
     }
 
@@ -153,7 +152,7 @@ public class TrainModuleUI extends Stage {
         VBox label9 = createLabelBox("", trainData.getTemperatureInside());
         VBox labelBox2 = new VBox(10, label5, label6, label7, label8, label9);
         
-        final HBox infoBox = new HBox(10, createHSpacer(), nameBox1, labelBox1, createHSpacer(), nameBox2, labelBox2, createHSpacer());
+        final HBox infoBox = new HBox(10, UICommon.createHSpacer(), nameBox1, labelBox1, UICommon.createHSpacer(), nameBox2, labelBox2, UICommon.createHSpacer());
         return infoBox;
     }
 
@@ -174,42 +173,42 @@ public class TrainModuleUI extends Stage {
         VBox light6 = createCircleBox(10, Color.GREEN, Color.RED, trainData.getEngineWorking());
         VBox lightBox = new VBox(10, createTextBox("Status"), light1, light2, light3, light4, light5, light6);
 
-        Button button1 = createButton("Insert Failure", 100, 30);
+        Button button1 = UICommon.createButton("Insert Failure", 100, 30);
         button1.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 trainData.setLeftDoorWorking(false);
             }
         });
-        Button button2 = createButton("Insert Failure", 100, 30);
+        Button button2 = UICommon.createButton("Insert Failure", 100, 30);
         button2.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 trainData.setRightDoorWorking(false);
             }
         });
-        Button button3 = createButton("Insert Failure", 100, 30);
+        Button button3 = UICommon.createButton("Insert Failure", 100, 30);
         button3.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 trainData.setLightWorking(false);
             }
         });
-        Button button4 = createButton("Insert Failure", 100, 30);
+        Button button4 = UICommon.createButton("Insert Failure", 100, 30);
         button4.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 trainData.setServiceBrakeWorking(false);
             }
         });
-        Button button5 = createButton("Insert Failure", 100, 30);
+        Button button5 = UICommon.createButton("Insert Failure", 100, 30);
         button5.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 trainData.setEmergencyBrakeWorking(false);
             }
         });
-        Button button6 = createButton("Insert Failure", 100, 30);
+        Button button6 = UICommon.createButton("Insert Failure", 100, 30);
         button6.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -218,34 +217,45 @@ public class TrainModuleUI extends Stage {
         });
         VBox buttonBox = new VBox(10, createTextBox("Insert Failure"), createVBox(button1), createVBox(button2), createVBox(button3), createVBox(button4), createVBox(button5), createVBox(button6));
 
-        HBox box = new HBox(10, createHSpacer(), nameBox, createHSpacer(), lightBox, createHSpacer(), buttonBox, createHSpacer());
+        HBox box = new HBox(10, UICommon.createHSpacer(), nameBox, UICommon.createHSpacer(), lightBox, UICommon.createHSpacer(), buttonBox, UICommon.createHSpacer());
 
-        final Button ebrakeButton = createButton("Emergency brake", 200, 50);
-        ebrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: red;");
-        ebrakeButton.setOnAction(new EventHandler<ActionEvent>() {
+        final ToggleButton eBrakeButton = UICommon.createToggleButton("Emergency brake", 200, 50);
+        eBrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: red;");
+        eBrakeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                trainData.setEmergencyBrake(true);
+                trainData.setEmergencyBrake(eBrakeButton.isSelected());
+            }
+        });
+        trainData.getEmergencyBrakeState().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue o,Boolean oldVal, Boolean newVal){
+                eBrakeButton.setSelected(newVal);
+                if(newVal){
+                    eBrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: firebrick;");
+                } else {
+                    eBrakeButton.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-font-size:20; -fx-text-fill: black; -fx-background-color: red;");
+                } 
             }
         });
         // TODO: add effect when button is clicked
         DropShadow shadow = new DropShadow();
         //Adding the shadow when the mouse cursor is on
-        ebrakeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+        eBrakeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
             @Override 
             public void handle(MouseEvent e) {
-                ebrakeButton.setEffect(shadow);
+                eBrakeButton.setEffect(shadow);
             }
         });
         //Removing the shadow when the mouse cursor is off
-        ebrakeButton.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
+        eBrakeButton.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
             @Override 
             public void handle(MouseEvent e) {
-                ebrakeButton.setEffect(null);
+                eBrakeButton.setEffect(null);
             }
         });
 
-        final VBox statusBox = new VBox(10, box, ebrakeButton);
+        final VBox statusBox = new VBox(10, box, eBrakeButton);
         statusBox.setAlignment(Pos.CENTER);
         return statusBox;
     }
@@ -266,57 +276,17 @@ public class TrainModuleUI extends Stage {
         return box;
     }
 
-    private Button createButton(String text, int width, int height) {
-        Button button = new Button();
-        button.setText(text);
-        button.setPrefWidth(width);
-        button.setPrefHeight(height);
-        return button;
-    }
-
-    private VBox createButtonBox(String text, int width, int height) {
-        // all VBox create function are unified to 40px height
-        return createVBox(createButton(text, width, height));
-    }
-
-    private Text createText(String text) {
-        Text t = new Text(text);
-        return t;
-    }
-
     private VBox createTextBox(String text) {
         // all VBox create function are unified to 40px height
-        return createVBox(createText(text));
-    }
-
-    private Label createLabel(String text) {
-        Label label = new Label(text);
-        label.setStyle("-fx-border-style: solid inside; -fx-border-width: 2; -fx-padding: 5;");
-        return label;
-    }
-
-    private VBox createLabelBox(String text) {
-        // all VBox create function are unified to 40px height
-        return createVBox(createLabel(text));
+        return createVBox(UICommon.createText(text));
     }
 
     private VBox createLabelBox(String text, StringProperty valueProperty) {
         // all VBox create function are unified to 40px height
-        Label label = createLabel(text);
+        Label label = UICommon.createLabel(text);
+        label.setStyle("-fx-border-style: solid inside; -fx-border-width: 2; -fx-padding: 5;");
         label.textProperty().bind(valueProperty);
         return createVBox(label);
-    }
-
-    private Circle createCircle(int radius, Color color) {
-        Circle circle = new Circle();
-        circle.setRadius(radius);
-        circle.setFill(color);
-        return circle;
-    }
-
-    private VBox createCircleBox(int radius, Color color) {
-        // all VBox create function are unified to 40px height
-        return createVBox(createCircle(radius, color));
     }
 
     private VBox createCircleBox(int radius, Color color1, Color color2, BooleanProperty booleanProperty) {
@@ -338,18 +308,4 @@ public class TrainModuleUI extends Stage {
         return createVBox(circle);
     }
 
-    private static Node createVSpacer() {
-        final Region spacer = new Region();
-        // Make it always grow or shrink according to the available space
-        VBox.setVgrow(spacer, Priority.ALWAYS);
-        return spacer;
-    }
-
-    private static Node createHSpacer() {
-        final Region spacer = new Region();
-        // Make it always grow or shrink according to the available space
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        return spacer;
-    }
-    
 }

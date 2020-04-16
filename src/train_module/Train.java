@@ -14,7 +14,7 @@ import javafx.beans.property.BooleanProperty;
 
 public class Train {
     
-    public Boolean removeFlag = false;
+    public BooleanProperty removeFlag = new SimpleBooleanProperty(false);
 
     /****** constants ******/
     // in tons
@@ -105,7 +105,7 @@ public class Train {
     }
 
     public void update() {
-        if (currentBlock == null || removeFlag) return;
+        if (currentBlock == null || removeFlag.getValue()) return;
 
         // spec: max speed 70 km/h = 19.44 m/s
         // service brake (2/3 load / 51.43 tons) 1.2 m/s^2, 61.7kN
@@ -120,10 +120,18 @@ public class Train {
         if (!stoppedAtStation && currentBlock instanceof Station && currentSpeed == 0) {
             stoppedAtStation = true;
             Random rand = new Random();
-            passengerCount -= rand.nextInt(passengerCount);
-            int boardingPassengers = rand.nextInt(maxPassenger - passengerCount);
-            passengerCount += boardingPassengers;
-            ((Station) currentBlock).addTicketsSold(passengerCount);
+            int leavingPassengers = 0;
+            int boardingPassengers = 0;
+            if (passengerCount > 0) {
+                leavingPassengers = rand.nextInt(passengerCount);
+                passengerCount -= leavingPassengers;
+            }
+            int avaliableSpace = maxPassenger - passengerCount;
+            if (avaliableSpace > 0) {
+                boardingPassengers = rand.nextInt(avaliableSpace);
+                passengerCount += boardingPassengers;
+            }
+            ((Station) currentBlock).addTicketsSold(boardingPassengers);
         }
 
         // update data
@@ -299,7 +307,7 @@ public class Train {
 
     public void destroyTrain() {
         controller.destroy();
-        removeFlag = true;
+        removeFlag.setValue(true);
     }
 
 

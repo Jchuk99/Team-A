@@ -16,6 +16,8 @@ public class ApplicationUI extends Application {
     @Override
     public void start(Stage primaryStage) {
 
+        ClockUI clockUI = new ClockUI();
+
         TrackModule trackModule= new TrackModule();
         TrainControllerModule trainControllerModule= new TrainControllerModule();
         TrackControllerModule trackControllerModule= new TrackControllerModule();
@@ -55,6 +57,7 @@ public class ApplicationUI extends Application {
         trainModuleUI.show();
         trainControllerUI.show();
 
+        clockUI.show();
         
         Thread thread = new Thread(new Runnable() {
 
@@ -64,16 +67,18 @@ public class ApplicationUI extends Application {
 
                     @Override
                     public void run() {
-                        for(Module module: modules) {
-                            module.tickTock();
+                        for (int i = 0; i < clockUI.clockStepAmount; i++) {
+                            clockUI.tickTock();
+                            for(Module module: modules) {
+                                module.tickTock();
+                            }
                         }
                     }
                 };
 
                 while (true) {
                     try {
-                        // TODO: variable clock speed
-                        Thread.sleep(10);
+                        Thread.sleep(clockUI.clockTimeStep);
                     } catch (InterruptedException e) {
                     }
 
