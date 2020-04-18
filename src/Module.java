@@ -13,12 +13,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public abstract class Module{ 
-    final int YEAR= 2020;
-    final int MONTH= 1;
-    final int DAY= 1;
-    final int HOUR= 9;
-    final int MINUTE= 30;
-    final int SECOND= 0;
+    final int YEAR = 2020;
+    final int MONTH = 1;
+    final int DAY = 1;
+    final int HOUR = 9;
+    final int MINUTE = 30;
+    final int SECOND = 0;
 
     public TrainModule trainModule;
     public TrainControllerModule trainControllerModule;
@@ -46,7 +46,6 @@ public abstract class Module{
     public abstract void update();
     // module update logic for every clock tick
     
-
     public void setTrainModule( TrainModule trainModule) {this.trainModule= trainModule;};
     public void setTrainControllerModule( TrainControllerModule trainControllerModule) {this.trainControllerModule= trainControllerModule;};
     public void setTrackModule( TrackModule trackModule) {this.trackModule= trackModule;};

@@ -26,8 +26,9 @@ public class CTCTrain {
     private StringProperty trainIDString = new SimpleStringProperty("");
 
 
-    public CTCTrain(){
+    public CTCTrain(int trainID){
         // All trains start in the yard.
+        this.trainID = trainID;
         currPos = CTCModule.map.getYard().getUUID();
     }
 

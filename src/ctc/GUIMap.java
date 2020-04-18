@@ -1,5 +1,10 @@
 package src.ctc;
 
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -7,16 +12,131 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.stage.Stage;
 import src.UICommon;
+import src.ctc.CTCBlockConstructor.CTCShift;
+import src.ctc.CTCBlockConstructor.CTCYard;
 import src.track_module.Block;
-import src.track_module.BlockConstructor.Shift;
+import src.track_module.Edge;
 import src.BaseMap;
 
 public class GUIMap extends BaseMap {
     
+
+    public void buildMap(Map<UUID, Block> blocks, Pane pane) {
+        pane.getChildren().setAll();
+        circleMap = new HashMap<Block, Circle>();
+        edgeMap = new HashMap<Edge, Line>();
+
+        for(Block block : blocks.values()) {
+            Circle circle = new Circle(block.getX(), block.getY(), 6);
+            circle.setFill(Color.GREEN);
+            circle.setViewOrder(0);
+            circle.setStrokeWidth(4);
+            if(block.getLine().equals("RED")) {
+                circle.setStroke(Color.FIREBRICK);
+            }
+            else if(block.getLine().equals("GREEN")) {
+                circle.setStroke(Color.LIMEGREEN);
+            }
+            else if(block instanceof CTCYard) {
+                circle.setFill(Color.BLACK);
+                circle.setStroke(Color.BLACK);
+            }
+            
+            pane.getChildren().add( circle);
+            for(Edge edge: block.getEdges()) {
+                Line line= new Line( block.getX(), block.getY(), edge.getBlock().getX(), edge.getBlock().getY());
+                edgeMap.put(edge, line);
+                line.setViewOrder(2);
+                line.setStyle("-fx-stroke-width: 2");
+
+                if(block.getLine().equals("RED")) {
+                    line.setStroke(Color.FIREBRICK);
+                }
+                else if(block.getLine().equals("GREEN")) {
+                    line.setStroke(Color.LIMEGREEN);
+                }
+                else if(block instanceof CTCYard) {
+                    if(edge.getBlock().getLine().equals("RED")) {
+                        line.setStroke(Color.FIREBRICK);
+                        }
+                    else if((edge.getBlock().getLine().equals("GREEN"))) {
+                            line.setStroke(Color.LIMEGREEN);
+                        }
+                }
+                if(block instanceof CTCShift) {
+                    CTCShift shift = (CTCShift)block;
+                    if (edge.getBlock().equals(shift.getPosition())){
+                        line = edgeMap.get(edge);
+                        line.setStroke(Color.YELLOW);
+                        line.setViewOrder(1);
+                        line.setStyle("-fx-stroke-width: 4");
+                    }
+                }
+                pane.getChildren().add(line);
+            }
+            
+            block.occupiedProperty().addListener((obs, oldText, newText) -> {
+                if (block.getOccupied()){
+                    this.circleMap.get(block).setFill(Color.BLUE);
+                }
+                else {
+                    this.circleMap.get(block).setFill(Color.GREEN);
+                }
+            });
+            block.functionalProperty().addListener((obs, oldText, newText) -> {
+                this.circleMap.get(block).setFill(Color.RED);
+            });
+            
+            if (block instanceof CTCShift){
+                CTCShift shiftBlock = (CTCShift)block;
+                shiftBlock.positionProperty().addListener((obs, oldText, newText) -> {
+                    Block position = shiftBlock.getPosition();
+                
+                    for(Edge edge: block.getEdges()){
+                        Line line = edgeMap.get(edge);
+                        line.setStyle("-fx-stroke-width: 2");
+                        if (edge.getBlock().equals(position)) {
+                            line.setStroke(Color.YELLOW);
+                            line.setViewOrder(1);
+                            line.setStyle("-fx-stroke-width: 4");
+                        }
+                        else{
+                            if(edge.getBlock().getLine().equals("RED")) {
+                                line.setStroke(Color.FIREBRICK);
+                                }
+                            else if(edge.getBlock().getLine().equals("GREEN")) {
+                                    line.setStroke(Color.LIMEGREEN);
+                                }
+                            line.setViewOrder(2);
+                        }
+                    }
+            });
+        }
+    
+            circle.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+                String title = block.getLine().charAt(0) + block.getLine().toLowerCase().substring(1) + " Line | Section " + block.getSection() + " | Block " + Integer.toString(block.getBlockNumber());
+                Scene scene = buildPopUp( block);
+                scene.getStylesheets().add(Paths.get(System.getenv("cssStyleSheetPath")).toUri().toString());
+                Stage stage = new Stage();
+                stage.setTitle(title);
+                stage.setScene(scene);
+                stage.sizeToScene();
+                stage.show();
+            });
+            circleMap.put(block, circle);
+        }
+
+    }
+
+
+
     @Override
     public Scene buildPopUp(Block block) {
         
@@ -26,33 +146,14 @@ public class GUIMap extends BaseMap {
         Circle circleOrange = UICommon.createCircle(10, Color.WHITE);
         statusUpdate(block, circleRed, circleOrange, circleBlue, circleGreen);
 
-        Button failureMode = UICommon.createButton("Set Closed", 200, 10);
-        failureMode.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
-            block.setClosed(!block.getClosed());
+        Button closedMode = UICommon.createButton("Set Closed", 200, 10);
+        closedMode.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+            CTCBlock ctcBlock = (CTCBlock)block;
+            ctcBlock.setClosed(!ctcBlock.getClosed());
         });
         Button switchMode = UICommon.createButton("Toggle Switch", 200, 10);
         switchMode.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
-            Shift shiftBlock = (Shift) block;
-            
-            /*
-            *
-            * TODO add this method to your extended block class
-            *
-            /*
-                public void updateConnected() {
-                    for (Edge e: this.getEdges()){
-                        if(switchPositions.contains(e.getBlock())){
-                            if(position.equals(e.getBlock())){
-                                e.setConnected(true);
-                            }
-                            else{
-                                e.setConnected(false);
-                            }
-                        }
-                    }
-                }
-            */
-
+            CTCShift shiftBlock = (CTCShift) block;
             shiftBlock.togglePosition();
 
         });
@@ -62,11 +163,11 @@ public class GUIMap extends BaseMap {
         HBox statusBox = new HBox(10, statusLabel, circleGreen, circleBlue, circleRed);
         statusBox.setAlignment(Pos.CENTER);
         VBox headerBox ;
-        if (block instanceof Shift){
-            headerBox = new VBox(5, statusBox, failureMode, switchMode);
+        if (block instanceof CTCShift){
+            headerBox = new VBox(5, statusBox, closedMode, switchMode);
         }
         else{
-            headerBox = new VBox(5, statusBox, failureMode);
+            headerBox = new VBox(5, statusBox, closedMode);
         }
         headerBox.setStyle("-fx-background-color: -fx-title-color;");
         headerBox.setPadding( new Insets(5));
@@ -124,14 +225,14 @@ public class GUIMap extends BaseMap {
         closedBox.getChildren().addAll(closedLabel0, closedLabel1);
         tableBox.getChildren().add(closedBox);
 
-        block.closedProperty().addListener((obs, oldText, newText) -> {
+        ((CTCBlock)block).closedProperty().addListener((obs, oldText, newText) -> {
                 closedLabel1.setText(UICommon.booleanToYesNo(newText));
                 statusUpdate(block, circleRed, circleOrange, circleBlue, circleGreen);
         });
 
-       if (block instanceof Shift){   
+       if (block instanceof CTCShift){   
             // Switch Box
-            Shift shiftBlock = (Shift)block;
+            CTCShift shiftBlock = (CTCShift)block;
             HBox switchBox= new HBox();
             switchBox.setAlignment(Pos.CENTER);
 
@@ -143,31 +244,8 @@ public class GUIMap extends BaseMap {
 
             switchBox.getChildren().addAll(switchLabel0, switchLabel1);
             tableBox.getChildren().add(switchBox);
-            
-            /*
-           shiftBlock.positionProperty().addListener((obs, oldText, newText) -> {
-                    switchLabel1.setText("" + newText);
-                    Block dest = shiftBlock.getPosition();
-                
-                    GraphCircle circleBlock = this.circleMap.get(block);
-                    for(GraphLine line: circleBlock.getEdges()){
-                        if (line.getDestination().equals(dest)){
-                            line.setStroke(Color.DARKVIOLET);
-                            line.setStroke(Color.DARKVIOLET);
-                        }
-                        else{
-                            if(line.getDestination().getLine().equals("RED")) {
-                                line.setStroke(Color.FIREBRICK);
-                                }
-                            else if(line.getDestination().getLine().equals("GREEN")) {
-                                    line.setStroke(Color.LIMEGREEN);
-                                }
-                        }
-                    }
-            });
-            */
+    
         }
-
 
         VBox totalBox = new VBox( headerBox, tableBox);
         Scene scene = new Scene(totalBox);

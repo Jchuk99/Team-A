@@ -111,8 +111,6 @@ public class Path {
 		return course;
     }
     
-
-
      
     //TODO: Make algorithim account for distance of blocks
    /* private LinkedList<Integer> findCourse(UUID start, UUID destination) {

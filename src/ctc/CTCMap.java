@@ -7,6 +7,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import src.ctc.CTCBlockConstructor.CTCNormal;
+import src.ctc.CTCBlockConstructor.CTCShift;
+import src.ctc.CTCBlockConstructor.CTCStation;
+import src.ctc.CTCBlockConstructor.CTCYard;
 import src.track_controller.TrackControllerModule;
 import src.track_controller.WaysideController;
 import src.track_module.Block;
@@ -15,18 +19,15 @@ import src.track_module.TrackModule;
 import src.track_module.BlockConstructor.Station;
 import src.track_module.BlockConstructor.Yard;
 import src.track_module.BlockConstructor.Shift;
-import src.track_module.BlockConstructor.Normal;
 
 public class CTCMap{
 
    private TrackControllerModule trackControllerModule;
    private TrackModule trackModule;
-   private Yard myYard;
-   //TODO:Change stationMap to stationList
-   //MAKE SWITCHLIST AND STATIONLISST RETURN ACTUAL LISTS AND STATIONS!!!
-   private Map<UUID, Station> stationMap = new HashMap<UUID, Station>();
+   private CTCYard myYard;
    private Map<UUID, Block> blockMap = new HashMap<UUID, Block>();
-   private List<Shift> switchList = new ArrayList<Shift>();
+   private List<CTCStation> stationList = new ArrayList<CTCStation>();
+   private List<CTCShift> switchList = new ArrayList<CTCShift>();
    
     public CTCMap(TrackControllerModule trackControllerModule, TrackModule trackModule){
         this.trackControllerModule = trackControllerModule;
@@ -34,28 +35,27 @@ public class CTCMap{
     }
 
     public Block getBlock(UUID block){return blockMap.get(block);}
-    public Yard  getYard(){return myYard;}
+    public CTCYard  getYard(){return myYard;}
     public int size(){return blockMap.size();}
     public Set<UUID> getBlockIDs(){ return blockMap.keySet();}
     public List<Block> getBlockList(){ return new ArrayList<Block>(blockMap.values());}
     public Map<UUID, Block> getBlockMap(){ return blockMap;}
-    public List<Station> getStationList(){ return new ArrayList<Station>(stationMap.values());}
-    public List<Shift> getSwitchList(){ return switchList;}
+    public List<CTCStation> getStationList(){ return stationList;}
+    public List<CTCShift> getSwitchList(){ return switchList;}
 
-    //TODO: gonna have to rework this when there's multiple lines, and multiple diffrent exits from the yard.
-    // WILL NOT WORK IF MULTIPLE LINES
     public UUID getStartingBlockID(String line){
         
         //TODO: made sure line is either red or green
         Block startingBlock = null;
             for (Edge edge: myYard.getEdges()){
+                //assumes only one starting block will be found for each line
                 if ((edge.getBlock().getLine().equalsIgnoreCase(line) && (edge.getConnected()))){
                     startingBlock = edge.getBlock();
                 }
             }
+        assert startingBlock != null;
         return startingBlock.getUUID();
     }
-
 
     public List<UUID> getOccupiedBlocks(){
 
@@ -74,7 +74,7 @@ public class CTCMap{
 
         List<UUID> closedBlocks = new ArrayList<UUID>(); // can be a set instead of a list.. doesn't really matter
         for (Map.Entry<UUID, Block> entry : blockMap.entrySet()){
-            Block currBlock = entry.getValue();
+            CTCBlock currBlock = (CTCBlock) entry.getValue();
             if (currBlock.getClosed() == true){
                 closedBlocks.add(currBlock.getUUID());
             }
@@ -82,16 +82,8 @@ public class CTCMap{
 
         return closedBlocks;
     }
-    
-    
 
     public void initMap(){
-        /*
-        TODO I commented this out. you are calling this before the track has been uploaded and 
-        there is no map to generate, causing compile errors.
-
-        - Eric
-        */
 
          //length, number, edges
          //hashmap of blocks with they're blocknumber so that I can access any one.
@@ -113,24 +105,24 @@ public class CTCMap{
 
                     if (block instanceof Station){
                         Station blockStation = (Station)block;
-                        Station myBlock = new Station(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, blockStation.getName(), xCoordinate, yCoordinate);
+                        CTCStation myBlock = new CTCStation(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, blockStation.getName(), xCoordinate, yCoordinate);
                         myBlock.setUUID(block.getUUID());
-                        stationMap.put(block.getUUID(), myBlock);
+
+                        stationList.add(myBlock);
                         blockMap.put(block.getUUID(), myBlock);
                     }
                     else if (block instanceof Shift){
-                        System.out.println(blockNumber);
                         Shift shiftBlock = (Shift)block;
-                        Shift myBlock = new Shift(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
+                        CTCShift myBlock = new CTCShift(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
                         myBlock.setUUID(shiftBlock.getUUID());
-                        switchList.add(myBlock);
-
                         myBlock.setSwitchPositions(shiftBlock.getSwitchPositions());
                         myBlock.setPosition(shiftBlock.getPosition());
+                        
+                        switchList.add(myBlock);
                         blockMap.put(shiftBlock.getUUID(), myBlock);
                     }
                     else{
-                        Normal myBlock = new Normal(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
+                        CTCNormal myBlock = new CTCNormal(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
                         myBlock.setUUID(block.getUUID());
                         blockMap.put(block.getUUID(), myBlock);
                     }
@@ -138,13 +130,11 @@ public class CTCMap{
         }
 
         Yard trackYard =  trackModule.getYard();
-        myYard = new Yard(trackYard.getX(), trackYard.getY()); 
-        UUID yardID = trackYard.getUUID();
-        myYard.setUUID(yardID);
+        myYard = new CTCYard(trackYard.getX(), trackYard.getY()); 
+        myYard.setUUID(trackYard.getUUID());
         myYard.setEdges(trackYard.getEdges());
-        blockMap.put(yardID, myYard);
-        
-
+        blockMap.put(trackYard.getUUID(), myYard);
+    
         // need an extra for loop to put in edges now that I have all the blocks
         for(WaysideController wayside: waysides){
             List<Block> blockList = wayside.getBlocks();
@@ -158,7 +148,7 @@ public class CTCMap{
     }
 
     // need to create second method that doesn't just reinitialize the map, but updates it's current attributes
-    // AKA occupied and switch positions
+    // AKA occupied and switch positions, TODO: functionality
     public void updateMap(){
         
         ArrayList<WaysideController> waysides = trackControllerModule.getWaysideControllers();
@@ -172,12 +162,11 @@ public class CTCMap{
 
                 if (block instanceof Shift){ 
                     Shift shiftBlock = (Shift)block;
-                    Shift myShiftBlock = (Shift)myBlock;
+                    CTCShift myShiftBlock = (CTCShift)myBlock;
                     myShiftBlock.setPosition(shiftBlock.getPosition());           
                 }
             }
         }
-        
         
     }
 

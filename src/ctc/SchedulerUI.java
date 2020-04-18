@@ -59,8 +59,6 @@ public class SchedulerUI extends Person {
     }
 
 
-
-
 }
 
 

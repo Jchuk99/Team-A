@@ -29,14 +29,13 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import src.BaseMap;
 import src.UICommon;
+import src.ctc.CTCBlockConstructor.CTCStation;
 import src.track_module.Block;
-import src.track_module.TrackMap;
-import src.track_module.BlockConstructor.Station;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 
 //TODO: IMPORT A STYLE GUIDE!!!
 
@@ -135,8 +134,8 @@ public class CTCUI extends Stage {
         trainBox.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;"); 
 
         //destBox
-        Pair<TableView<Station>, TableView<Block>> bTable = createBlockTables();
-        TableView<Station> stationTable = bTable.getKey();
+        Pair<TableView<CTCStation>, TableView<Block>> bTable = createBlockTables();
+        TableView<CTCStation> stationTable = bTable.getKey();
         TableView<Block> blocksTable = bTable.getValue();
 
         HBox destBox = new HBox(10, stationTable, blocksTable);
@@ -219,9 +218,10 @@ public class CTCUI extends Stage {
     }
 
     private static Pane createMapPane(){
-        TrackMap trackMap = new TrackMap();
+        GUIMap trackMap = new GUIMap();
         // TODO this isn't working right now and I cannot diagnose why easily.
         // Let me know on the fix - Eric
+        // initMap method in CTC Module must be called when track is read in. Gets blocks from waysides.
         Pane graphPane = new Pane();
 
         //TODO: ask eric about setting this stuff
@@ -291,8 +291,13 @@ public class CTCUI extends Stage {
     }
     
     private static Pair<VBox, TableView<Person>> createTrainBox(int length, int height, TableView<CTCTrain> statusTable){
+        trainID = TrainTable.largestID;
         ObservableList<Person> trainData = FXCollections.observableArrayList();
-        // get size of trains in CTC and use that to create initial presentation of trains
+        // get list of train IDS in CTC and use that to create initial presentation of trains
+        List<Integer> trainIds = ctcOffice.getTrainIDs();
+        for(Integer ID: trainIds){
+            trainData.add(new Person("Train " + ID));
+        }
         
         statusTable.setEditable(true);
         TableView<Person> trainTable = new TableView<Person>();
@@ -375,11 +380,11 @@ public class CTCUI extends Stage {
         return scheduleTable;
     }
 
-    private static Pair<TableView<Station>, TableView<Block>> createBlockTables(){
-        TableView<Station> stationTable = new TableView<Station>();
+    private static Pair<TableView<CTCStation>, TableView<Block>> createBlockTables(){
+        TableView<CTCStation> stationTable = new TableView<CTCStation>();
         stationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<Station, String> stations = new TableColumn<>("Select Destination");
+        TableColumn<CTCStation, String> stations = new TableColumn<>("Select Destination");
         stations.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
         stationTable.getColumns().add(stations);
          
@@ -406,10 +411,10 @@ public class CTCUI extends Stage {
             }
         });
 
-        return new Pair<TableView<Station>, TableView<Block>>(stationTable, blockTable);
+        return new Pair<TableView<CTCStation>, TableView<Block>>(stationTable, blockTable);
     }
 
-    private static Button createDispatchButton(TableView<Person> trainTable, TableView<Block> blocksTable,TableView<Station> stationTable  ,Slider speedSlider){
+    private static Button createDispatchButton(TableView<Person> trainTable, TableView<Block> blocksTable,TableView<CTCStation> stationTable  ,Slider speedSlider){
         Button dispatch = UICommon.createButton("DISPATCH", 400, 100);
         dispatch.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
                                 "-fx-background-color: green;" + "-fx-font-size:30;" + "-fx-text-fill: white;");
