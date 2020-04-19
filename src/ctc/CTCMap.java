@@ -35,6 +35,18 @@ public class CTCMap{
     }
 
     public Block getBlock(UUID block){return blockMap.get(block);}
+    //TODO: error check
+    public Block getBlock(String line, int blockNumber){
+        Block returnBlock = null;
+        for (Map.Entry<UUID, Block> entry : blockMap.entrySet()){
+            Block currBlock = entry.getValue();
+            if (currBlock.getLine().equalsIgnoreCase(line) && currBlock.getBlockNumber() == blockNumber){
+                    returnBlock = currBlock;
+            }
+        }
+        return returnBlock;
+    }
+
     public CTCYard  getYard(){return myYard;}
     public int size(){return blockMap.size();}
     public Set<UUID> getBlockIDs(){ return blockMap.keySet();}
@@ -82,6 +94,29 @@ public class CTCMap{
 
         return closedBlocks;
     }
+    //TODO: error check
+    public int getGreenLineSales(){
+        int tickets = 0;
+        for (CTCStation station: stationList){
+            if (station.getLine().equalsIgnoreCase("green")){
+                tickets += station.getTicketsSold();
+            }
+        }
+        return tickets;
+    }
+
+    //TODO: error check
+    public int getRedLineSales(){
+        int tickets = 0;
+        for (CTCStation station: stationList){
+            if (station.getLine().equalsIgnoreCase("red")){
+                tickets += station.getTicketsSold();
+            }
+        }
+        return tickets;
+    }
+
+
 
     public void initMap(){
 
@@ -148,7 +183,7 @@ public class CTCMap{
     }
 
     // need to create second method that doesn't just reinitialize the map, but updates it's current attributes
-    // AKA occupied and switch positions, TODO: functionality
+    // AKA occupied, switch positions, and tickets sales for each station TODO: functionality
     public void updateMap(){
         
         ArrayList<WaysideController> waysides = trackControllerModule.getWaysideControllers();
@@ -159,6 +194,12 @@ public class CTCMap{
             for(Block block : blockList){
                 Block myBlock = blockMap.get(block.getUUID());
                 myBlock.setOccupied(block.getOccupied());
+
+                if (block instanceof Station){
+                    Station stationBlock = (Station)block;
+                    CTCStation myStationBlock = (CTCStation)myBlock;
+                    myStationBlock.setTicketsSold(stationBlock.getTicketsSold());
+                }
 
                 if (block instanceof Shift){ 
                     Shift shiftBlock = (Shift)block;

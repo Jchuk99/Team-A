@@ -1,6 +1,7 @@
 package src.ctc;
 
 import java.text.DecimalFormat;
+import java.time.LocalTime;
 import java.util.UUID;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -16,7 +17,8 @@ public class CTCTrain {
     private UUID destination;
     private UUID currPos;
     private UUID prevPos = null;
-    //private int errorStatus; //TODO: make this an enum.
+    private int errorStatus; //TODO: make this an enum.
+    private LocalTime dispatchTime;
     private Route route = new Route();
 
     private StringProperty suggestedSpeedString = new SimpleStringProperty("");
@@ -40,7 +42,8 @@ public class CTCTrain {
         if (route.size() == 0){
             // block connected to yard depending on line
             start = CTCModule.map.getStartingBlockID(destination.getLine());
-            setCurrPos(start);
+            //TODO: add a isDipatched method;
+            //setCurrPos(start);
             //TODO: look @ add path logic
             route.addPath(start, dest, prevPathBlock);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
@@ -48,6 +51,30 @@ public class CTCTrain {
         else{
             start = route.getLastPath().getEndBlock();
             route.addPath(start, dest, prevPathBlock);
+            prevPathBlock = route.getLastPath().getBeforeEndBlock();
+        }
+
+        //TODO: calculate authorities the real wau.
+        authority = (float) route.getCurrPath().getCourse().size();
+    }
+
+    public void addPath(UUID dest, LocalTime startTime, LocalTime endTime){
+        Block destination = CTCModule.map.getBlock(dest);
+        UUID start;
+
+        //If train does not have any queued paths then will be in yard.
+        if (route.size() == 0){
+            // block connected to yard depending on line
+            start = CTCModule.map.getStartingBlockID(destination.getLine());
+            //TODO: add a isDipatched method;
+            //setCurrPos(start);
+            //TODO: look @ add path logic
+            route.addPath(start, dest, prevPathBlock, startTime, endTime);
+            prevPathBlock = route.getLastPath().getBeforeEndBlock();
+        }
+        else{
+            start = route.getLastPath().getEndBlock();
+            route.addPath(start, dest, prevPathBlock, startTime, endTime);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
 
@@ -111,6 +138,9 @@ public class CTCTrain {
         prevPos = this.currPos;
         this.currPos = currPos;
     }
+    public void setDispatchTime(LocalTime dispatchTime){
+        this.dispatchTime = dispatchTime;
+    }
     public Route getRoute(){
         return route;
     }
@@ -128,6 +158,9 @@ public class CTCTrain {
     }
     public UUID getCurrPos(){
         return currPos;
+    }
+    public LocalTime getDispatchTime(){
+        return dispatchTime;
     }
 
     /*** FOR GUI ***/

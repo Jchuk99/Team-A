@@ -364,7 +364,7 @@ public class TrackModule extends Module {
                 }
             }
         }
-        this.ctcModule.initMap();
+       // this.ctcModule.initMap();
         for(String line: myBlocks.keySet()) {
             for( Block block : myBlocks.get(line).values()) {
                 blocks.put( block.getUUID(), block);

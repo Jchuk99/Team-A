@@ -26,8 +26,10 @@ public class CTCBlockConstructor {
             super( line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
             this.name= name;
         }
-
-       public String getName() {return name;};
+        
+        public void setTicketsSold( int tickets) {this.tickets = tickets;};
+        public int getTicketsSold() {return tickets;}
+        public String getName() {return name;};
     }
 
     public static class CTCShift extends CTCBlock {  

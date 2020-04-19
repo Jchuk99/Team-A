@@ -5,15 +5,16 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.UUID;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import src.track_module.Block;
 import src.track_module.Edge;
 
 public class Path {
 
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    //TODO: figure out how to calculate train speed from currentPath
+    private LocalTime startTime;
+    private LocalTime endTime;
     private LinkedList<UUID> course;
     private UUID endBlock;
 
@@ -26,8 +27,15 @@ public class Path {
         course = findCourse(startBlock, endBlock, prevBlock);
     }
 
-    public LocalDateTime getStartTime() {return startTime;};
-    public LocalDateTime getEndTime() {return endTime;};
+    public Path(UUID startBlock, UUID endBlock, LocalTime startTime, LocalTime endTime, UUID prevBlock){
+        this.endBlock = endBlock;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        course = findCourse(startBlock, endBlock, prevBlock);
+    }
+
+    public LocalTime getStartTime() {return startTime;};
+    public LocalTime getEndTime() {return endTime;};
     public UUID getEndBlock() {return endBlock;};
 
     public void updateCourse(UUID start, UUID prev){

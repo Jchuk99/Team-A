@@ -1,4 +1,6 @@
 package src.ctc;
+
+import java.time.LocalTime;
 import java.util.*;
 
 public class Route {
@@ -25,6 +27,9 @@ public class Route {
 
     public void addPath(UUID start, UUID end, UUID prevBlock){
         paths.add(new Path(start, end, prevBlock));
+    }
+    public void addPath(UUID start, UUID end, UUID prevBlock, LocalTime startTime, LocalTime endTime){
+        paths.add(new Path(start, end, startTime, endTime, prevBlock));
     }
 
     public int size(){ return paths.size();}

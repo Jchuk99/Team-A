@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import src.Module;
@@ -17,6 +19,8 @@ import src.track_module.Block;
 public class CTCModule extends Module{
     public static final int MAX_AUTHORITY = 3;
     public static CTCMap map = null;
+    public StringProperty greenTickets = new SimpleStringProperty("");
+    public StringProperty redTickets = new SimpleStringProperty("");
     private TrainTable trainTable = new TrainTable();
     private Schedule schedule = new Schedule(trainTable);
     
@@ -28,6 +32,7 @@ public class CTCModule extends Module{
             updateTrainPositions();
             updateTrains();
             updateTrainAuthorities();
+            updateStationSales();
         }
 
         // use this module to get/set data from wayside every cycle which includes
@@ -135,6 +140,11 @@ public class CTCModule extends Module{
            // System.out.println("Train authority: "+ authority);
             train.setAuthority(authority);
         }
+    }
+
+    public void updateStationSales(){
+        redTickets.setValue("" + map.getRedLineSales());
+        greenTickets.setValue("" + map.getGreenLineSales());
     }
 
     public void dispatch(String trainID, float suggestedSpeed, UUID destination){

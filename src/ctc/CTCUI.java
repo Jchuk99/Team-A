@@ -41,6 +41,7 @@ import java.util.List;
 
 public class CTCUI extends Stage {
     public static CTCModule ctcOffice;
+    static Pane graphPane;
     static int trainID = 0;
 
     public static void setCTCModule(CTCModule ctcOffice0){
@@ -57,21 +58,33 @@ public class CTCUI extends Stage {
         HBox timeBox = createTimeBox();
         timeBox.setAlignment(Pos.CENTER);
 
-        //TODO: rework this whole entire part
-        Text ticketText = new Text("Ticket Sales");
+        Text greenLineHourText = new Text("Green Line Ticket Sales");
+        Text redLineHourText = new Text("Red Line Ticket Sales");
         //TODO: replace ticketLabel with actual value
-        Label ticketLabel = new Label("205/h");
-        ticketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+        Label greenLineHourLabel = new Label("");
+        Label redLineHourLabel = new Label("");
+        //greenLineHourLabel.textProperty().bind(ctcOffice.greenTickets);
+        //redLineHourLabel.textProperty().bind(ctcOffice.redTickets);
+        greenLineHourLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+        redLineHourLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
 
-        HBox ticketBox = new HBox(10, ticketText, ticketLabel);
+        HBox greenTicketBox = new HBox(10, greenLineHourText, greenLineHourLabel);
+        HBox redTicketBox = new HBox(10, redLineHourText, redLineHourLabel);
+        VBox ticketBox = new VBox(10, greenTicketBox, redTicketBox);
         ticketBox.setAlignment(Pos.CENTER);
 
-        Text totalTicketText = new Text("Total Ticket Sales");
-        //TODO: replace ticketLabel with actual value
-        Label totalTicketLabel = new Label("1000");
-        totalTicketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+        Text greenLineTotalText = new Text("Green Line Total Ticket Sales");
+        Text redLineTotalText = new Text("Red Line Total Ticket Sales");
+        Label greenLineTotalLabel = new Label("");
+        Label redLineTotalLabel = new Label("");
+        greenLineTotalLabel.textProperty().bind(ctcOffice.greenTickets);
+        redLineTotalLabel.textProperty().bind(ctcOffice.redTickets);
+        greenLineTotalLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+        redLineTotalLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
 
-        HBox totalTicketBox = new HBox(10, totalTicketText, totalTicketLabel);
+        HBox greenTotalTicketBox = new HBox(10, greenLineTotalText, greenLineTotalLabel);
+        HBox redTotalTicketBox = new HBox(10, redLineTotalText, redLineTotalLabel);
+        VBox totalTicketBox = new VBox(10, greenTotalTicketBox, redTotalTicketBox);
         totalTicketBox.setAlignment(Pos.CENTER);
 
         Button manualMode = UICommon.createButton("Manual Input/Schedule", 300, 50);
@@ -87,6 +100,7 @@ public class CTCUI extends Stage {
                 getManualDisplay();
             }
         });
+        manualMode.setDisable(true);
 
         HBox topHalf1 = new HBox();
         HBox.setHgrow(timeBox, Priority.ALWAYS);
@@ -222,13 +236,14 @@ public class CTCUI extends Stage {
         // TODO this isn't working right now and I cannot diagnose why easily.
         // Let me know on the fix - Eric
         // initMap method in CTC Module must be called when track is read in. Gets blocks from waysides.
-        Pane graphPane = new Pane();
+        graphPane = new Pane();
 
         //TODO: ask eric about setting this stuff
         //graphPane.setStyle("-fx-background-color: -fx-focus-color;");
         VBox.setVgrow(graphPane, Priority.ALWAYS);
         graphPane.setViewOrder(1);
-        trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
+        trackMap.mapUnavailable(graphPane);
+        //trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
         return graphPane;
     }
     
