@@ -39,19 +39,44 @@ public class TrackModuleUI extends Stage {
 
         HBox topBox = new HBox(10);
 
-        Label temperatureLabel = UICommon.createLabel( System.getenv("globalTemperature") + "°F");
+        Label temperatureLabel = UICommon.createLabel( trackModule.getTemperature() + "°F");
         temperatureLabel.setAlignment(Pos.CENTER);
         temperatureLabel.setStyle("-fx-font-size: 24;");
-        temperatureLabel.prefWidthProperty().bind(topBox.widthProperty().divide((4)));
+        temperatureLabel.prefWidthProperty().bind(topBox.widthProperty().divide((8)));
+        trackModule.temperatureProperty().addListener((obs, oldText, newText) -> {
+                temperatureLabel.setText( String.valueOf(trackModule.getTemperature()  + "°F"));
+            }
+        );
+        Button increaseTemperature = UICommon.createButton("+", 24, 24);
+        increaseTemperature.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                int temp = trackModule.getTemperature();
+                if(temp < 120) {
+                    trackModule.setTemperature(++temp);
+                }
+            }
+        });
+        Button decreaseTemperature = UICommon.createButton("-", 24, 24);
+        decreaseTemperature.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                int temp = trackModule.getTemperature();
+                if(temp > -40) {
+                    trackModule.setTemperature(--temp);
+                }
+            }
+        });
         
-        Label timeLabel = UICommon.createLabel( System.getenv("globalTime"));
+        Label timeLabel = UICommon.createLabel("9:30:00");
+        timeLabel.textProperty().bind(trackModule.timeString);
         timeLabel.setAlignment(Pos.CENTER);
         timeLabel.setStyle("-fx-font-size: 24;");
         timeLabel.prefWidthProperty().bind(topBox.widthProperty().divide((4)));
 
         // select track file button
-        Button button = new Button("Select Track File");
-        button.setOnAction(new EventHandler<ActionEvent>() {
+        Button selectTrackFile = new Button("Select Track File");
+        selectTrackFile.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 FileChooser fileChooser = new FileChooser();
@@ -79,14 +104,14 @@ public class TrackModuleUI extends Stage {
                 
                 trackMap.buildMap(trackModule.blocks, graphPane);
                 // Removes the select track button and resizes temperature and time boxes
-                temperatureLabel.prefWidthProperty().bind(topBox.widthProperty().divide((2)));
-                timeLabel.prefWidthProperty().bind(topBox.widthProperty().divide((2)));
-                topBox.getChildren().setAll(temperatureLabel, timeLabel);
+                temperatureLabel.prefWidthProperty().bind(topBox.widthProperty().divide((3)));
+                timeLabel.prefWidthProperty().bind(topBox.widthProperty().divide((1.5)));
+                topBox.getChildren().setAll(temperatureLabel, increaseTemperature, decreaseTemperature,timeLabel);
             }
         });
-        button.prefWidthProperty().bind(topBox.widthProperty().divide((2)));
+        selectTrackFile.prefWidthProperty().bind(topBox.widthProperty().divide((2)));
         
-        topBox.getChildren().addAll( temperatureLabel, timeLabel, button);
+        topBox.getChildren().addAll( temperatureLabel, increaseTemperature, decreaseTemperature, timeLabel, selectTrackFile);
         topBox.setStyle("-fx-background-color: -fx-title-color;");
         topBox.setEffect(new DropShadow(20, new Color(0,0,0,1)));
         topBox.setPadding(new Insets(10));

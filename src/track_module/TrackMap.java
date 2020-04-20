@@ -120,7 +120,7 @@ public class TrackMap extends BaseMap {
         tableBox.getChildren().add(heaterBox);
 
         block.heaterProperty().addListener((obs, oldText, newText) -> {
-                heaterLabel1.setText(UICommon.booleanToYesNo(newText));
+                heaterLabel1.setText(UICommon.booleanToOnOff(newText));
         });        
 
         // Final Values
