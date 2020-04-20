@@ -68,7 +68,7 @@ public class CTCTrain {
         if (route.size() == 0){
             // block connected to yard depending on line
             start = CTCModule.map.getStartingBlockID(destination.getLine());
-            //TODO: add a isDipatched method;
+            //TODO: add a isDipatched method;;
             //TODO: whenever train is dispatched set currPos to start;
             //setCurrPos(start);
             //TODO: look @ add path logic
