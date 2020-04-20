@@ -217,7 +217,7 @@ public class CTCUI extends Stage {
     }
 
     private static Pane createMapPane(){
-        //GUIMap trackMap = new GUIMap();
+        GUIMap trackMap = new GUIMap();
         // TODO this isn't working right now and I cannot diagnose why easily.
         // Let me know on the fix - Eric
         Pane graphPane = new Pane();
@@ -226,7 +226,7 @@ public class CTCUI extends Stage {
         //graphPane.setStyle("-fx-background-color: -fx-focus-color;");
         VBox.setVgrow(graphPane, Priority.ALWAYS);
         graphPane.setViewOrder(1);
-        //trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
+        trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
         return graphPane;
     }
     
