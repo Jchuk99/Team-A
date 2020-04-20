@@ -15,8 +15,6 @@ public class TimePath extends Path {
         course = findCourse(startBlock, endBlock, prevBlock);
     }
 
-    
-
     public LocalTime getStartTime() {return startTime;};
     public LocalTime getEndTime() {return endTime;};
 

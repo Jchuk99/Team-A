@@ -108,8 +108,14 @@ public class CTCTrain {
 
     public void getNextPath(){
         route.getNextPath();
-        if (route.getCurrPath() != null){
+        Path currPath = route.getCurrPath();
+        if (currPath != null){
             setDestination(route.getCurrPath().getEndBlock());
+            if (currPath instanceof TimePath){
+                TimePath currTimePath = (TimePath) currPath;
+                //TODO: create calcSuggestedSpeed
+                //setSuggestedSpeed(currTimePath.calcSuggestedSpeed());
+            }
         }
     }
 

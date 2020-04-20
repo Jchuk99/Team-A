@@ -159,8 +159,15 @@ public class CTCModule extends Module{
 
         if (currTime.equals(dispatchTime) || currTime.isAfter(dispatchTime)){
             trainToDispatch.setCurrPos(trainToDispatch.startPos);
+            Path currPath = trainToDispatch.getRoute().getCurrPath();
+            if (currPath != null && currPath instanceof TimePath){
+                TimePath currTimePath = (TimePath) currPath;
+                //TODO: create calcSuggestedSpeed()
+                //train.setSuggestedSpeed(currTimePath.calcSuggestedSpeed());
+            }
             this.trackModule.dispatchTrain(trainToDispatch);
             dispatchQueue.poll();
+            
         }
 
     }

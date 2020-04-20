@@ -51,7 +51,8 @@ public class Schedule{
                 }
                 destinations.add(destination);
             }
-        } 
+        }
+        scheduleReader.close(); 
         //createSchedule()
     }
 
@@ -63,6 +64,7 @@ public class Schedule{
             trainTable.createTrain(trainID);
             CTCTrain train = trainTable.getTrain(trainID);
             train.setDispatchTime(dispatchTimes.get(trainID - 1));
+            startTime = train.getDispatchTime();
             for (int pos = 0; pos < destinations.size(); pos++){
                 List<String> destination = destinations.get(pos);
 
@@ -70,24 +72,19 @@ public class Schedule{
                 int blockNumber = Integer.parseInt(destination.get(1));
                 endTime = convertToTime(destination.get(OFFSET + trainID));
                 Block blockDest = CTCModule.map.getBlock(line, blockNumber);
-
-                if (pos == 0)
-                {
-                    startTime = train.getDispatchTime();
-                }
                 //add train's path train.addTimePath(blockDest.getUUID(), starTime, endTime);
                 startTime = endTime;
             }
-
 
         }
 
     }
 
     private LocalTime convertToTime(String time){
+        //need to fix due to how schedule strings
         String realTime = "0" + time;
-        LocalTime dateTime = LocalTime.parse(realTime, formatter);
-        return dateTime;
+        LocalTime localTime = LocalTime.parse(realTime, formatter);
+        return localTime;
     }
 
     public CTCTrain dispatchTrain(String trainIDString, float suggestedSpeed, UUID destination){
