@@ -17,6 +17,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
@@ -95,8 +96,16 @@ public class TrainControllerUI extends Stage {
 
         /****** select train ******/
 
-        /****** beacon ******/
-        final HBox beaconBox = new HBox(10, createTextBox("Beacon"), createLabelBox("",trainControllerData.getBeacon()));
+        /****** beacon and Kp/Ki******/
+        Button kpki =new Button("Set Control Law Constants");
+        kpki.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                getKpKi();
+            }
+        });
+        
+        final HBox beaconBox = new HBox(10, createTextBox("Beacon"), createLabelBox("",trainControllerData.getBeacon()),kpki);
         beaconBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
         /****** beacon ******/
 
@@ -154,7 +163,7 @@ public class TrainControllerUI extends Stage {
     }
 
     private HBox createTopBox() {
-        VBox time = createLabelBox("11:00:23 am");
+        VBox time = createLabelBox("11:00:23 am",trainControllerModule.timeString);
         final HBox timeBox = new HBox(10, createTextBox("Time"), time);
 
         Circle circleG = createCircle(10, Color.GREEN);
@@ -504,6 +513,61 @@ public class TrainControllerUI extends Stage {
         //final VBox statusBox = new VBox(10, box, eBrakeButton);
         box.setAlignment(Pos.CENTER);
         return box;
+    }
+
+    private void getKpKi(){
+        Stage popupwindow = new Stage();   
+        popupwindow.setTitle("CTC UI");  
+
+        int length = 200;
+        int height = 200; 
+
+        Label kpl=createLabel("Kp");
+        TextField kp=new TextField();
+        kp.setText(trainControllerData.getControlLaw().getValueSafe().split(",")[0]);
+        kp.setPrefColumnCount(10);
+        kp.getText();
+
+        Label kil=createLabel("Ki");
+        TextField ki=new TextField();
+        ki.setText(trainControllerData.getControlLaw().getValueSafe().split(",")[1]);
+        ki.setPrefColumnCount(10);
+        ki.getText();
+        
+        TextField pw=new TextField();
+        pw.setPromptText("Enter password");
+        pw.setPrefColumnCount(10);
+        pw.getText();
+
+        Button submit=new Button("Submit");
+        submit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(isNumeric(kp.getText()) && isNumeric(ki.getText()) && pw.getText().equals("password")){
+                    String x=kp.getText()+","+ki.getText();
+                    trainControllerData.setControlLaw(x);
+                    popupwindow.close();
+                }
+            }
+        });
+        VBox smallScreenField = new VBox(10, kp, ki,pw,submit);
+        VBox smallScreenLabel=new VBox(10,kpl,kil);
+        HBox smallScreen=new HBox(10,smallScreenLabel,smallScreenField);
+        smallScreen.setPadding(new Insets(10));
+        popupwindow.setScene(new Scene(smallScreen, length, height));
+        popupwindow.show();
+    }
+
+    public boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            float f = Float.parseFloat(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
     }
 
     private VBox createVBox() {

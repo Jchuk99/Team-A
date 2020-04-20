@@ -33,7 +33,10 @@ public class TrainControllerData {
     private BooleanProperty emergencyBrakeWorking = new SimpleBooleanProperty(false);
     private BooleanProperty engineWorking = new SimpleBooleanProperty(false);
 
+    private StringProperty controlLaw = new SimpleStringProperty("20,10");
+
     public TrainControllerData() {
+   
     }
 
     public void setTrainController(TrainController tc) {
@@ -56,6 +59,8 @@ public class TrainControllerData {
             currentAcceleration.setValue("");
             hvacSetpoint.unbind();
             hvacSetpoint.setValue("");
+            controlLaw.unbind();
+            controlLaw.setValue("");
 
             leftDoorsControlClosed.unbind();
             leftDoorsControlClosed.setValue(false);
@@ -93,6 +98,7 @@ public class TrainControllerData {
             currentPower.bind(currentTC.getCurrentPower());
             currentAcceleration.bind(currentTC.getCurrentAcceleration());
             hvacSetpoint.bind(currentTC.getHVACSetpoint());
+            controlLaw.bind(currentTC.getControlLaw());
 
             leftDoorsControlClosed.bind(currentTC.getLeftDoorsControlClosed());
             rightDoorsControlClosed.bind(currentTC.getRightDoorsControlClosed());
@@ -144,7 +150,10 @@ public class TrainControllerData {
     public StringProperty getHVACSetpoint() {
         return hvacSetpoint;
     }
- 
+
+    public StringProperty getControlLaw() {
+        return controlLaw;
+    }
     
     public BooleanProperty getLeftDoorWorking() {
         return leftDoorWorking;
@@ -171,21 +180,27 @@ public class TrainControllerData {
     }
 
     public void setManualModeOn(boolean x){
-        currentTC.setManualModeOn(x);
+        if(currentTC!=null){
+            currentTC.setManualModeOn(x);
+        }
     }
     
     /**
     
     */
     public void setLeftDoorsControlClosed(boolean x){
+        if(currentTC!=null){
         currentTC.setLeftDoorsControlClosed(x);
+        }
     }
     
     /**
     
     */
     public void setRightDoorsControlClosed(boolean x){
-        currentTC.setRightDoorsControlClosed(x);
+        if(currentTC!=null){
+            currentTC.setRightDoorsControlClosed(x);
+        }
     }
     
     
@@ -193,42 +208,60 @@ public class TrainControllerData {
     
     */
     public void setCabinLightsControlOn(boolean x){
-        currentTC.setCabinLightsControlOn(x);
+        if(currentTC!=null){
+            currentTC.setCabinLightsControlOn(x);
+        }
     }
     
     /**
     
     */
     public void setHeadLightsControlOn(boolean x){
-        currentTC.setHeadLightsControlOn(x);
+        if(currentTC!=null){    
+         currentTC.setHeadLightsControlOn(x);
+        }
     }
     
     /**
     
     */
     public void setHVACSetpoint(int x){
+        if(currentTC!=null){
         currentTC.setHVACSetpoint(x);
+        }
     }
     
+    public void setControlLaw(String x){
+        if(currentTC!=null){
+        currentTC.setKpKi(x);
+        }
+    }
+
     /**
     
     */
     public void setDriverSpeed(int x){
+        if(currentTC!=null){
         currentTC.setDriverSpeed(x);
+       }
     }
     
     /**
     
     */
     public void setEmergencyBrakeControlOn(boolean x){
+        if(currentTC!=null){
         currentTC.setEmergencyBrakeControlOn(x);
+        }
     }
     
     /**
     
     */
     public void setServiceBrakeControlOn(boolean x){
+        if(currentTC!=null){
         currentTC.setServiceBrakeControlOn(x);
+        }
     }
 
     /**
