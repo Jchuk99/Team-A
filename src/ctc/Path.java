@@ -5,14 +5,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.UUID;
-import java.time.LocalTime;
 
 import src.track_module.Block;
 import src.track_module.Edge;
 
 public class Path {
 
-    //TODO: figure out how to calculate train speed from currentPath
     protected LinkedList<UUID> course;
     protected UUID endBlock;
 

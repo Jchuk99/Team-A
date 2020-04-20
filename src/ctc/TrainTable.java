@@ -1,5 +1,6 @@
 package src.ctc;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +20,6 @@ public class TrainTable {
 
     }
 
-
     public CTCTrain getTrain(int trainID){
         return trains.get(trainID);   
     }
@@ -34,11 +34,25 @@ public class TrainTable {
         }
     }
 
+    public void createTrain(int trainID, LocalTime time){
+        if (!trains.containsKey(trainID)){
+            maxID(trainID);
+            CTCTrain train = new CTCTrain(trainID);
+            train.setDispatchTime(time);
+            trains.put(trainID, train);
+            observableTrains.add(train);
+            dispatchQueue.add(train);
+        }
+    }
+
     public void destroyTrain(CTCTrain train){
         trains.remove(train.getTrainID(), train);
         observableTrains.remove(train);
     }
-    
+    public PriorityQueue<CTCTrain> getDispatchQueue(){
+        return dispatchQueue;
+    }
+
     public HashMap<Integer, CTCTrain> getTrainMap(){
         return trains;
     }

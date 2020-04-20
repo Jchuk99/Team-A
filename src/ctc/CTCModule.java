@@ -1,9 +1,11 @@
 package src.ctc;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.UUID;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -147,12 +149,35 @@ public class CTCModule extends Module{
         greenTickets.setValue("" + map.getGreenLineSales());
     }
 
-    public void dispatch(String trainID, float suggestedSpeed, UUID destination){
+    
+    public void dispatchTrains(){
+        PriorityQueue<CTCTrain> dispatchQueue = trainTable.getDispatchQueue();
+        CTCTrain trainToDispatch = dispatchQueue.peek();
+
+        LocalTime dispatchTime = trainToDispatch.getDispatchTime();
+        LocalTime currTime = date.toLocalTime();
+
+        if (currTime.equals(dispatchTime) || currTime.isAfter(dispatchTime)){
+            trainToDispatch.setCurrPos(trainToDispatch.startPos);
+            this.trackModule.dispatchTrain(trainToDispatch);
+            dispatchQueue.poll();
+        }
+
+    }
+
+
+    public void dispatch(String trainIDString, float suggestedSpeed, UUID destination){
 
         // need to give speed in meters per second, authority, train ID, and route 
         suggestedSpeed = suggestedSpeed/(float)2.237; // CONVERSION TO METERS PER SECOND
-        CTCTrain train = schedule.dispatchTrain(trainID, suggestedSpeed, destination);
-        this.trackModule.dispatchTrain(train);
+        int trainID = Integer.parseInt(trainIDString.split(" ")[1]);
+
+        trainTable.createTrain(trainID, date.toLocalTime());
+        CTCTrain train = trainTable.getTrain(trainID);
+
+        train.setDestination(destination);
+        train.setSuggestedSpeed(suggestedSpeed);
+        train.addPath(destination);
 
     }
 

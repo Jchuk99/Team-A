@@ -27,7 +27,7 @@ public abstract class Module{
     public CTCModule ctcModule;
     
     LocalDateTime startTime;
-    LocalDateTime date;
+    protected LocalDateTime date;
     public StringProperty timeString = new SimpleStringProperty("");
     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 

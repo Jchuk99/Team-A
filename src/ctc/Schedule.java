@@ -30,6 +30,7 @@ public class Schedule{
 		String line = scheduleReader.readLine();
         String [] data  = line.split(",");
         trainSize = data.length - 33;
+
         List<String> dispatchTimeStrings = Arrays.asList(Arrays.copyOfRange(data, 31, 41));
         for (int i = 0; i < dispatchTimeStrings.size(); i++){
             String realTime = "0" + dispatchTimeStrings.get(i);
