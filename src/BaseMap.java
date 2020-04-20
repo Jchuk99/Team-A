@@ -110,8 +110,6 @@ public abstract class BaseMap {
             
             if (block instanceof Shift){
                 Shift shiftBlock = (Shift)block;
-                 // Not working whenever the switch starts on block 8, slightly updates but doesn't change color.
-                 // IDK what's causing this issue, works fine for one of the switch lines.
                 shiftBlock.positionProperty().addListener((obs, oldText, newText) -> {
                     Block position = shiftBlock.getPosition();
                 
@@ -135,8 +133,7 @@ public abstract class BaseMap {
                     }
             });
         }
-        
-
+    
             circle.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
                 String title = block.getLine().charAt(0) + block.getLine().toLowerCase().substring(1) + " Line | Section " + block.getSection() + " | Block " + Integer.toString(block.getBlockNumber());
                 Scene scene = buildPopUp( block);
@@ -149,20 +146,7 @@ public abstract class BaseMap {
             });
             circleMap.put(block, circle);
         }
-        //TODO: switch listening isn't working in this method.
-            /*
-                shiftBlock.positionProperty().addListener((obs, oldText, newText) -> {
-                    for(GraphLine line: circle.getEdges()){
-                        if (line.getDestination().equals(dest)){
-                            line.getStrokeDashArray().addAll(25d, 20d, 5d, 20d);
-                        }
-                        else{
-                            line.getStrokeDashArray().removeAll(25d, 20d, 5d, 20d);
-                        }
-                    }
-                });
-            }
-        }*/
+
     }
     public abstract Scene buildPopUp(Block block);
 }

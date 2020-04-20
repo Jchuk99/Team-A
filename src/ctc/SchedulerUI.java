@@ -58,9 +58,6 @@ public class SchedulerUI extends Person {
         this.trainThree = trainThree;
     }
 
-
-
-
 }
 
 

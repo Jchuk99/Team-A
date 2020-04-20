@@ -1,58 +1,102 @@
 package src.ctc;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import src.track_module.Block;
 
 public class Schedule{
+    public static final int OFFSET = 1;
+    public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+    private List<List<String>> destinations = new ArrayList<List<String>>();
+    private List<LocalTime> dispatchTimes;
+    private int trainSize = 0;
+    private TrainTable trainTable;
 
-    private HashMap<Integer, CTCTrain> trains = new HashMap<Integer, CTCTrain>();
-    private ObservableList<CTCTrain> observableTrains = FXCollections.observableArrayList();
-    private File scheduleFile;
-    // data structure to hold schedule file
-    
-    public Schedule(){
+    public Schedule(TrainTable trainTable){
+        this.trainTable = trainTable;
     }
 
-    public void uploadSchedule(){
+    public void readInSchedule() throws IOException{
+        File scheduleFile  = new File("schedule.txt");
+        BufferedReader scheduleReader = new BufferedReader(new FileReader(scheduleFile));
+        scheduleReader.readLine();
+
+		String line = scheduleReader.readLine();
+        String [] data  = line.split(",");
+        trainSize = data.length - 33;
+        List<String> dispatchTimeStrings = Arrays.asList(Arrays.copyOfRange(data, 31, 41));
+        for (int i = 0; i < dispatchTimeStrings.size(); i++){
+            String realTime = "0" + dispatchTimeStrings.get(i);
+            LocalTime dateTime = LocalTime.parse(realTime, formatter);
+            dispatchTimes.add(dateTime);
+        }
+        
+        while ((line = scheduleReader.readLine()) != null) {
+            data = line.split(",");
+            if (data.length > 26){
+                List<String> destination = new ArrayList<String>();
+                String blockLine = data[0];
+                String blockNum = data[2];
+                destination.add(blockLine);
+                destination.add(blockNum);
+                for (int i = 31; i < 41; i++){
+                    destination.add(data[i]);
+                }
+                destinations.add(destination);
+            }
+        } 
+        createSchedule();
     }
 
+    public void createSchedule(){
+        LocalTime startTime;
+        LocalTime endTime;
+        
+        for(int trainID = 1; trainID < trainSize + 1; trainID++){
+            trainTable.createTrain(trainID);
+            CTCTrain train = trainTable.getTrain(trainID);
+            train.setDispatchTime(dispatchTimes.get(trainID - 1));
+            startTime = train.getDispatchTime();
+
+            for (int pos = 0; pos < destinations.size(); pos++){
+                List<String> destination = destinations.get(pos);
+
+                String line = destination.get(0);
+                int blockNumber = Integer.parseInt(destination.get(1));
+                endTime = convertToTime(destination.get(OFFSET + trainID));
+                Block blockDest = CTCModule.map.getBlock(line, blockNumber);
+
+                train.addTimePath(blockDest.getUUID(), startTime, endTime);
+                startTime = endTime;
+            }
+
+        }
+
+    }
+
+    private LocalTime convertToTime(String time){
+        String realTime = "0" + time;
+        LocalTime dateTime = LocalTime.parse(realTime, formatter);
+        return dateTime;
+    }
+
+    //TODO: put this in trainTable?
     public CTCTrain dispatchTrain(String trainIDString, float suggestedSpeed, UUID destination){
         int trainID = Integer.parseInt(trainIDString.split(" ")[1]);
 
-        if (!trains.containsKey(trainID)){
-            CTCTrain train = new CTCTrain();
-            trains.put(trainID, train);
-            observableTrains.add(train);
-        }
+        trainTable.createTrain(trainID);
+        CTCTrain train = trainTable.getTrain(trainID);
 
-        CTCTrain train = trains.get(trainID);
-
-        train.setTrainID(trainID);
         train.setDestination(destination);
         train.setSuggestedSpeed(suggestedSpeed);
-
         train.addPath(destination);
 
         return train;
-    }
-
-    public void destroyTrain(CTCTrain train){
-        trains.remove(train.getTrainID(), train);
-        observableTrains.remove(train);
-    }
-    
-    public HashMap<Integer, CTCTrain> getTrainMap(){
-        return trains;
-    }
-    public List<CTCTrain> getTrains(){
-        return new ArrayList<CTCTrain>(trains.values());
-    }
-    /** FOR GUI */
-    public ObservableList<CTCTrain> getObservableTrains(){
-        return observableTrains;
     }
 
 }

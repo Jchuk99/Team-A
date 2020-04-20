@@ -103,6 +103,7 @@ public class TrackModuleUI extends Stage {
                 }
                 
                 trackMap.buildMap(trackModule.blocks, graphPane);
+                //CTC
                 // Removes the select track button and resizes temperature and time boxes
                 temperatureLabel.prefWidthProperty().bind(topBox.widthProperty().divide((3)));
                 timeLabel.prefWidthProperty().bind(topBox.widthProperty().divide((1.5)));

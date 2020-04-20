@@ -1,23 +1,28 @@
 package src.ctc;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.UUID;
-
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import src.Module;
+import src.ctc.CTCBlockConstructor.CTCShift;
+import src.ctc.CTCBlockConstructor.CTCStation;
 import src.track_module.Block;
-import src.track_module.BlockConstructor.Shift;
-import src.track_module.BlockConstructor.Station;
-
 
 public class CTCModule extends Module{
     public static final int MAX_AUTHORITY = 3;
     public static CTCMap map = null;
-    private Schedule schedule = new Schedule();
+    public StringProperty greenTickets = new SimpleStringProperty("");
+    public StringProperty redTickets = new SimpleStringProperty("");
+    private TrainTable trainTable = new TrainTable();
+    private Schedule schedule = new Schedule(trainTable);
     
 
     public void update(){
@@ -27,24 +32,22 @@ public class CTCModule extends Module{
             updateTrainPositions();
             updateTrains();
             updateTrainAuthorities();
+            updateStationSales();
         }
-
-        // LOGIC: check if the next block on the train's path is occupied. If it is there's two options:
-        // 1. The train went to that next block. If so update it's position
-        // 2. It's closed. If so, don't update it's position.
 
         // use this module to get/set data from wayside every cycle which includes
         // track state (includes occupied blocks)
-        // ticket sales for each line
-        // train error infomartion, how the fuck am i supposed to assign this to each train?
+        // ticket sales for each line from track module
+        // train error infomartion, from waysides.
 
         // gives off list of CTC trains(Suggested Speed(M/s), Authority, currPosition of each train)
         // gives off switches(Integer Boolean Hashmap)
-        // gives off occupied blocks
+        // gives off closed blocks
     }
     
 
     public void main() {
+        //schedule.readInSchedule();
     }
 
     public CTCModule(){
@@ -72,11 +75,9 @@ public class CTCModule extends Module{
     }
 
     public void updateTrainPositions(){
-        //TODO: should I use occupied blocks or should I feed the block into map?
         List<UUID> occupiedBlocks = map.getOccupiedBlocks();
         List<UUID> closedBlocks = map.getClosedBlocks();
 
-        // Need method to get all trains.  
         List<CTCTrain> trains = getTrains();
 
         if(trains.size() > 0){
@@ -97,13 +98,15 @@ public class CTCModule extends Module{
                     // if the nextBlock is null then we should be @ our destination
                     //TODO: think of edge cases.
                     //TODO: only update the current Path after waiting 3 minutes at station.
-                    train.getNextPath();
-                    if (train.getRoute().size() == 0 ){
-                        System.out.println("Train route is done.");
-                        if (!train.inYard()){
-                            train.goToYard();
-                        }else{
-                           // schedule.destroyTrain(train);
+                    if (train.atDestination()){
+                        train.getNextPath();
+                        if (train.getRoute().size() == 0 ){
+                            System.out.println("Train route is done.");
+                            if (!train.inYard()){
+                                train.goToYard();
+                            }else{
+                            // trainTable.destroyTrain(train);
+                            }
                         }
                     }
                 }
@@ -139,37 +142,75 @@ public class CTCModule extends Module{
         }
     }
 
-    public void dispatch(String trainID, float suggestedSpeed, UUID destination){
+    public void updateStationSales(){
+        redTickets.setValue("" + map.getRedLineSales());
+        greenTickets.setValue("" + map.getGreenLineSales());
+    }
+
+    
+    public void dispatchTrains(){
+        PriorityQueue<CTCTrain> dispatchQueue = trainTable.getDispatchQueue();
+        CTCTrain trainToDispatch = dispatchQueue.peek();
+
+        LocalTime dispatchTime = trainToDispatch.getDispatchTime();
+        LocalTime currTime = date.toLocalTime();
+
+        if (currTime.equals(dispatchTime) || currTime.isAfter(dispatchTime)){
+            trainToDispatch.setCurrPos(trainToDispatch.startPos);
+            Path currPath = trainToDispatch.getRoute().getCurrPath();
+
+            if (currPath != null && currPath instanceof TimePath){
+                TimePath currTimePath = (TimePath) currPath;
+                trainToDispatch.setSuggestedSpeed(currTimePath.calcSuggestedSpeed());
+            }
+
+            this.trackModule.dispatchTrain(trainToDispatch);
+            dispatchQueue.poll(); 
+        }
+
+    }
+
+    public void dispatch(String trainIDString, float suggestedSpeed, UUID destination){
 
         // need to give speed in meters per second, authority, train ID, and route 
-        suggestedSpeed = suggestedSpeed/(float)2.237; // METERS PER SECOND
-        CTCTrain train = schedule.dispatchTrain(trainID, suggestedSpeed, destination);
-        this.trackModule.dispatchTrain(train);
+        suggestedSpeed = suggestedSpeed/(float)2.237; // CONVERSION TO METERS PER SECOND
+        int trainID = Integer.parseInt(trainIDString.split(" ")[1]);
+
+        trainTable.createTrain(trainID, date.toLocalTime());
+        CTCTrain train = trainTable.getTrain(trainID);
+
+        train.setDestination(destination);
+        train.setSuggestedSpeed(suggestedSpeed);
+        train.addPath(destination);
 
     }
 
     public List<CTCTrain> getTrains(){
-        List<CTCTrain> trainList = schedule.getTrains();
+        List<CTCTrain> trainList = trainTable.getTrains();
         Collections.sort(trainList, new trainComparator());
         return trainList;
     }
+
+    public List<Integer> getTrainIDs(){
+        return trainTable.getTrainIDs();
+    }
     public HashMap<Integer, CTCTrain> getTrainMap(){
-        return schedule.getTrainMap();
+        return trainTable.getTrainMap();
     }
 
-    public List<Shift> getSwitchPositions(){return map.getSwitchList();}
+    public List<CTCShift> getSwitchPositions(){return map.getSwitchList();}
     public List<UUID> getClosedBlocks() {return map.getClosedBlocks();}
 
     /****** for GUI ******/
 
     public ObservableList<CTCTrain> getObservableTrains(){
-        ObservableList<CTCTrain> trainList = schedule.getObservableTrains();
+        ObservableList<CTCTrain> trainList = trainTable.getObservableTrains();
         FXCollections.sort(trainList, new trainComparator());
         return trainList;
     }
 
-    public ObservableList<Station> getObservableStationList(){
-        ObservableList<Station> stationList = FXCollections.observableList(map.getStationList());
+    public ObservableList<CTCStation> getObservableStationList(){
+        ObservableList<CTCStation> stationList = FXCollections.observableList(map.getStationList());
         return stationList;
    }
 

@@ -13,12 +13,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public abstract class Module{ 
-    final int YEAR= 2020;
-    final int MONTH= 1;
-    final int DAY= 1;
-    final int HOUR= 9;
-    final int MINUTE= 30;
-    final int SECOND= 0;
+    final int YEAR = 2020;
+    final int MONTH = 1;
+    final int DAY = 1;
+    final int HOUR = 0;
+    final int MINUTE = 0;
+    final int SECOND = 0;
 
     public TrainModule trainModule;
     public TrainControllerModule trainControllerModule;
@@ -26,7 +26,8 @@ public abstract class Module{
     public TrackControllerModule trackControllerModule;
     public CTCModule ctcModule;
     
-    LocalDateTime date;
+    LocalDateTime startTime;
+    protected LocalDateTime date;
     public StringProperty timeString = new SimpleStringProperty("");
     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
@@ -35,6 +36,7 @@ public abstract class Module{
 
     public Module() {
         this.date= LocalDateTime.of(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND);
+        this.startTime = date;
     }
 
     public void tickTock() {
@@ -45,7 +47,6 @@ public abstract class Module{
 
     public abstract void update();
     // module update logic for every clock tick
-
     public void setTrainModule( TrainModule trainModule) {this.trainModule= trainModule;};
     public void setTrainControllerModule( TrainControllerModule trainControllerModule) {this.trainControllerModule= trainControllerModule;};
     public void setTrackModule( TrackModule trackModule) {this.trackModule= trackModule;};

@@ -5,19 +5,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.UUID;
-import java.time.LocalDateTime;
-
 import src.track_module.Block;
 import src.track_module.Edge;
 
 public class Path {
 
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private LinkedList<UUID> course;
-    private UUID endBlock;
+    protected LinkedList<UUID> course;
+    protected UUID endBlock;
 
-    
     public Path(){
     }
  
@@ -26,10 +21,8 @@ public class Path {
         course = findCourse(startBlock, endBlock, prevBlock);
     }
 
-    public LocalDateTime getStartTime() {return startTime;};
-    public LocalDateTime getEndTime() {return endTime;};
     public UUID getEndBlock() {return endBlock;};
-
+    
     public void updateCourse(UUID start, UUID prev){
         course = findCourse(start, endBlock, prev);
     }
@@ -55,7 +48,7 @@ public class Path {
     }
     
     //TODO: Make algorithim account for distance of blocks
-    private LinkedList<UUID> findCourse(UUID start, UUID destination, UUID prevBlock) {
+    protected LinkedList<UUID> findCourse(UUID start, UUID destination, UUID prevBlock) {
         CTCMap map = CTCModule.map;
         Set<UUID> blockIDs = map.getBlockIDs();
         HashMap<UUID, Boolean> marked = new HashMap<UUID, Boolean>();
@@ -94,6 +87,10 @@ public class Path {
             course.add(0, curr);
             //System.out.println("Curr: " + CTCModule.map.getBlock(curr).getBlockNumber());
             curr = edgeTo.get(curr);
+            //TODO: what if I can't find a path?
+            if (curr == null){
+                break;
+            }
             
 		}
         course.add(0, curr);
@@ -107,8 +104,6 @@ public class Path {
 		return course;
     }
     
-
-
      
     //TODO: Make algorithim account for distance of blocks
    /* private LinkedList<Integer> findCourse(UUID start, UUID destination) {

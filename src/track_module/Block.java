@@ -14,7 +14,6 @@ abstract public class Block {
     private BooleanProperty occupied= new SimpleBooleanProperty(false);
     private BooleanProperty functional= new SimpleBooleanProperty(true);
     private BooleanProperty heater= new SimpleBooleanProperty(false);
-    private BooleanProperty closed = new SimpleBooleanProperty(false);
     private Train train;
     private UUID id;
     private final String line;
@@ -29,7 +28,7 @@ abstract public class Block {
     private final int xCorrdinate;
     private final int yCorrdinate;
 
-    Block( String line, char section, int blockNumber, int length, float speedLimit, float grade, 
+    public Block( String line, char section, int blockNumber, int length, float speedLimit, float grade, 
         float elevation, float cummElevation, boolean underground, int xCorrdinate, int yCorrdinate) {
             id= UUID.randomUUID();
             this.line= line;
@@ -47,13 +46,11 @@ abstract public class Block {
     public BooleanProperty occupiedProperty() {return occupied;};
     public BooleanProperty functionalProperty() {return functional;};
     public BooleanProperty heaterProperty() {return heater;};
-    public BooleanProperty closedProperty() {return closed;};
 
     public String getLine() {return line;};
     public char getSection() {return section;};
     public UUID getUUID(){return id;};
     public int getBlockNumber() {return blockNumber;};
-    public boolean getClosed() { return closedProperty().get();}
     public boolean getOccupied() {return occupiedProperty().get();};
     public boolean getFunctional() {return functionalProperty().get();};
     public boolean getHeater() {return heaterProperty().get();};
@@ -70,7 +67,6 @@ abstract public class Block {
     public void setOccupied(boolean occupied){occupiedProperty().set(occupied);};
     public void setHeater(boolean heater){heaterProperty().set(heater);};
     public void setFunctional( boolean functional) {functionalProperty().set(functional);};
-    public void setClosed(boolean closed){closedProperty().set(closed);};
     public void setUUID(UUID id){this.id = id;};
     public void setEdges(Set<Edge> set){edges = set;};
     public void addEdge( Block block, Boolean connected) {

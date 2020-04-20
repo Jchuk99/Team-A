@@ -4,10 +4,14 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 public class TrainData {
 
     Train currentTrain;
+    BooleanProperty trainDestroyedListener = new SimpleBooleanProperty(false);
+
     StringProperty suggestedSpeed = new SimpleStringProperty("");
     StringProperty currentSpeed = new SimpleStringProperty("");
     StringProperty authority = new SimpleStringProperty("");
@@ -25,15 +29,25 @@ public class TrainData {
     BooleanProperty lightWorking = new SimpleBooleanProperty(false);
     BooleanProperty serviceBrakeWorking = new SimpleBooleanProperty(false);
     BooleanProperty emergencyBrakeWorking = new SimpleBooleanProperty(false);
+    BooleanProperty emergencyBrakeState = new SimpleBooleanProperty(false);
     BooleanProperty engineWorking = new SimpleBooleanProperty(false);
 
     public TrainData() {
+        trainDestroyedListener.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue o,Boolean oldVal, Boolean newVal){
+                if (newVal) setTrain(null);
+            }
+        });
     }
 
     public void setTrain(Train train) {
         // set Train to train or null for GUI to pull data from
         currentTrain = train;
         if (train == null) {
+            trainDestroyedListener.unbind();
+            trainDestroyedListener.setValue(false);
+
             suggestedSpeed.unbind();
             suggestedSpeed.setValue("");
             currentSpeed.unbind();
@@ -66,9 +80,13 @@ public class TrainData {
             serviceBrakeWorking.setValue(false);
             emergencyBrakeWorking.unbind();
             emergencyBrakeWorking.setValue(false);
+            emergencyBrakeState.unbind();
+            emergencyBrakeState.setValue(false);
             engineWorking.unbind();
             engineWorking.setValue(false);
         } else {
+            trainDestroyedListener.bind(currentTrain.removeFlag);
+
             suggestedSpeed.bind(currentTrain.getSuggestedSpeed());
             currentSpeed.bind(currentTrain.getCurrentSpeed());
             authority.bind(currentTrain.getAuthority());
@@ -86,6 +104,7 @@ public class TrainData {
             lightWorking.bind(currentTrain.getLightWorking());
             serviceBrakeWorking.bind(currentTrain.getServiceBrakeWorking());
             emergencyBrakeWorking.bind(currentTrain.getEmergencyBrakeWorking());
+            emergencyBrakeState.bind(currentTrain.getEmergencyBrakeState());
             engineWorking.bind(currentTrain.getEngineWorking());
         }
     }
@@ -151,6 +170,10 @@ public class TrainData {
 
     public BooleanProperty getEmergencyBrakeWorking() {
         return emergencyBrakeWorking;
+    }
+    
+    public BooleanProperty getEmergencyBrakeState() {
+        return emergencyBrakeState;
     }
     
     public BooleanProperty getEngineWorking() {

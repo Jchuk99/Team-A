@@ -24,7 +24,7 @@ public class TrainModule extends Module {
     public void update() {
         for (Train train : trainList) {
             train.update();
-            if (train.removeFlag) trainList.remove(train);
+            if (train.removeFlag.getValue()) trainList.remove(train);
         }
     }
 

@@ -15,6 +15,7 @@ public class WaysideController {
 	List<CTCTrain> trains;
 	List<Shift> switchPositions;
 	List<UUID> closedBlocks;
+	UUID crossingBlock;
 
 	public WaysideController(){
 		this.blocks= new LinkedList<Block>();
@@ -42,9 +43,7 @@ public class WaysideController {
 	}
 
 	public void runPLC(){
-		plc.runPLCLogicSwitch(blocks, trains, switchPositions, closedBlocks);
-		plc.runPLCLogicCrossing(blocks, trains, switchPositions, closedBlocks);
-		plc.runPLCLogicLights(blocks, trains, switchPositions, closedBlocks);
+		plc.makeBits(blocks, trains, switchPositions, closedBlocks, crossingBlock);
 	}
 
 	public void setTrains(List<CTCTrain> trainsInJuris){
@@ -70,6 +69,11 @@ public class WaysideController {
 	public List<UUID> getClosedBlocks(){
 		return closedBlocks;
 	}
+
+	public void setCrossingBlock(UUID uuid){
+		crossingBlock = uuid;
+	}
+
 
 
 }
