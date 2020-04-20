@@ -3,7 +3,6 @@ package src.ctc;
 import java.text.DecimalFormat;
 import java.time.LocalTime;
 import java.util.UUID;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import src.track_module.Block;
@@ -113,8 +112,7 @@ public class CTCTrain {
             setDestination(route.getCurrPath().getEndBlock());
             if (currPath instanceof TimePath){
                 TimePath currTimePath = (TimePath) currPath;
-                //TODO: create calcSuggestedSpeed
-                //setSuggestedSpeed(currTimePath.calcSuggestedSpeed());
+                setSuggestedSpeed(currTimePath.calcSuggestedSpeed());
             }
         }
     }

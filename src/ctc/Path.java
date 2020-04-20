@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.UUID;
-
 import src.track_module.Block;
 import src.track_module.Edge;
 
@@ -14,7 +13,6 @@ public class Path {
     protected LinkedList<UUID> course;
     protected UUID endBlock;
 
-    
     public Path(){
     }
  
@@ -24,7 +22,7 @@ public class Path {
     }
 
     public UUID getEndBlock() {return endBlock;};
-
+    
     public void updateCourse(UUID start, UUID prev){
         course = findCourse(start, endBlock, prev);
     }

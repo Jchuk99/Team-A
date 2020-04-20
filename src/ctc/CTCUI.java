@@ -32,7 +32,6 @@ import javafx.util.Pair;
 import src.UICommon;
 import src.ctc.CTCBlockConstructor.CTCStation;
 import src.track_module.Block;
-
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;

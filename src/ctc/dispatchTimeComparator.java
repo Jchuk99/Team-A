@@ -1,7 +1,6 @@
 package src.ctc;
 import java.util.Comparator;
 
-
 public class dispatchTimeComparator implements Comparator<CTCTrain> {
     public dispatchTimeComparator(){
 

@@ -1,10 +1,9 @@
 package src.ctc;
-import java.util.Comparator;
 
+import java.util.Comparator;
 
 public class trainComparator implements Comparator<CTCTrain> {
     public trainComparator(){
-
     }
 
     @Override

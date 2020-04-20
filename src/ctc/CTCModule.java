@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.UUID;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -16,7 +15,6 @@ import src.Module;
 import src.ctc.CTCBlockConstructor.CTCShift;
 import src.ctc.CTCBlockConstructor.CTCStation;
 import src.track_module.Block;
-
 
 public class CTCModule extends Module{
     public static final int MAX_AUTHORITY = 3;
@@ -49,6 +47,7 @@ public class CTCModule extends Module{
     
 
     public void main() {
+        //schedule.readInSchedule();
     }
 
     public CTCModule(){
@@ -76,7 +75,6 @@ public class CTCModule extends Module{
     }
 
     public void updateTrainPositions(){
-        //TODO: should I use occupied blocks or should I feed the block into map?
         List<UUID> occupiedBlocks = map.getOccupiedBlocks();
         List<UUID> closedBlocks = map.getClosedBlocks();
 
@@ -107,7 +105,7 @@ public class CTCModule extends Module{
                             if (!train.inYard()){
                                 train.goToYard();
                             }else{
-                            // schedule.destroyTrain(train);
+                            // trainTable.destroyTrain(train);
                             }
                         }
                     }
@@ -160,18 +158,17 @@ public class CTCModule extends Module{
         if (currTime.equals(dispatchTime) || currTime.isAfter(dispatchTime)){
             trainToDispatch.setCurrPos(trainToDispatch.startPos);
             Path currPath = trainToDispatch.getRoute().getCurrPath();
+
             if (currPath != null && currPath instanceof TimePath){
                 TimePath currTimePath = (TimePath) currPath;
-                //TODO: create calcSuggestedSpeed()
-                //train.setSuggestedSpeed(currTimePath.calcSuggestedSpeed());
+                trainToDispatch.setSuggestedSpeed(currTimePath.calcSuggestedSpeed());
             }
+
             this.trackModule.dispatchTrain(trainToDispatch);
-            dispatchQueue.poll();
-            
+            dispatchQueue.poll(); 
         }
 
     }
-
 
     public void dispatch(String trainIDString, float suggestedSpeed, UUID destination){
 

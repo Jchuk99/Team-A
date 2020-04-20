@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
 import src.track_module.Block;
 
 public class Schedule{
@@ -22,7 +21,7 @@ public class Schedule{
         this.trainTable = trainTable;
     }
 
-    public void uploadSchedule() throws IOException{
+    public void readInSchedule() throws IOException{
         File scheduleFile  = new File("schedule.txt");
         BufferedReader scheduleReader = new BufferedReader(new FileReader(scheduleFile));
         scheduleReader.readLine();
@@ -30,7 +29,6 @@ public class Schedule{
 		String line = scheduleReader.readLine();
         String [] data  = line.split(",");
         trainSize = data.length - 33;
-
         List<String> dispatchTimeStrings = Arrays.asList(Arrays.copyOfRange(data, 31, 41));
         for (int i = 0; i < dispatchTimeStrings.size(); i++){
             String realTime = "0" + dispatchTimeStrings.get(i);
@@ -51,9 +49,8 @@ public class Schedule{
                 }
                 destinations.add(destination);
             }
-        }
-        scheduleReader.close(); 
-        //createSchedule()
+        } 
+        createSchedule();
     }
 
     public void createSchedule(){
@@ -65,6 +62,7 @@ public class Schedule{
             CTCTrain train = trainTable.getTrain(trainID);
             train.setDispatchTime(dispatchTimes.get(trainID - 1));
             startTime = train.getDispatchTime();
+
             for (int pos = 0; pos < destinations.size(); pos++){
                 List<String> destination = destinations.get(pos);
 
@@ -72,7 +70,8 @@ public class Schedule{
                 int blockNumber = Integer.parseInt(destination.get(1));
                 endTime = convertToTime(destination.get(OFFSET + trainID));
                 Block blockDest = CTCModule.map.getBlock(line, blockNumber);
-                //add train's path train.addTimePath(blockDest.getUUID(), starTime, endTime);
+
+                train.addTimePath(blockDest.getUUID(), startTime, endTime);
                 startTime = endTime;
             }
 
@@ -81,12 +80,12 @@ public class Schedule{
     }
 
     private LocalTime convertToTime(String time){
-        //need to fix due to how schedule strings
         String realTime = "0" + time;
-        LocalTime localTime = LocalTime.parse(realTime, formatter);
-        return localTime;
+        LocalTime dateTime = LocalTime.parse(realTime, formatter);
+        return dateTime;
     }
 
+    //TODO: put this in trainTable?
     public CTCTrain dispatchTrain(String trainIDString, float suggestedSpeed, UUID destination){
         int trainID = Integer.parseInt(trainIDString.split(" ")[1]);
 

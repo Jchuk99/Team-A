@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
 import src.ctc.CTCBlockConstructor.CTCNormal;
 import src.ctc.CTCBlockConstructor.CTCShift;
 import src.ctc.CTCBlockConstructor.CTCStation;

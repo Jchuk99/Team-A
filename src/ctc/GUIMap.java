@@ -4,7 +4,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -27,7 +26,7 @@ import src.BaseMap;
 
 public class GUIMap extends BaseMap {
     
-
+    @Override
     public void buildMap(Map<UUID, Block> blocks, Pane pane) {
         pane.getChildren().setAll();
         circleMap = new HashMap<Block, Circle>();
@@ -135,8 +134,6 @@ public class GUIMap extends BaseMap {
 
     }
 
-
-
     @Override
     public Scene buildPopUp(Block block) {
         
@@ -211,7 +208,6 @@ public class GUIMap extends BaseMap {
                 statusUpdate(block, circleRed, circleOrange, circleBlue, circleGreen);
         });
 
-
         // Closed Box
         HBox closedBox= new HBox();
         closedBox.setAlignment(Pos.CENTER);
@@ -257,7 +253,6 @@ public class GUIMap extends BaseMap {
         label.setAlignment(Pos.CENTER_LEFT);
         label.setPadding( new Insets(5));
         label.prefWidthProperty().bind(box.widthProperty().divide((2)));
-
     }
     
     private void statusUpdate( Block block, Circle circleRed,Circle circleOrange, Circle circleBlue, Circle circleGreen) {

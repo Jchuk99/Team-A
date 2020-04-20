@@ -1,12 +1,8 @@
-
 package src.ctc;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import src.track_module.Block;
-
-
-
 
 public class CTCBlock extends Block{
 

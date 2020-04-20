@@ -1,6 +1,6 @@
 package src.ctc;
-import java.util.Comparator;
 
+import java.util.Comparator;
 import src.track_module.Block;
 
 public class blockNumberComparator implements Comparator<Block> {
