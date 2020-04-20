@@ -22,8 +22,8 @@ public class ClockUI extends Stage {
     final int YEAR= 2020;
     final int MONTH= 1;
     final int DAY= 1;
-    final int HOUR= 9;
-    final int MINUTE= 30;
+    final int HOUR= 0;
+    final int MINUTE= 0;
     final int SECOND= 0;
 
     LocalDateTime date;

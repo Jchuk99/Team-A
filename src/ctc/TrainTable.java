@@ -3,6 +3,7 @@ package src.ctc;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,6 +13,7 @@ public class TrainTable {
     public static int largestID = 0;
     private HashMap<Integer, CTCTrain> trains = new HashMap<Integer, CTCTrain>();
     private ObservableList<CTCTrain> observableTrains = FXCollections.observableArrayList();
+    private PriorityQueue<CTCTrain> dispatchQueue = new PriorityQueue<CTCTrain>(11, new dispatchTimeComparator()); 
 
     public TrainTable(){
 
@@ -28,6 +30,7 @@ public class TrainTable {
             CTCTrain train = new CTCTrain(trainID);
             trains.put(trainID, train);
             observableTrains.add(train);
+            dispatchQueue.add(train);
         }
     }
 

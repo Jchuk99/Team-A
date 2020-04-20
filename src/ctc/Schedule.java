@@ -17,7 +17,7 @@ public class Schedule{
     private List<LocalTime> dispatchTimes;
     private int trainSize = 0;
     private TrainTable trainTable;
-    
+
     public Schedule(TrainTable trainTable){
         this.trainTable = trainTable;
     }
@@ -74,7 +74,7 @@ public class Schedule{
                 {
                     startTime = train.getDispatchTime();
                 }
-                //add train's path train.addPath(blockDest.getUUID(), starTime, endTime);
+                //add train's path train.addTimePath(blockDest.getUUID(), starTime, endTime);
                 startTime = endTime;
             }
 

@@ -13,10 +13,8 @@ import src.track_module.Edge;
 public class Path {
 
     //TODO: figure out how to calculate train speed from currentPath
-    private LocalTime startTime;
-    private LocalTime endTime;
-    private LinkedList<UUID> course;
-    private UUID endBlock;
+    protected LinkedList<UUID> course;
+    protected UUID endBlock;
 
     
     public Path(){
@@ -27,15 +25,6 @@ public class Path {
         course = findCourse(startBlock, endBlock, prevBlock);
     }
 
-    public Path(UUID startBlock, UUID endBlock, LocalTime startTime, LocalTime endTime, UUID prevBlock){
-        this.endBlock = endBlock;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        course = findCourse(startBlock, endBlock, prevBlock);
-    }
-
-    public LocalTime getStartTime() {return startTime;};
-    public LocalTime getEndTime() {return endTime;};
     public UUID getEndBlock() {return endBlock;};
 
     public void updateCourse(UUID start, UUID prev){
@@ -63,7 +52,7 @@ public class Path {
     }
     
     //TODO: Make algorithim account for distance of blocks
-    private LinkedList<UUID> findCourse(UUID start, UUID destination, UUID prevBlock) {
+    protected LinkedList<UUID> findCourse(UUID start, UUID destination, UUID prevBlock) {
         CTCMap map = CTCModule.map;
         Set<UUID> blockIDs = map.getBlockIDs();
         HashMap<UUID, Boolean> marked = new HashMap<UUID, Boolean>();

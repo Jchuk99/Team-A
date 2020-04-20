@@ -15,6 +15,7 @@ public class CTCTrain {
     private int trainID;
     private UUID prevPathBlock = null;
     private UUID destination;
+    private UUID startPos;
     private UUID currPos;
     private UUID prevPos = null;
     private int errorStatus; //TODO: make this an enum.
@@ -34,23 +35,24 @@ public class CTCTrain {
         currPos = CTCModule.map.getYard().getUUID();
     }
 
+    // used for when there's no start and endtime, AKA when train is dispatched by dispatcher
     public void addPath(UUID dest){
         Block destination = CTCModule.map.getBlock(dest);
-        UUID start;
+
 
         //If train does not have any queued paths then will be in yard.
         if (route.size() == 0){
             // block connected to yard depending on line
-            start = CTCModule.map.getStartingBlockID(destination.getLine());
+            startPos = CTCModule.map.getStartingBlockID(destination.getLine());
             //TODO: add a isDipatched method;
+            //TODO: whenever train is dispatched set currPos to start;
             //setCurrPos(start);
             //TODO: look @ add path logic
-            route.addPath(start, dest, prevPathBlock);
+            route.addPath(startPos, dest, prevPathBlock);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
         else{
-            start = route.getLastPath().getEndBlock();
-            route.addPath(start, dest, prevPathBlock);
+            route.addPath(route.getLastPath().getEndBlock(), dest, prevPathBlock);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
 
@@ -58,7 +60,7 @@ public class CTCTrain {
         authority = (float) route.getCurrPath().getCourse().size();
     }
 
-    public void addPath(UUID dest, LocalTime startTime, LocalTime endTime){
+    public void addTimePath(UUID dest, LocalTime startTime, LocalTime endTime){
         Block destination = CTCModule.map.getBlock(dest);
         UUID start;
 
@@ -67,14 +69,15 @@ public class CTCTrain {
             // block connected to yard depending on line
             start = CTCModule.map.getStartingBlockID(destination.getLine());
             //TODO: add a isDipatched method;
+            //TODO: whenever train is dispatched set currPos to start;
             //setCurrPos(start);
             //TODO: look @ add path logic
-            route.addPath(start, dest, prevPathBlock, startTime, endTime);
+            route.addTimePath(start, dest, prevPathBlock, startTime, endTime);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
         else{
             start = route.getLastPath().getEndBlock();
-            route.addPath(start, dest, prevPathBlock, startTime, endTime);
+            route.addTimePath(start, dest, prevPathBlock, startTime, endTime);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
 
