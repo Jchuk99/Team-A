@@ -241,12 +241,8 @@ public class CTCUI extends Stage {
         //graphPane.setStyle("-fx-background-color: -fx-focus-color;");
         VBox.setVgrow(graphPane, Priority.ALWAYS);
         graphPane.setViewOrder(1);
-<<<<<<< HEAD
-        trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
-=======
         trackMap.mapUnavailable(graphPane);
         //trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
->>>>>>> 04605a4c1682bb8198ae6dd93a3392ada9c5fe24
         return graphPane;
     }
     
