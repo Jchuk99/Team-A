@@ -29,6 +29,7 @@ public class CTCModule extends Module{
 
         if (validMap()){
             map.updateMap();
+            dispatchTrains();
             updateTrainPositions();
             updateTrains();
             updateTrainAuthorities();
@@ -64,6 +65,7 @@ public class CTCModule extends Module{
         if (map == null){
             map = new CTCMap(trackControllerModule, trackModule);
             map.initMap();
+            schedule.createSchedule();
         }
     }
 
@@ -105,7 +107,7 @@ public class CTCModule extends Module{
                             if (!train.inYard()){
                                 train.goToYard();
                             }else{
-                            // trainTable.destroyTrain(train);
+                                trainTable.destroyTrain(train);
                             }
                         }
                     }
@@ -116,6 +118,7 @@ public class CTCModule extends Module{
         }
     }
 
+    //
     public void updateTrainAuthorities(){
         //TODO: Error Check, discuss train coming out of yard.
         List<CTCTrain> trains = getTrains();
@@ -152,24 +155,33 @@ public class CTCModule extends Module{
         PriorityQueue<CTCTrain> dispatchQueue = trainTable.getDispatchQueue();
         CTCTrain trainToDispatch = dispatchQueue.peek();
 
-        LocalTime dispatchTime = trainToDispatch.getDispatchTime();
-        LocalTime currTime = date.toLocalTime();
+        // if the queue isn't empty 
+        if (trainToDispatch !=null){
+            LocalTime dispatchTime = trainToDispatch.getDispatchTime();
+            LocalTime currTime = date.toLocalTime();
 
-        if (currTime.equals(dispatchTime) || currTime.isAfter(dispatchTime)){
-            trainToDispatch.setCurrPos(trainToDispatch.startPos);
-            Path currPath = trainToDispatch.getRoute().getCurrPath();
+            if (currTime.equals(dispatchTime) || currTime.isAfter(dispatchTime)){
+                trainToDispatch.setCurrPos(trainToDispatch.startPos);
+                Path currPath = trainToDispatch.getRoute().getCurrPath();
 
-            if (currPath != null && currPath instanceof TimePath){
-                TimePath currTimePath = (TimePath) currPath;
-                trainToDispatch.setSuggestedSpeed(currTimePath.calcSuggestedSpeed());
+                if (currPath != null){
+                    trainToDispatch.setDestination(currPath.getEndBlock());
+                    if (currPath instanceof TimePath){
+                        TimePath currTimePath = (TimePath) currPath;
+                        trainToDispatch.setSuggestedSpeed(currTimePath.calcSuggestedSpeed());
+                    }
+                }
+
+                this.trackModule.dispatchTrain(trainToDispatch);
+                // take train out of dispatch Queue if dispatched.
+                dispatchQueue.poll(); 
             }
-
-            this.trackModule.dispatchTrain(trainToDispatch);
-            dispatchQueue.poll(); 
         }
 
     }
 
+    //TODO: rename, you're creating a train that's going into the dispatchQueue , which will be sent to dispatched on one of the updateCycles.
+    // train will have a dispatchTime equal to current time, the hope is for it to dispatch instantly.
     public void dispatch(String trainIDString, float suggestedSpeed, UUID destination){
 
         // need to give speed in meters per second, authority, train ID, and route 
@@ -179,7 +191,6 @@ public class CTCModule extends Module{
         trainTable.createTrain(trainID, date.toLocalTime());
         CTCTrain train = trainTable.getTrain(trainID);
 
-        train.setDestination(destination);
         train.setSuggestedSpeed(suggestedSpeed);
         train.addPath(destination);
 
@@ -189,6 +200,12 @@ public class CTCModule extends Module{
         List<CTCTrain> trainList = trainTable.getTrains();
         Collections.sort(trainList, new trainComparator());
         return trainList;
+    }
+
+    public List<CTCTrain> getTrainsOnMap(){
+        List<CTCTrain> trainsOnMap = trainTable.getTrainsOnMap();
+        Collections.sort(trainsOnMap, new trainComparator());
+        return trainsOnMap;
     }
 
     public List<Integer> getTrainIDs(){

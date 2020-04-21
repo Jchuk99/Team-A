@@ -9,7 +9,7 @@ import src.track_module.Block;
 
 public class CTCTrain {
 
-    private float authority;
+    private float authority = 0;
     private float suggestedSpeed; // IN METERS PER SECOND INTENRALLY
     private int trainID;
     private UUID prevPathBlock = null;
@@ -39,15 +39,11 @@ public class CTCTrain {
     public void addPath(UUID dest){
         Block destination = CTCModule.map.getBlock(dest);
 
-
         //If train does not have any queued paths then will be in yard.
         if (route.size() == 0){
             // block connected to yard depending on line
             startPos = CTCModule.map.getStartingBlockID(destination.getLine());
             //TODO: add a isDipatched method;
-            //TODO: whenever train is dispatched set currPos to start;
-            //setCurrPos(start);
-            //TODO: look @ add path logic
             route.addPath(startPos, dest, prevPathBlock);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
@@ -68,10 +64,7 @@ public class CTCTrain {
         if (route.size() == 0){
             // block connected to yard depending on line
             start = CTCModule.map.getStartingBlockID(destination.getLine());
-            //TODO: add a isDipatched method;;
-            //TODO: whenever train is dispatched set currPos to start;
-            //setCurrPos(start);
-            //TODO: look @ add path logic
+            //TODO: add a isDipatched method, maybe just dispatched when not in yard.
             route.addTimePath(start, dest, prevPathBlock, startTime, endTime);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
@@ -85,16 +78,19 @@ public class CTCTrain {
         authority = (float) route.getCurrPath().getCourse().size();
     }
     public void update(){
-        updateCurrPath();
+        //updateCurrPath();
         updateString();
     }
+    /*
     public void updateCurrPath(){
         Path currPath = route.getCurrPath();
         if (currPath != null){
+            // this constantly updates
             currPath.updateCourse(currPos, prevPos);
         }
 
     }
+    */
 
     public UUID getNextBlockID(UUID currBlock){
         if (route.size() > 0){
@@ -119,7 +115,7 @@ public class CTCTrain {
 
     public void goToYard(){
         setDestination(CTCModule.map.getYard().getUUID());
-        route.addPath(currPos, CTCModule.map.getYard().getUUID(), prevPathBlock);
+        route.addPath(currPos, CTCModule.map.getYard().getUUID(), prevPos);
         prevPathBlock = null;
     }
 
@@ -129,7 +125,11 @@ public class CTCTrain {
     public boolean inYard(){
         return currPos == CTCModule.map.getYard().getUUID();
     }
+    public boolean onMap(){
+        return !inYard();
+    }
     
+    // getters and setters.
     public void setAuthority(float authority){
         this.authority = authority;
     }
@@ -176,8 +176,20 @@ public class CTCTrain {
     public void updateString() {
         DecimalFormat df = new DecimalFormat("##.##");
         suggestedSpeedString.setValue(df.format((suggestedSpeed * 2.237)) + " mph"); // IN M/s
-        currPosString.setValue("Block " + CTCModule.map.getBlock(currPos).getBlockNumber() );
-        destinationString.setValue("Block " + CTCModule.map.getBlock(destination).getBlockNumber());
+        if (inYard()){
+            currPosString.setValue("YARD");
+        }
+        else{
+            currPosString.setValue("Block " + CTCModule.map.getBlock(currPos).getBlockNumber() );
+        }
+        if (destination != null){
+            if (destination.equals(CTCModule.map.getYard().getUUID())){
+                destinationString.setValue("YARD");
+            }
+            else{
+                destinationString.setValue("Block " + CTCModule.map.getBlock(destination).getBlockNumber());
+            }
+        }
         trainIDString.setValue("Train " + trainID);
         authorityString.setValue(authority + " Blocks");
 

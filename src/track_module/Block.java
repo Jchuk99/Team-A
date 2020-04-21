@@ -20,6 +20,7 @@ abstract public class Block {
     private final char section;
     private final int length;
     private int blockNumber;
+    private boolean bidirectional;
     private final float speedLimit;
     private final float grade;
     private final float elevation;

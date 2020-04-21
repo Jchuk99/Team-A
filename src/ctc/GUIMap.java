@@ -171,6 +171,19 @@ public class GUIMap extends BaseMap {
         headerBox.setAlignment(Pos.CENTER);
 
         VBox tableBox = new VBox();
+        // Block Number Box
+        HBox blockNumberBox  = new HBox();
+        blockNumberBox.setAlignment(Pos.CENTER);
+
+        Label blockNumberLabel0 = UICommon.createLabel("Block Number");
+        customizeLabel(blockNumberLabel0, blockNumberBox);
+
+        Label blockNumberLabel1 = UICommon.createLabel("" + block.getBlockNumber());
+        customizeLabel(blockNumberLabel1, blockNumberBox);
+
+        blockNumberBox.getChildren().addAll(blockNumberLabel0, blockNumberLabel1);
+        tableBox.getChildren().add(blockNumberBox);
+
 
         // Functional Box
         HBox functionalBox= new HBox();
@@ -240,6 +253,10 @@ public class GUIMap extends BaseMap {
 
             switchBox.getChildren().addAll(switchLabel0, switchLabel1);
             tableBox.getChildren().add(switchBox);
+            shiftBlock.positionProperty().addListener((obs, oldBlock, newBlock) -> {
+                switchLabel1.setText("" + newBlock.getBlockNumber());
+                statusUpdate(block, circleRed, circleOrange, circleBlue, circleGreen);
+        });
     
         }
 

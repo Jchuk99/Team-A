@@ -40,6 +40,8 @@ import java.util.List;
 
 public class CTCUI extends Stage {
     public static CTCModule ctcOffice;
+    static Button manualMode;
+    static GUIMap trackMap;
     static Pane graphPane;
     static int trainID = 0;
 
@@ -86,7 +88,7 @@ public class CTCUI extends Stage {
         VBox totalTicketBox = new VBox(10, greenTotalTicketBox, redTotalTicketBox);
         totalTicketBox.setAlignment(Pos.CENTER);
 
-        Button manualMode = UICommon.createButton("Manual Input/Schedule", 300, 50);
+        manualMode = UICommon.createButton("Manual Input/Schedule", 300, 50);
         manualMode.setAlignment(Pos.CENTER);
 
          //TODO: style
@@ -118,7 +120,7 @@ public class CTCUI extends Stage {
         VBox mapStatus = createMapStatus(length);
         HBox bottomHalf = new HBox(10, mapStatus, mapPane);
         
-        topHalf.setPrefHeight(height/2);
+        topHalf.setPrefHeight(height/4);
         VBox fullScreen = new VBox(10, topHalf, bottomHalf);
 
         /****full screen *****/
@@ -231,7 +233,7 @@ public class CTCUI extends Stage {
     }
 
     private static Pane createMapPane(){
-        GUIMap trackMap = new GUIMap();
+        trackMap = new GUIMap();
         // TODO this isn't working right now and I cannot diagnose why easily.
         // Let me know on the fix - Eric
         // initMap method in CTC Module must be called when track is read in. Gets blocks from waysides.
@@ -244,6 +246,11 @@ public class CTCUI extends Stage {
         trackMap.mapUnavailable(graphPane);
         //trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
         return graphPane;
+    }
+
+    public static void buildMap(){
+        trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
+        manualMode.setDisable(false);
     }
     
     private static TableView<CTCTrain> createTrainTable(){

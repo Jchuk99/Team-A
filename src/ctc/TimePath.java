@@ -22,7 +22,9 @@ public class TimePath extends Path {
         float elapsedSeconds = Duration.between(startTime, endTime).toSeconds();
         for(UUID blockID: course){
             Block block = CTCModule.map.getBlock(blockID);
-            distance += block.getLength();
+            if (block != null){
+                distance += block.getLength();
+            }
         }
         return (float) (distance/elapsedSeconds);
     }

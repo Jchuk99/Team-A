@@ -367,7 +367,7 @@ public class TrackModule extends Module {
                 }
             }
         }
-       // this.ctcModule.initMap();
+        this.ctcModule.initMap();
         for(String line: myBlocks.keySet()) {
             for( Block block : myBlocks.get(line).values()) {
                 blocks.put( block.getUUID(), block);
@@ -381,7 +381,7 @@ public class TrackModule extends Module {
 
         Train train = trainModule.createTrain();
         train.setBlock(startingBlock);
-        train.setTrain(ctcTrain.getSuggestedSpeed(),ctcTrain.getAuthority());
+        train.setTrain(ctcTrain.getSuggestedSpeed(), ctcTrain.getAuthority());
        
         System.out.println("Suggeted Speed: " + ctcTrain.getSuggestedSpeed() + " Authority: " + ctcTrain.getAuthority());
         System.out.println("Starting Block Number: " + startingBlock.getBlockNumber());

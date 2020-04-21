@@ -63,6 +63,9 @@ public class TrainController {
         attachedTrain = train;
         UUID = train.getUUID();
     }
+    public static void setModule(TrainControllerModule trainControllerModule0){
+        trainControllerModule = trainControllerModule0;
+    }
 
     public void update() {
         

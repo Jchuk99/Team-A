@@ -49,7 +49,12 @@ public class Path {
     
     //TODO: Make algorithim account for distance of blocks
     protected LinkedList<UUID> findCourse(UUID start, UUID destination, UUID prevBlock) {
+
+
+
         CTCMap map = CTCModule.map;
+        System.out.println("Start: " + map.getBlock(start).getBlockNumber());
+        System.out.println("End: " + map.getBlock(destination).getBlockNumber());
         Set<UUID> blockIDs = map.getBlockIDs();
         HashMap<UUID, Boolean> marked = new HashMap<UUID, Boolean>();
         HashMap<UUID, UUID> edgeTo = new HashMap<UUID, UUID>();
@@ -65,21 +70,40 @@ public class Path {
         Deque<Block> q = new LinkedList<Block>();
         
         distTo.put(block.getUUID(), 0);
-        marked.put(block.getUUID(), true);
+        edgeTo.put(block.getUUID(), prevBlock);
+        //marked.put(block.getUUID(), true);
         q.add(block);
 
         while (!q.isEmpty()) {
             Block b = q.remove();
+            prevBlock = edgeTo.get(b.getUUID());
                 for (Edge e : b.getEdges()) {
                     Block edgeBlock = e.getBlock();
-                    if (!marked.get(edgeBlock.getUUID()) && !edgeBlock.getUUID().equals(prevBlock) && e.getConnected()) {
+                    if (!edgeBlock.getUUID().equals(prevBlock) && e.getConnected() && edgeTo.get(edgeBlock.getUUID()) != block.getUUID()){
+                        edgeTo.put(edgeBlock.getUUID(), b.getUUID());
+                        q.add(edgeBlock);
+                    }
+                }
+                if (edgeTo.get(destination) != null){
+                    break;
+                }
+        }
+
+
+       /* while (!q.isEmpty()) {
+            Block b = q.remove();
+            prevBlock = edgeTo.get(b.getUUID());
+                for (Edge e : b.getEdges()) {
+                    Block edgeBlock = e.getBlock();
+                    if (!marked.get(edgeBlock.getUUID()) && !edgeBlock.getUUID().equals(prevBlock) && e.getConnected() 
+                        && edgeTo.get(edgeBlock.getUUID()) != block.getUUID()) {
                         edgeTo.put(edgeBlock.getUUID(), b.getUUID());
                         distTo.put(edgeBlock.getUUID(), distTo.get(b.getUUID()) + 1);
                         marked.put(edgeBlock.getUUID(), true);
                         q.add(edgeBlock);
                     }
                 }
-        }
+        }*/
         
         LinkedList<UUID> course = new LinkedList<UUID>();
 		UUID curr = destination;
@@ -94,12 +118,12 @@ public class Path {
             
 		}
         course.add(0, curr);
-        /*
+        
         for (UUID blockID: course){
             System.out.println("Block Number: " + map.getBlock(blockID).getBlockNumber());
             System.out.println("Block ID: " + blockID);
         }
-        */
+        
         
 		return course;
     }
