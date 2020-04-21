@@ -1,0 +1,2 @@
+Main-Class: src.Main
+Class-Path: deps/javafx-sdk-13.0.2/lib/*.jar

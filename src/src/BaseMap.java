@@ -50,7 +50,7 @@ public abstract class BaseMap {
         for(Block block : blocks.values()) {
             Circle circle = new Circle(block.getX(), block.getY(), 6);
             circle.setFill(Color.GREEN);
-            circle.setViewOrder(0);
+            //circle.setViewOrder(0);
             circle.setStrokeWidth(4);
             if(block.getLine().equals("RED")) {
                 circle.setStroke(Color.FIREBRICK);
@@ -67,7 +67,7 @@ public abstract class BaseMap {
             for(Edge edge: block.getEdges()) {
                 Line line= new Line( block.getX(), block.getY(), edge.getBlock().getX(), edge.getBlock().getY());
                 edgeMap.put(edge, line);
-                line.setViewOrder(2);
+                //line.setViewOrder(2);
                 line.setStyle("-fx-stroke-width: 2");
 
                 if(block.getLine().equals("RED")) {
@@ -89,7 +89,7 @@ public abstract class BaseMap {
                     if (edge.getBlock().equals(shift.getPosition())){
                         line = edgeMap.get(edge);
                         line.setStroke(Color.YELLOW);
-                        line.setViewOrder(1);
+                        //line.setViewOrder(1);
                         line.setStyle("-fx-stroke-width: 4");
                     }
                 }
@@ -118,7 +118,7 @@ public abstract class BaseMap {
                         line.setStyle("-fx-stroke-width: 2");
                         if (edge.getBlock().equals(position)) {
                             line.setStroke(Color.YELLOW);
-                            line.setViewOrder(1);
+                            //line.setViewOrder(1);
                             line.setStyle("-fx-stroke-width: 4");
                         }
                         else{
@@ -128,7 +128,7 @@ public abstract class BaseMap {
                             else if(edge.getBlock().getLine().equals("GREEN")) {
                                     line.setStroke(Color.LIMEGREEN);
                                 }
-                            line.setViewOrder(2);
+                            //line.setViewOrder(2);
                         }
                     }
             });

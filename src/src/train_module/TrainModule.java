@@ -2,6 +2,7 @@ package src.train_module;
 
 import src.Module;
 import src.train_controller.TrainController;
+import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -9,6 +10,7 @@ public class TrainModule extends Module {
 
     int nextID = 1;
     ObservableList<Train> trainList;
+    ArrayList<Train> removeList;
 
     public TrainModule() {
         super();
@@ -22,9 +24,13 @@ public class TrainModule extends Module {
 
     @Override
     public void update() {
+        removeList = new ArrayList<Train>();
         for (Train train : trainList) {
             train.update();
-            if (train.removeFlag.getValue()) trainList.remove(train);
+            if (train.removeFlag.getValue()) removeList.add(train);
+        }
+        for (Train train : removeList) {
+            trainList.remove(train);
         }
     }
 
