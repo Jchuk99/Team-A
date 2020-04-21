@@ -67,7 +67,7 @@ public class WaysideController {
 	}
 
 	public void runPLC(){
-		plc.makeBits(blocks, trains, switchPositions, closedBlocks, crossingBlock, lightsBlocks);
+		//plc.makeBits(blocks, trains, switchPositions, closedBlocks, crossingBlock, lightsBlocks);
 		//adjustedSwitchPositions = plc.runSwitchLogic();
 		//adjustedTrains = plc.runAuthorityLogic();
 		//
