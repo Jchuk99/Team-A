@@ -8,13 +8,18 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.Node;
 import javafx.stage.Stage;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -49,12 +54,26 @@ public class ClockUI extends Stage {
         timeBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
 
         Label speed = UICommon.createLabel("1.00");
-        final HBox labelBox = new HBox(10, createTextBox("Clock Speed: "), createVBox(speed));
+        ToggleButton button = UICommon.createToggleButton("x100 speed", 100, 50);
         Slider slider = createSlider(1, 100, 1);
+
+        final HBox labelBox = new HBox(10, createTextBox("Clock Speed: "), createVBox(speed), UICommon.createHSpacer(), createVBox(button));
         
+        ObjectProperty<Float> clockSpeedMultiplier = new SimpleObjectProperty<Float>((float)1.0);
+        button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (button.isSelected()) {
+                    clockSpeedMultiplier.setValue((float)100.0);
+                } else {
+                    clockSpeedMultiplier.setValue((float)1.0);
+                }
+            }
+        });
+
         slider.valueProperty().addListener(new ChangeListener<Number>() { 
             public void changed(ObservableValue <? extends Number > observable, Number oldValue, Number newValue) { 
-                clockTimeSpeed = newValue.floatValue();
+                clockTimeSpeed = newValue.floatValue() * clockSpeedMultiplier.getValue();
                 speed.setText("" + UICommon.roundToTwoDecimal(clockTimeSpeed));
                 float step = ((float)Module.TIMESTEP) / clockTimeSpeed;
                 if (step < 10) {
@@ -66,7 +85,21 @@ public class ClockUI extends Stage {
                 }
                 clockTimeStep = (long)step;
             } 
-        }); 
+        });
+
+        clockSpeedMultiplier.addListener(new ChangeListener<Float>() {
+            @Override
+            public void changed(ObservableValue <? extends Float> observable, Float oldValue, Float newValue) {
+                double value = slider.getValue();
+                // to invoke update
+                if (value == 100) {
+                    slider.setValue(value - 0.1);
+                } else {
+                    slider.setValue(value + 0.1);
+                }
+                slider.setValue(value);
+            }
+        });
         final VBox sliderBox = new VBox(10, createVBox(labelBox), createVBox(slider));
         sliderBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
         
