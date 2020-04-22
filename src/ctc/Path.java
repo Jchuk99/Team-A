@@ -1,12 +1,10 @@
 package src.ctc;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.Stack;
 import java.util.UUID;
 import src.track_module.Block;
 import src.track_module.Edge;
@@ -83,9 +81,6 @@ public class Path {
         while (!q.isEmpty()) {
             Block b = q.remove();
             prevBlock = edgeTo.get(b.getUUID()).peek();
-            if(prevBlock != null){
-                int prevBlockNumber = map.getBlock(prevBlock).getBlockNumber();
-            }
                 for (Edge e : b.getEdges()) {
                     Block edgeBlock = e.getBlock();
                     // not the previous block, connected, and edgeTo the block isn't the current block(circle)

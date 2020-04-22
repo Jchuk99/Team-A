@@ -93,6 +93,34 @@ public class CTCMap{
 
         return closedBlocks;
     }
+
+    public List<Block> getGreenBlocks(){
+
+        List<Block> greenBlocks = new ArrayList<Block>(); // can be a set instead of a list.. doesn't really matter
+        for (Map.Entry<UUID, Block> entry : blockMap.entrySet()){
+            Block currBlock = entry.getValue();
+            if (currBlock.getLine().equalsIgnoreCase("green") == true){
+                greenBlocks.add(currBlock);
+            }
+        }
+
+        return greenBlocks;
+    }
+
+    public List<Block> getRedBlocks(){
+        List<Block> redBlocks = new ArrayList<Block>(); // can be a set instead of a list.. doesn't really matter
+        for (Map.Entry<UUID, Block> entry : blockMap.entrySet()){
+            Block currBlock = entry.getValue();
+            if (currBlock.getLine().equalsIgnoreCase("red") == true){
+                redBlocks.add(currBlock);
+            }
+        }
+
+        return redBlocks;
+
+    }
+
+
     //TODO: error check
     public int getGreenLineSales(){
         int tickets = 0;

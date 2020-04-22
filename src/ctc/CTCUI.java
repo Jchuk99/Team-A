@@ -149,11 +149,12 @@ public class CTCUI extends Stage {
         trainBox.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;"); 
 
         //destBox
-        Pair<TableView<CTCStation>, TableView<Block>> bTable = createBlockTables();
-        TableView<CTCStation> stationTable = bTable.getKey();
-        TableView<Block> blocksTable = bTable.getValue();
+        BlockTables bTable = createBlockTables();
+        TableView<CTCStation> stationTable = bTable.stationTable;
+        TableView<Block> greenBlockTable = bTable.greenBlockTable;
+        TableView<Block> redBlockTable = bTable.redBlockTable;
 
-        HBox destBox = new HBox(10, stationTable, blocksTable);
+        HBox destBox = new HBox(10, stationTable, greenBlockTable, redBlockTable);
         destBox.setPrefWidth(length/3);
         destBox.setPrefHeight(height/2);
         destBox.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
@@ -173,7 +174,7 @@ public class CTCUI extends Stage {
         sliderBox.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + "-fx-font-size:12;" + "-fx-text-fill: black;" + "-fx-padding: 5;");
 
         HBox timeBox = createTimeBox();
-        Button dispatch = createDispatchButton(trainTable, blocksTable, stationTable, speedSlider);
+        Button dispatch = createDispatchButton(trainTable, greenBlockTable, redBlockTable, stationTable, speedSlider);
 
         VBox box3 = new VBox(10, timeBox, createSpacer(), sliderBox, createSpacer(),  dispatch);
         box3.setPrefWidth(length/3);
@@ -236,12 +237,9 @@ public class CTCUI extends Stage {
         trackMap = new GUIMap();
         graphPane = new Pane();
 
-        //TODO: ask eric about setting this stuff
-        //graphPane.setStyle("-fx-background-color: -fx-focus-color;");
         VBox.setVgrow(graphPane, Priority.ALWAYS);
         graphPane.setViewOrder(1);
         trackMap.mapUnavailable(graphPane);
-        //trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
         return graphPane;
     }
 
@@ -388,51 +386,73 @@ public class CTCUI extends Stage {
         scheduleTable.getColumns().add(trainTwo);
         scheduleTable.getColumns().add(trainThree);
 
-        scheduleTable.getItems().add(new SchedulerUI("5", "WHITED", "7:30am", "8:00am", "8:30am"));
-        scheduleTable.getItems().add(new SchedulerUI("9", "SOUTH BANK", "8:00am", "8:30am", "9:00am"));
-        scheduleTable.getItems().add(new SchedulerUI("11", "CENTRAL", "8:30am", "9:00am", "9:30am"));
-        scheduleTable.getItems().add(new SchedulerUI("15", "EDGEBROOK", "9:00am", "9:30am", "10:00am"));
+        scheduleTable.getItems().add(new SchedulerUI("2", "Pioneer", "7:30am", "8:00am", "8:30am"));
+        scheduleTable.getItems().add(new SchedulerUI("9", "Edgebrook", "8:00am", "8:30am", "9:00am"));
+        scheduleTable.getItems().add(new SchedulerUI("16", "Station47", "8:30am", "9:00am", "9:30am"));
+        scheduleTable.getItems().add(new SchedulerUI("22", "Whited", "9:00am", "9:30am", "10:00am"));
+        scheduleTable.getItems().add(new SchedulerUI("31", "South Bank", "9:00am", "9:30am", "10:00am"));
+        scheduleTable.getItems().add(new SchedulerUI("39", "Central", "9:00am", "9:30am", "10:00am"));
+        scheduleTable.getItems().add(new SchedulerUI("48", "Inglewood", "9:00am", "9:30am", "10:00am"));
+        scheduleTable.getItems().add(new SchedulerUI("65", "Glenbury", "9:00am", "9:30am", "10:00am"));
+        scheduleTable.getItems().add(new SchedulerUI("73", "Dormont", "9:00am", "9:30am", "10:00am"));
         
         scheduleTable.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
 
         return scheduleTable;
     }
 
-    private static Pair<TableView<CTCStation>, TableView<Block>> createBlockTables(){
+    private static BlockTables createBlockTables(){
         TableView<CTCStation> stationTable = new TableView<CTCStation>();
         stationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<CTCStation, String> stations = new TableColumn<>("Select Destination");
+        TableColumn<CTCStation, String> stations = new TableColumn<>("Stations");
         stations.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
         stationTable.getColumns().add(stations);
          
         stationTable.setItems(ctcOffice.getObservableStationList());
 
-        TableView<Block> blockTable = new TableView<Block>();
-        blockTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        TableColumn<Block, String> blocks = new TableColumn<>("Select Block");
-        blocks.setCellValueFactory(cellData -> new SimpleStringProperty(Integer.toString(cellData.getValue().getBlockNumber())));
-        blockTable.getColumns().add(blocks);
-
-        blockTable.setItems(ctcOffice.getObservableBlockList());
+        TableView<Block> greenBlockTable = new TableView<Block>();
+        greenBlockTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        TableColumn<Block, String> greenBlocks = new TableColumn<>("Green Line ");
+        greenBlocks.setStyle("-fx-text-fill: green");
+        greenBlocks.setCellValueFactory(cellData -> new SimpleStringProperty(Integer.toString(cellData.getValue().getBlockNumber())));
+        greenBlockTable.getColumns().add(greenBlocks);
+        greenBlockTable.setItems(ctcOffice.getObservableGreenBlocks());
+        
+        TableView<Block> redBlockTable = new TableView<Block>();
+        redBlockTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        TableColumn<Block, String> redBlocks = new TableColumn<>("Red Line");
+        redBlocks.setStyle("-fx-text-fill: red");
+        redBlocks.setCellValueFactory(cellData -> new SimpleStringProperty(Integer.toString(cellData.getValue().getBlockNumber())));
+        redBlockTable.getColumns().add(redBlocks);
+        redBlockTable.setItems(ctcOffice.getObservableRedBlocks());
+        
        
         stationTable.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
             if (newItem != null) {
-                blockTable.getSelectionModel().clearSelection();
+                greenBlockTable.getSelectionModel().clearSelection();
+                redBlockTable.getSelectionModel().clearSelection();
             }
         });
     
-        blockTable.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
+        greenBlockTable.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
             if (newItem != null) {
                 stationTable.getSelectionModel().clearSelection();
+                redBlockTable.getSelectionModel().clearSelection();
             }
         });
 
-        return new Pair<TableView<CTCStation>, TableView<Block>>(stationTable, blockTable);
+        redBlockTable.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
+            if (newItem != null) {
+                stationTable.getSelectionModel().clearSelection();
+                greenBlockTable.getSelectionModel().clearSelection();
+            }
+        });
+
+        return new BlockTables(stationTable, greenBlockTable, redBlockTable);
     }
 
-    private static Button createDispatchButton(TableView<Person> trainTable, TableView<Block> blocksTable,TableView<CTCStation> stationTable  ,Slider speedSlider){
+    private static Button createDispatchButton(TableView<Person> trainTable,TableView<Block> greenBlockTable, TableView<Block> redBlockTable,TableView<CTCStation> stationTable  ,Slider speedSlider){
         Button dispatch = UICommon.createButton("DISPATCH", 400, 100);
         dispatch.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
                                 "-fx-background-color: green;" + "-fx-font-size:30;" + "-fx-text-fill: white;");
@@ -459,8 +479,11 @@ public class CTCUI extends Stage {
                 Person train;
                 float speed;
 
-                if (!blocksTable.getSelectionModel().isEmpty()){
-                    block = blocksTable.getSelectionModel().getSelectedItem();
+                if (!greenBlockTable.getSelectionModel().isEmpty()){
+                    block = greenBlockTable.getSelectionModel().getSelectedItem();
+                }
+                else if(!redBlockTable.getSelectionModel().isEmpty()){
+                    block = redBlockTable.getSelectionModel().getSelectedItem();
                 }
                 else{
                     block = stationTable.getSelectionModel().getSelectedItem(); 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleObjectProperty;
 import src.track_module.Block;
-import src.track_module.Edge;
+
 
 public class CTCBlockConstructor {
     public static class CTCNormal extends CTCBlock {

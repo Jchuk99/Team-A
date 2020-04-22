@@ -7,6 +7,13 @@ public class SchedulerUI extends Person {
     private String trainOne = null;
     private String trainTwo  = null;
     private String trainThree  = null;
+    private String trainFour  = null;
+    private String trainFive  = null;
+    private String trainSix  = null;
+    private String trainSeven = null;
+    private String trainEight  = null;
+    private String trainNine  = null;
+    private String trainTen  = null;
 
     public SchedulerUI(){
     }

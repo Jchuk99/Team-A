@@ -272,12 +272,22 @@ public class CTCModule extends Module{
     public ObservableList<CTCStation> getObservableStationList(){
         ObservableList<CTCStation> stationList = FXCollections.observableList(map.getStationList());
         return stationList;
-   }
+    }
 
     public ObservableList<Block> getObservableBlockList(){
          ObservableList<Block> blockList = FXCollections.observableList(map.getBlockList());
          FXCollections.sort(blockList, new blockNumberComparator());
          return blockList;
+    }
+    public ObservableList<Block> getObservableGreenBlocks(){
+        ObservableList<Block> greenBlocks = FXCollections.observableList(map.getGreenBlocks());
+        FXCollections.sort(greenBlocks, new blockNumberComparator());
+        return greenBlocks;
+    }
+   public ObservableList<Block> getObservableRedBlocks(){
+        ObservableList<Block> redBlocks = FXCollections.observableList(map.getRedBlocks());
+        FXCollections.sort(redBlocks, new blockNumberComparator());
+        return redBlocks;
     }
 
     public boolean validMap(){

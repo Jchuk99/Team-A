@@ -15,7 +15,6 @@ public class CTCTrain {
     private int trainID;
     private UUID prevPathBlock = null;
     private UUID destination;
-    //TODO: write a getter for this
     public UUID startPos;
     private UUID currPos;
     private UUID prevPos = null;
@@ -185,6 +184,9 @@ public class CTCTrain {
     }
     public UUID getDestination(){
         return destination;
+    }
+    public UUID getStartPos(){
+        return startPos;
     }
     public UUID getCurrPos(){
         return currPos;

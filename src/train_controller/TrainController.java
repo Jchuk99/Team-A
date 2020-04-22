@@ -427,7 +427,7 @@ public class TrainController {
             }
             else{
                 v_cmd2=(float)0.0;
-		    radicalSlowDown21=false;
+		    radicalSlowDown2 = false;
             }
         }
         
