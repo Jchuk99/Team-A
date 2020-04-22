@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
-
+import src.ctc.CTCBlockConstructor.CTCShift;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import src.Module;
@@ -19,6 +19,7 @@ import src.ctc.CTCTrain;
 
 
 public class TrackModule extends Module {
+    List<UUID> prevClosedBlocks;
     HashMap<UUID, Block> blocks;
     Yard yard;
     IntegerProperty temperature = new SimpleIntegerProperty(50);
@@ -30,7 +31,41 @@ public class TrackModule extends Module {
     }
     
     public void update(){
-		
+        //Simple implementation of what needs to be receivied from the CTC
+        //All of this information should be gotten by the waysides, you and Calvin need to work it out.
+        //- Jason
+        if(this.ctcModule.validMap()){
+            List<CTCShift> ctcSwitches = this.ctcModule.getSwitchPositions();
+            for(CTCShift shift: ctcSwitches){
+                Shift myShift = (Shift) blocks.get(shift.getUUID());
+                myShift.setPosition(shift.getPosition());
+            }
+
+
+            List<UUID> closedBlocks = this.trackControllerModule.getCTCClosedBlocks();
+            if (closedBlocks != null){
+                for (UUID blockID: closedBlocks){
+                    blocks.get(blockID).setOccupied(true);
+                }
+            }
+            if (prevClosedBlocks != null){
+                for (UUID blockID: prevClosedBlocks){
+                    if (!closedBlocks.contains(blockID)){
+                        blocks.get(blockID).setOccupied(false);
+                    }
+                }
+            }
+            prevClosedBlocks = closedBlocks;
+
+            List<CTCTrain> trains = this.ctcModule.getTrainsOnMap();
+            for (CTCTrain ctcTrain: trains){
+                Block currBlock = blocks.get(ctcTrain.getCurrPos());
+                Train train = currBlock.getTrain();
+                if (train != null){
+                    train.setTrain(ctcTrain.getSuggestedSpeed(), ctcTrain.getAuthority());
+                }
+            }
+        }
 	}
 	
 
@@ -367,7 +402,7 @@ public class TrackModule extends Module {
                 }
             }
         }
-       // this.ctcModule.initMap();
+        this.ctcModule.initMap();
         for(String line: myBlocks.keySet()) {
             for( Block block : myBlocks.get(line).values()) {
                 blocks.put( block.getUUID(), block);
@@ -381,7 +416,7 @@ public class TrackModule extends Module {
 
         Train train = trainModule.createTrain();
         train.setBlock(startingBlock);
-        train.setTrain(ctcTrain.getSuggestedSpeed(),ctcTrain.getAuthority());
+        train.setTrain(ctcTrain.getSuggestedSpeed(), ctcTrain.getAuthority());
        
         System.out.println("Suggeted Speed: " + ctcTrain.getSuggestedSpeed() + " Authority: " + ctcTrain.getAuthority());
         System.out.println("Starting Block Number: " + startingBlock.getBlockNumber());

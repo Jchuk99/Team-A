@@ -15,9 +15,10 @@ import src.Module;
 import src.ctc.CTCBlockConstructor.CTCShift;
 import src.ctc.CTCBlockConstructor.CTCStation;
 import src.track_module.Block;
+import src.track_module.Edge;
 
 public class CTCModule extends Module{
-    public static final int MAX_AUTHORITY = 3;
+    public static final int MAX_AUTHORITY = 5;
     public static CTCMap map = null;
     public StringProperty greenTickets = new SimpleStringProperty("");
     public StringProperty redTickets = new SimpleStringProperty("");
@@ -29,6 +30,7 @@ public class CTCModule extends Module{
 
         if (validMap()){
             map.updateMap();
+            dispatchTrains();
             updateTrainPositions();
             updateTrains();
             updateTrainAuthorities();
@@ -64,6 +66,7 @@ public class CTCModule extends Module{
         if (map == null){
             map = new CTCMap(trackControllerModule, trackModule);
             map.initMap();
+            schedule.createSchedule();
         }
     }
 
@@ -77,10 +80,52 @@ public class CTCModule extends Module{
     public void updateTrainPositions(){
         List<UUID> occupiedBlocks = map.getOccupiedBlocks();
         List<UUID> closedBlocks = map.getClosedBlocks();
-
-        List<CTCTrain> trains = getTrains();
+        List<CTCTrain> trains = getTrainsOnMap();
 
         if(trains.size() > 0){
+            for (CTCTrain train : trains){
+                if (train.atDestination()){
+                    if (train.inYard()){
+                        trainTable.destroyTrain(train);
+                        break;
+                    }
+                    if (train.isDwelling()){
+                        if (train.isDoneDwelling(date.toLocalTime())){
+                            train.getNextPath();
+                            if (train.getRoute().size() == 0 ){
+                                System.out.println("Train route is done.");
+                                if (!train.inYard()){
+                                    train.goToYard();
+                                }
+                            }
+                            train.setDwelling(false);
+                        }
+                    }
+                    else{
+                        train.setDwellStart(date.toLocalTime());
+                        train.setDwelling(true);
+                    }
+                }
+               // not at it's destination
+                else{
+                    Block currBlock = map.getBlock(train.getCurrPos());
+                    for (Edge e: currBlock.getEdges()){
+                        UUID edgeBlockID = e.getBlock().getUUID();
+                        boolean isOccupied = occupiedBlocks.contains(edgeBlockID);
+                        boolean isClosed = closedBlocks.contains(edgeBlockID);  
+                        boolean prevBlock = edgeBlockID.equals(train.getPrevPos());
+                        if(!prevBlock && isOccupied && !isClosed){
+                            train.setCurrPos(edgeBlockID);
+                            if (!train.onPath()){
+                                train.updateCurrPath();
+                            }
+                        }
+                    }
+                }
+            } 
+        }  
+           
+          /* 
             for (CTCTrain train: trains){
                 //TODO: change all the blockID's to blocks, just get the ID from the block.
                 UUID nextBlock = train.getNextBlockID(train.getCurrPos());
@@ -105,7 +150,7 @@ public class CTCModule extends Module{
                             if (!train.inYard()){
                                 train.goToYard();
                             }else{
-                            // trainTable.destroyTrain(train);
+                                trainTable.destroyTrain(train);
                             }
                         }
                     }
@@ -113,9 +158,10 @@ public class CTCModule extends Module{
 
             }
             
-        }
+        }*/
     }
 
+    //
     public void updateTrainAuthorities(){
         //TODO: Error Check, discuss train coming out of yard.
         List<CTCTrain> trains = getTrains();
@@ -136,9 +182,9 @@ public class CTCModule extends Module{
                 }
                 nextBlockID = train.getNextBlockID(nextBlockID);
             }
-           // System.out.println("Train ID: " + train.getTrainID());
-           // System.out.println("Train authority: "+ authority);
-            train.setAuthority(authority);
+            System.out.println("Train ID: " + train.getTrainID());
+            System.out.println("Train authority: "+ authority);
+            train.setAuthority(authority + 1);
         }
     }
 
@@ -152,24 +198,33 @@ public class CTCModule extends Module{
         PriorityQueue<CTCTrain> dispatchQueue = trainTable.getDispatchQueue();
         CTCTrain trainToDispatch = dispatchQueue.peek();
 
-        LocalTime dispatchTime = trainToDispatch.getDispatchTime();
-        LocalTime currTime = date.toLocalTime();
+        // if the queue isn't empty 
+        if (trainToDispatch !=null){
+            LocalTime dispatchTime = trainToDispatch.getDispatchTime();
+            LocalTime currTime = date.toLocalTime();
 
-        if (currTime.equals(dispatchTime) || currTime.isAfter(dispatchTime)){
-            trainToDispatch.setCurrPos(trainToDispatch.startPos);
-            Path currPath = trainToDispatch.getRoute().getCurrPath();
+            if (currTime.equals(dispatchTime) || currTime.isAfter(dispatchTime)){
+                trainToDispatch.setCurrPos(trainToDispatch.startPos);
+                Path currPath = trainToDispatch.getRoute().getCurrPath();
 
-            if (currPath != null && currPath instanceof TimePath){
-                TimePath currTimePath = (TimePath) currPath;
-                trainToDispatch.setSuggestedSpeed(currTimePath.calcSuggestedSpeed());
+                if (currPath != null){
+                    trainToDispatch.setDestination(currPath.getEndBlock());
+                    if (currPath instanceof TimePath){
+                        TimePath currTimePath = (TimePath) currPath;
+                        trainToDispatch.setSuggestedSpeed(currTimePath.calcSuggestedSpeed());
+                    }
+                }
+
+                this.trackModule.dispatchTrain(trainToDispatch);
+                // take train out of dispatch Queue if dispatched.
+                dispatchQueue.poll(); 
             }
-
-            this.trackModule.dispatchTrain(trainToDispatch);
-            dispatchQueue.poll(); 
         }
 
     }
 
+    //TODO: rename, you're creating a train that's going into the dispatchQueue , which will be sent to dispatched on one of the updateCycles.
+    // train will have a dispatchTime equal to current time, the hope is for it to dispatch instantly.
     public void dispatch(String trainIDString, float suggestedSpeed, UUID destination){
 
         // need to give speed in meters per second, authority, train ID, and route 
@@ -179,7 +234,6 @@ public class CTCModule extends Module{
         trainTable.createTrain(trainID, date.toLocalTime());
         CTCTrain train = trainTable.getTrain(trainID);
 
-        train.setDestination(destination);
         train.setSuggestedSpeed(suggestedSpeed);
         train.addPath(destination);
 
@@ -191,6 +245,12 @@ public class CTCModule extends Module{
         return trainList;
     }
 
+    public List<CTCTrain> getTrainsOnMap(){
+        List<CTCTrain> trainsOnMap = trainTable.getTrainsOnMap();
+        Collections.sort(trainsOnMap, new trainComparator());
+        return trainsOnMap;
+    }
+
     public List<Integer> getTrainIDs(){
         return trainTable.getTrainIDs();
     }
@@ -198,8 +258,22 @@ public class CTCModule extends Module{
         return trainTable.getTrainMap();
     }
 
-    public List<CTCShift> getSwitchPositions(){return map.getSwitchList();}
-    public List<UUID> getClosedBlocks() {return map.getClosedBlocks();}
+    public List<CTCShift> getSwitchPositions(){
+        if (validMap()){
+            return map.getSwitchList();
+        }
+        else{
+            return null;
+        }
+    }
+    public List<UUID> getClosedBlocks() {
+        if (validMap()){
+            return map.getClosedBlocks();
+        }
+        else{
+            return null;
+        }
+    }
 
     /****** for GUI ******/
 
@@ -212,15 +286,25 @@ public class CTCModule extends Module{
     public ObservableList<CTCStation> getObservableStationList(){
         ObservableList<CTCStation> stationList = FXCollections.observableList(map.getStationList());
         return stationList;
-   }
+    }
 
     public ObservableList<Block> getObservableBlockList(){
          ObservableList<Block> blockList = FXCollections.observableList(map.getBlockList());
          FXCollections.sort(blockList, new blockNumberComparator());
          return blockList;
     }
+    public ObservableList<Block> getObservableGreenBlocks(){
+        ObservableList<Block> greenBlocks = FXCollections.observableList(map.getGreenBlocks());
+        FXCollections.sort(greenBlocks, new blockNumberComparator());
+        return greenBlocks;
+    }
+   public ObservableList<Block> getObservableRedBlocks(){
+        ObservableList<Block> redBlocks = FXCollections.observableList(map.getRedBlocks());
+        FXCollections.sort(redBlocks, new blockNumberComparator());
+        return redBlocks;
+    }
 
-    private boolean validMap(){
+    public boolean validMap(){
         return map != null;
     }
     

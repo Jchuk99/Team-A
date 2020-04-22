@@ -5,6 +5,7 @@ import src.track_module.BlockConstructor.Shift;
 import java.util.*;
 import java.io.File;
 import src.ctc.*;
+import src.ctc.CTCBlockConstructor.CTCShift;
 
 
 public class WaysideController {
@@ -15,7 +16,11 @@ public class WaysideController {
 	List<CTCTrain> trains;
 	List<Shift> switchPositions;
 	List<UUID> closedBlocks;
+	List<Block> lightsBlocks;
 	UUID crossingBlock;
+
+	List<CTCTrain> adjustedTrains;
+	List<Shift> adjustedSwitchPositions;
 
 	public WaysideController(){
 		this.blocks= new LinkedList<Block>();
@@ -38,40 +43,67 @@ public class WaysideController {
 		blocks.add(block);
 	}
 
-	public LinkedList<Block> getBlocks(){
-		return blocks;
+	public void addBlockBeginning(Block block){
+		blocks.add(0, block);
 	}
 
-	public void runPLC(){
-		plc.makeBits(blocks, trains, switchPositions, closedBlocks, crossingBlock);
+	public LinkedList<Block> getBlocks(){
+		return blocks;
 	}
 
 	public void setTrains(List<CTCTrain> trainsInJuris){
 		this.trains = trainsInJuris;
 	}
 
-	public List<CTCTrain> getTrains(){
-		return trains;
-	}
-
-	public void setSwitchPosition(List<Shift> switchesInJuris){
+	public void setSwitchPositions(List<Shift> switchesInJuris){
 		this.switchPositions = switchesInJuris;
-	}
-
-	public List<Shift> getSwitchPositions(){
-		return switchPositions;
 	}
 
 	public void setClosedBlocks(List<UUID> closedBlocksInJuris){
 		this.closedBlocks = closedBlocksInJuris;
 	}
 
+	public void setCrossingBlock(UUID uuid){
+		crossingBlock = uuid;
+	}
+
+	public void setLightsBlocks(List<Block> lightsInJuris){
+		this.lightsBlocks = lightsInJuris;
+	}
+
+	public List<CTCTrain> getTrains(){
+		return trains;
+	}
+
+	public List<Shift> getSwitchPositions(){
+		return switchPositions;
+	}
+
 	public List<UUID> getClosedBlocks(){
 		return closedBlocks;
 	}
 
-	public void setCrossingBlock(UUID uuid){
-		crossingBlock = uuid;
+	public UUID getCrossingBlock(UUID uuid){
+		return uuid;
+	}
+
+	public List<Block> getLightsBlocks(List<Block> lightsInJuris){
+		return lightsInJuris;
+	}
+
+	public void runPLC(){
+		//plc.makeBits(blocks, trains, switchPositions, closedBlocks, crossingBlock, lightsBlocks);
+		//adjustedSwitchPositions = plc.runSwitchLogic();
+		//adjustedTrains = plc.runAuthorityLogic();
+
+	}
+
+	public List<Shift> getAdjustedSwitchPositions(){
+		return adjustedSwitchPositions;
+	}
+
+	public List<CTCTrain> getAdjustedTrains(){
+		return adjustedTrains;
 	}
 
 

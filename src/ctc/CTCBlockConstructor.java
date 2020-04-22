@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleObjectProperty;
 import src.track_module.Block;
-import src.track_module.Edge;
+
 
 public class CTCBlockConstructor {
     public static class CTCNormal extends CTCBlock {
@@ -58,7 +58,7 @@ public class CTCBlockConstructor {
                 addSwitchPosition(block);
             }
         }
-
+        /*
         public void updateConnected() {
                     for (Edge e: this.getEdges()){
                         if(switchPositions.contains(e.getBlock())){
@@ -71,10 +71,11 @@ public class CTCBlockConstructor {
                         }
                     }
         }
+        */
 
         public void setPosition( Block block) {
             positionProperty().set(block);
-            updateConnected();
+           // updateConnected();
         }
         public void addSwitchPosition(Block position){
             switchPositions.add(position);

@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import src.UICommon;
+import src.ctc.CTCUI;
 import src.track_module.TrackModule.FileFormatException;
 
 public class TrackModuleUI extends Stage {
@@ -102,7 +103,7 @@ public class TrackModuleUI extends Stage {
                 }
                 
                 trackMap.buildMap(trackModule.blocks, graphPane);
-                //CTC
+                CTCUI.buildMap();
                 // Removes the select track button and resizes temperature and time boxes
                 temperatureLabel.prefWidthProperty().bind(topBox.widthProperty().divide((3)));
                 timeLabel.prefWidthProperty().bind(topBox.widthProperty().divide((1.5)));

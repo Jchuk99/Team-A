@@ -1,5 +1,6 @@
 package src.ctc;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -49,15 +50,21 @@ public class Path {
     
     //TODO: Make algorithim account for distance of blocks
     protected LinkedList<UUID> findCourse(UUID start, UUID destination, UUID prevBlock) {
+
+
+        LinkedList<UUID> course = null;
+        int limit = 0;
         CTCMap map = CTCModule.map;
+        System.out.println("Start: " + map.getBlock(start).getBlockNumber());
+        System.out.println("End: " + map.getBlock(destination).getBlockNumber());
         Set<UUID> blockIDs = map.getBlockIDs();
         HashMap<UUID, Boolean> marked = new HashMap<UUID, Boolean>();
-        HashMap<UUID, UUID> edgeTo = new HashMap<UUID, UUID>();
+        HashMap<UUID, Deque<UUID>> edgeTo = new HashMap<UUID,  Deque<UUID>>();
         HashMap<UUID, Integer> distTo = new HashMap<UUID, Integer>();
 
         for (UUID blockID: blockIDs){
             marked.put(blockID, false);
-            edgeTo.put(blockID, null);
+            edgeTo.put(blockID, new ArrayDeque<UUID>() );
             distTo.put(blockID, Integer.MAX_VALUE);
         }
 
@@ -65,41 +72,47 @@ public class Path {
         Deque<Block> q = new LinkedList<Block>();
         
         distTo.put(block.getUUID(), 0);
-        marked.put(block.getUUID(), true);
+        Deque<UUID> edgeQueue = edgeTo.get(block.getUUID());
+        if (prevBlock != null){
+            edgeQueue.addFirst(prevBlock);
+        }
         q.add(block);
 
         while (!q.isEmpty()) {
             Block b = q.remove();
+            prevBlock = edgeTo.get(b.getUUID()).peek();
                 for (Edge e : b.getEdges()) {
                     Block edgeBlock = e.getBlock();
-                    if (!marked.get(edgeBlock.getUUID()) && !edgeBlock.getUUID().equals(prevBlock) && e.getConnected()) {
-                        edgeTo.put(edgeBlock.getUUID(), b.getUUID());
-                        distTo.put(edgeBlock.getUUID(), distTo.get(b.getUUID()) + 1);
-                        marked.put(edgeBlock.getUUID(), true);
-                        q.add(edgeBlock);
+                    // not the previous block, connected, and edgeTo the block isn't the current block(circle)
+                    if (!edgeBlock.getUUID().equals(prevBlock) && e.getConnected() && !b.getUUID().equals(edgeTo.get(edgeBlock.getUUID()).peek())){
+                            edgeTo.get(edgeBlock.getUUID()).addFirst(b.getUUID());
+                            q.add(edgeBlock);
                     }
                 }
+              if (limit >= 1000 || edgeTo.get(destination).size() >=1){
+                  break;
+              }
+              limit++;
         }
         
-        LinkedList<UUID> course = new LinkedList<UUID>();
-		UUID curr = destination;
-		while (!curr.equals(start)){
+        course = new LinkedList<UUID>();
+        UUID curr = destination;
+        while (!curr.equals(start)){
             course.add(0, curr);
-            //System.out.println("Curr: " + CTCModule.map.getBlock(curr).getBlockNumber());
-            curr = edgeTo.get(curr);
+            curr = edgeTo.get(curr).pollFirst();
             //TODO: what if I can't find a path?
             if (curr == null){
                 break;
             }
-            
-		}
+        }
         course.add(0, curr);
-        /*
+        
+        
         for (UUID blockID: course){
             System.out.println("Block Number: " + map.getBlock(blockID).getBlockNumber());
             System.out.println("Block ID: " + blockID);
         }
-        */
+        
         
 		return course;
     }
