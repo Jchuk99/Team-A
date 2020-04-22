@@ -15,7 +15,6 @@ import src.Module;
 import src.track_controller.WaysideController;
 import src.track_module.BlockConstructor.*;
 import src.train_module.Train;
-import src.ctc.CTCBlock;
 import src.ctc.CTCTrain;
 
 
@@ -42,11 +41,13 @@ public class TrackModule extends Module {
                 myShift.setPosition(shift.getPosition());
             }
 
-            List<UUID> closedBlocks = this.ctcModule.getClosedBlocks();
-            for (UUID blockID: closedBlocks){
-                blocks.get(blockID).setOccupied(true);
-            }
 
+            List<UUID> closedBlocks = this.trackControllerModule.getCTCClosedBlocks();
+            if (closedBlocks != null){
+                for (UUID blockID: closedBlocks){
+                    blocks.get(blockID).setOccupied(true);
+                }
+            }
             if (prevClosedBlocks != null){
                 for (UUID blockID: prevClosedBlocks){
                     if (!closedBlocks.contains(blockID)){

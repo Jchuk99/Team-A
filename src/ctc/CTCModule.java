@@ -258,8 +258,22 @@ public class CTCModule extends Module{
         return trainTable.getTrainMap();
     }
 
-    public List<CTCShift> getSwitchPositions(){return map.getSwitchList();}
-    public List<UUID> getClosedBlocks() {return map.getClosedBlocks();}
+    public List<CTCShift> getSwitchPositions(){
+        if (validMap()){
+            return map.getSwitchList();
+        }
+        else{
+            return null;
+        }
+    }
+    public List<UUID> getClosedBlocks() {
+        if (validMap()){
+            return map.getClosedBlocks();
+        }
+        else{
+            return null;
+        }
+    }
 
     /****** for GUI ******/
 
