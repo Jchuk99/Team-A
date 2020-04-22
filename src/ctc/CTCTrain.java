@@ -9,7 +9,7 @@ import javafx.beans.property.StringProperty;
 import src.track_module.Block;
 
 public class CTCTrain {
-    private static long dwellTime = 600; // IN SECONDS
+    private static long dwellTime = 60; // IN SECONDS
     private float authority = 0;
     private float suggestedSpeed; // IN METERS PER SECOND INTENRALLY
     private int trainID;
@@ -119,7 +119,8 @@ public class CTCTrain {
         return currPos.equals(destination);
     }
     public boolean inYard(){
-        return currPos == CTCModule.map.getYard().getUUID();
+        boolean inYard = currPos.equals(CTCModule.map.getYard().getUUID());
+        return inYard;
     }
     public boolean onMap(){
         return !inYard();

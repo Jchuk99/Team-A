@@ -44,6 +44,7 @@ public class TrainTable {
     }
 
     public void destroyTrain(CTCTrain train){
+        System.out.println("destroy train");
         trains.remove(train.getTrainID(), train);
         observableTrains.remove(train);
     }

@@ -80,7 +80,7 @@ public class CTCModule extends Module{
     public void updateTrainPositions(){
         List<UUID> occupiedBlocks = map.getOccupiedBlocks();
         List<UUID> closedBlocks = map.getClosedBlocks();
-        List<CTCTrain> trains = getTrainsOnMap();
+        List<CTCTrain> trains = getTrains();
 
         if(trains.size() > 0){
             for (CTCTrain train : trains){
@@ -108,16 +108,23 @@ public class CTCModule extends Module{
                 }
                // not at it's destination
                 else{
-                    Block currBlock = map.getBlock(train.getCurrPos());
-                    for (Edge e: currBlock.getEdges()){
-                        UUID edgeBlockID = e.getBlock().getUUID();
-                        boolean isOccupied = occupiedBlocks.contains(edgeBlockID);
-                        boolean isClosed = closedBlocks.contains(edgeBlockID);  
-                        boolean prevBlock = edgeBlockID.equals(train.getPrevPos());
-                        if(!prevBlock && isOccupied && !isClosed){
-                            train.setCurrPos(edgeBlockID);
-                            if (!train.onPath()){
-                                train.updateCurrPath();
+                    if (train.onMap()){
+                        Block currBlock = map.getBlock(train.getCurrPos());
+                        for (Edge e: currBlock.getEdges()){
+                            UUID edgeBlockID = e.getBlock().getUUID();
+                            boolean isOccupied = occupiedBlocks.contains(edgeBlockID);
+                            boolean isClosed = closedBlocks.contains(edgeBlockID);  
+                            boolean prevBlock = edgeBlockID.equals(train.getPrevPos());
+                            if(edgeBlockID.equals(map.getYard().getUUID()) && e.getConnected() && !occupiedBlocks.contains(currBlock.getUUID())){
+                                train.setCurrPos(map.getYard().getUUID());
+                            }
+                            else{
+                                if(!prevBlock && isOccupied && !isClosed){
+                                    train.setCurrPos(edgeBlockID);
+                                    if (!train.onPath()){
+                                        train.updateCurrPath();
+                                    }
+                                }
                             }
                         }
                     }
@@ -182,8 +189,8 @@ public class CTCModule extends Module{
                 }
                 nextBlockID = train.getNextBlockID(nextBlockID);
             }
-            System.out.println("Train ID: " + train.getTrainID());
-            System.out.println("Train authority: "+ authority);
+            //System.out.println("Train ID: " + train.getTrainID());
+            //System.out.println("Train authority: "+ authority);
             train.setAuthority(authority + 1);
         }
     }

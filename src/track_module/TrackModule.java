@@ -57,7 +57,7 @@ public class TrackModule extends Module {
             }
             prevClosedBlocks = closedBlocks;
 
-            List<CTCTrain> trains = this.ctcModule.getTrainsOnMap();
+            List<CTCTrain> trains = this.trackControllerModule.getCTCTrains();
             for (CTCTrain ctcTrain: trains){
                 Block currBlock = blocks.get(ctcTrain.getCurrPos());
                 Train train = currBlock.getTrain();
