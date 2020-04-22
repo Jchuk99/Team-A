@@ -97,7 +97,6 @@ public class TrackModuleUI extends Stage {
                     stage.setTitle("File Error");
                     stage.setScene(scene);
                     stage.sizeToScene();
-                    // TODO increase the width so line section number visible in header
                     stage.show();
                     return;
                 }
@@ -134,6 +133,6 @@ public class TrackModuleUI extends Stage {
         Scene scene = new Scene(fullScreen, WIDTH, HEIGHT);
         scene.getStylesheets().add(Paths.get(System.getenv("cssStyleSheetPath")).toUri().toString());
         setScene(scene);
-        showAndWait(); // TODO
+        showAndWait();
     }
 }

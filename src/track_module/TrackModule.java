@@ -132,7 +132,7 @@ public class TrackModule extends Module {
             //////////
             try{ 
                 blockNumber= Integer.parseInt( data[2]);
-                if( myBlocks.containsKey(blockNumber) || blockNumber < 1) {
+                if( myBlocks.get(line).containsKey(blockNumber) || blockNumber < 1) {
                     throw new Exception();
                 }
             }
