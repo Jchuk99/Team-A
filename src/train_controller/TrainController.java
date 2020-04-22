@@ -411,7 +411,7 @@ public class TrainController {
         //using driver or suggested speed
         else if(!manualModeOn.getValue()){
             v_cmd2=suggestedSpeed;
-		radicalSlowDown1=false;
+		radicalSlowDown2=false;
         }
         else {
             
@@ -423,11 +423,11 @@ public class TrainController {
                 if(suggestedSpeed<Float.parseFloat(driverSpeed.getValueSafe().split(" ")[0])){
                     v_cmd2=suggestedSpeed;
                 }
-		    radicalSlowDown1=false;
+		    radicalSlowDown2=false;
             }
             else{
                 v_cmd2=(float)0.0;
-		    radicalSlowDown1=false;
+		    radicalSlowDown21=false;
             }
         }
         
