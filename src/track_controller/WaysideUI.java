@@ -23,10 +23,22 @@ import java.util.concurrent.CountDownLatch;
 import javafx.stage.FileChooser;
 import javafx.scene.layout.Pane;
 import javafx.collections.ObservableList;
+import src.UICommon;
+import javafx.scene.layout.Priority;
+import src.track_module.BlockConstructor.Shift;
+import src.track_module.BlockConstructor.Crossing;
+import src.track_module.BlockConstructor.Station;
+import src.ctc.CTCTrain;
  
 public class WaysideUI extends Stage{
     public static final CountDownLatch latch = new CountDownLatch(1);
     public static TrackControllerModule trackControllerModule;
+    public static ArrayList<WaysideController> waysideControllers;
+    public static TableView plcTable;
+    public static int length = 1200;
+    public static int height = 1200;
+    public static Pane graphPane;
+    public static TrackControllerMap trackControllerMap = new TrackControllerMap();
 
     public static void setTrackControllerModule(TrackControllerModule trackControllerModule0){
         trackControllerModule = trackControllerModule0;
@@ -34,52 +46,92 @@ public class WaysideUI extends Stage{
 
     public WaysideUI(){
         setTitle("Wayside Controller UI");
-        ArrayList<WaysideController> waysideControllers = trackControllerModule.getWaysideControllers();
-        WaysideController waysideController = new WaysideController();
-
-        int length = 1200;
-        int height = 800;
         
         /*******************************top half***************************************/
         /*******************************box1*******************************************/
         
-        TableView plcTable = new TableView();
-        TableColumn<String, WaysideController> plcs = new TableColumn<>("Select PLC");
+        
+        plcTable = new TableView();
+        TableColumn<String, WaysideController> plcs = new TableColumn<>("Select Wayside");
         plcs.setCellValueFactory(new PropertyValueFactory<>("id"));
         plcTable.getColumns().add(plcs);
         plcTable.setPrefWidth(length/6);
 
-        int plcCount = 0;
-        for(WaysideController controller : waysideControllers){
-            controller.setId("PLC " + ++plcCount);
-            System.out.println(controller.getClass());
-            plcTable.getItems().add(controller);
-        }
-        
+        //////////////////////BLOCK TABLE///////////////////////////
         TableView blockTable = new TableView();
-        TableColumn<String, BlockProperties> blockID = new TableColumn<>("Block ID");
+        TableColumn<String, Properties> blockID = new TableColumn<>("Block ID");
         blockID.setCellValueFactory(new PropertyValueFactory<>("blockNumber"));
-        TableColumn<String, BlockProperties> blockStatus = new TableColumn<>("Block Status");
+        TableColumn<String, Properties> blockStatus = new TableColumn<>("Block Status");
         blockStatus.setCellValueFactory(new PropertyValueFactory<>("occupied"));
-        TableColumn<String, BlockProperties> blockOpenClose= new TableColumn<>("Block Open/Close");
+        TableColumn<String, Properties> blockOpenClose= new TableColumn<>("Block Open/Close");
         blockOpenClose.setCellValueFactory(new PropertyValueFactory<>("blockOpenClose"));
-        TableColumn<String, BlockProperties> suggestedSpeed = new TableColumn<>("Suggested Speed (mph)");
-        suggestedSpeed.setCellValueFactory(new PropertyValueFactory<>("suggestedSpeed"));
-        TableColumn<String, BlockProperties> authority = new TableColumn<>("Authority (ft)");
-        authority.setCellValueFactory(new PropertyValueFactory<>("authority"));
         blockTable.getColumns().add(blockID);
         blockTable.getColumns().add(blockStatus);
         blockTable.getColumns().add(blockOpenClose);
-        blockTable.getColumns().add(suggestedSpeed);
-        blockTable.getColumns().add(authority);
         blockTable.setPrefWidth(length/3);
+
+        //////////////////////TRAIN TABLE///////////////////////////
+        TableView trainTable = new TableView();
+        TableColumn<String, Properties> suggestedSpeed = new TableColumn<>("Suggested Speed (mph)");
+        suggestedSpeed.setCellValueFactory(new PropertyValueFactory<>("suggestedSpeed"));
+        TableColumn<String, Properties> authority = new TableColumn<>("Authority (ft)");
+        authority.setCellValueFactory(new PropertyValueFactory<>("authority"));
+        trainTable.getColumns().add(suggestedSpeed);
+        trainTable.getColumns().add(authority);
+        trainTable.setPrefWidth(length/3);
+        VBox rightTables = new VBox(blockTable, trainTable);
+
+        //////////////////////SWITCH TABLE//////////////////////////
+        TableView switchTable = new TableView();
+        TableColumn<String, Properties> switchID = new TableColumn<>("Switch Number");
+        switchID.setCellValueFactory(new PropertyValueFactory<>("switchNumber"));
+        TableColumn<String, Properties> switchPosition = new TableColumn<>("Switch Position");
+        switchPosition.setCellValueFactory(new PropertyValueFactory<>("position"));
+        switchTable.getColumns().add(switchID);
+        switchTable.getColumns().add(switchPosition);
+        switchTable.setPrefWidth(length/6);
+        switchTable.setPrefHeight(height/6);
+
+        //////////////////////SIGNAL LIGHT//////////////////////////
+        Label signalLight = new Label("Signal Light:");
+        Circle greenCircle = new Circle(); 
+        Circle yellowCircle = new Circle(); 
+        Circle redCircle = new Circle();
+        greenCircle.setRadius(10);  
+        redCircle.setRadius(10);  
+        yellowCircle.setRadius(10);   
+        greenCircle.setFill(Color.GRAY); 
+        redCircle.setFill(Color.GRAY); 
+        yellowCircle.setFill(Color.GRAY); 
+        HBox lightGrouper = new HBox(10, signalLight, greenCircle, yellowCircle, redCircle);
+        lightGrouper.setPrefHeight(height/6);
+        lightGrouper.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 1;" + "-fx-padding: 5;");
+        
+
+        //////////////////////RAILWAY CROSSING STATUS////////////////
+        //String text 
+        Label railwayCrossing = new Label("Railway Crossing In Jurisdiction:");
+        Label inJuris = new Label("False");
+        HBox statusGrouper = new HBox(10, railwayCrossing, inJuris);
+        statusGrouper.setPrefHeight(height/6);
+        statusGrouper.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 1;" + "-fx-padding: 5;");
+        Label railwayCrossingActivated = new Label("Crossing and Lights Activated:");
+        Label activated = new Label("False");
+        HBox statusGrouper2 = new HBox(10, railwayCrossingActivated, activated);
+        statusGrouper2.setPrefHeight(height/6);
+        statusGrouper2.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 1;" + "-fx-padding: 5;");
+        VBox statusGrouper3 = new VBox(statusGrouper, statusGrouper2);
+
+        VBox box2 = new VBox(10, lightGrouper, statusGrouper3, switchTable);
+        box2.setPrefWidth(length/3);
+        box2.setPrefHeight(height/2);
+        box2.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
         
 
 
-        final WaysideController newWaysideController = waysideController;
+        /******************************************************************************/
  
-        
-
+        HashMap<UUID, Block> blocks = new HashMap<UUID, Block>();
         HBox spacer = new HBox();
         spacer.setPrefHeight(height/6);
         Button viewBlock= new Button();
@@ -89,37 +141,89 @@ public class WaysideUI extends Stage{
             @Override
             public void handle(ActionEvent event) {
                 if(!plcTable.getSelectionModel().isEmpty()){
-                    WaysideController waysideController = (WaysideController) plcTable.getSelectionModel().getSelectedItem();
+                    redCircle.setFill(Color.GRAY);
+                    yellowCircle.setFill(Color.GRAY);
+                    greenCircle.setFill(Color.GRAY);
+                    inJuris.setText("False");
+                    activated.setText("False");
                     blockTable.getItems().clear();
-                    for(Block block : waysideController.getBlocks()){
-                        String occupiedText = "Unoccupied";
+                    switchTable.getItems().clear();
+                    trainTable.getItems().clear();
+                    String occupiedText = "Empty";
+                    WaysideController waysideController = (WaysideController) plcTable.getSelectionModel().getSelectedItem();
+                    for(Block block : waysideController.getBlocks()){                      
                         if(block.getOccupied()){
                             occupiedText = "Occupied";
                         }
-                        BlockProperties blockFix = new BlockProperties(block.getBlockNumber(), occupiedText, "Closed", 50, 5, 1);
-                        System.out.println("Block ID: " + block.getBlockNumber() + " Block Occupied: " + block.getOccupied() + " Suggested Speed: 50 Authority: 60");
-                        blockTable.getItems().add(blockFix);
-                    }        
+
+                        if(block instanceof Shift){
+                            Properties shiftFix = new Properties(1, "", "", 1, 1, ((Shift)block).getBlockNumber(), ((Shift)block).getPosition().getBlockNumber());
+                            switchTable.getItems().add(shiftFix);
+                        }
+
+                        else if(block instanceof Crossing){
+                            inJuris.setText("True");
+                            if(((Crossing)block).getClosesd()){
+                                activated.setText("True");
+                            }
+                            else{
+                                activated.setText("False");
+                            }
+
+                        }
+                        else if(block instanceof Station){
+                            /*if(block.getRed() == false) {
+                                redCircle.setFill(Color.RED);
+                                yellowCircle.setFill(Color.GRAY);
+                                greenCircle.setFill(Color.GRAY);
+                                this.circleMap.get(block).setFill(Color.RED);
+                            }
+                            else if(block.getYellow() == true) {
+                                redCircle.setFill(Color.GRAY);
+                                yellowCircle.setFill(Color.YELLOW);
+                                greenCircle.setFill(Color.GRAY);
+                                this.circleMap.get(block).setFill(Color.YELLOW);
+                            }
+                            else {*/
+                                redCircle.setFill(Color.GRAY);
+                                yellowCircle.setFill(Color.GRAY);
+                                greenCircle.setFill(Color.GREEN);
+                                //this.circleMap.get(block).setFill(Color.GREEN);
+                            //}
+                        }
+                        
+                        Properties blockFix = new Properties(block.getBlockNumber(), occupiedText, "Open", 50, 5, 1, 1);
+                        blockTable.getItems().add(blockFix);                    
+                        blocks.put(block.getUUID(), block);           
+                    } 
+                    if(waysideController.getTrains() != null){
+                        for(CTCTrain train : waysideController.getTrains()){
+                            Properties trainFix = new Properties(1, "", "", train.getSuggestedSpeed(), train.getAuthority(), 1, 1);
+                            trainTable.getItems().add(trainFix);
+                        }
+                    }
+                    
+                    trackControllerMap.buildMap(blocks, graphPane); 
+                    blocks.clear();
                 }
             }
         });
-        
         Button plcInput = new Button();
         plcInput.setText("PLC Input");
-        plcInput.setOnAction(new EventHandler<ActionEvent>() {
+        /*plcInput.setOnAction(new EventHandler<ActionEvent>() {
  
             @Override
             public void handle(ActionEvent event) {
                 getPLCTextBox(1, newWaysideController);
             }
-        });
+        });*/
         Button plcUpload = new Button();
         plcUpload.setText("Upload PLC File");
         plcUpload.setOnAction(new EventHandler<ActionEvent>() {
  
             @Override
             public void handle(ActionEvent event) {
-               getPLCTextBox(2, newWaysideController);
+               getPLCTextBox(2);
             }
         });
         VBox buttonGrouper = new VBox(10, spacer, viewBlock, plcInput, plcUpload);
@@ -133,50 +237,7 @@ public class WaysideUI extends Stage{
         /******************************************************************************/
 
         
-        /*******************************box2*******************************************/
-        Label signalLight = new Label("Signal Light:");
-        Circle greenCircle = new Circle(); 
-        Circle yellowCircle = new Circle(); 
-        Circle redCircle = new Circle();
-        greenCircle.setRadius(10);  
-        redCircle.setRadius(10);  
-        yellowCircle.setRadius(10);   
-        greenCircle.setFill(Color.GREEN); 
-        redCircle.setFill(Color.RED); 
-        yellowCircle.setFill(Color.YELLOW); 
-        HBox lightGrouper = new HBox(10, signalLight, greenCircle, yellowCircle, redCircle);
-        lightGrouper.setPrefHeight(height/6);
-        lightGrouper.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 1;" + "-fx-padding: 5;");
-        
 
-        Label railwayCrossing = new Label("Railway Crossing Status:");
-        Rectangle statusRectangle = new Rectangle(10, 10, 40, 20);
-        HBox statusGrouper = new HBox(10, railwayCrossing, statusRectangle);
-        statusGrouper.setPrefHeight(height/6);
-        statusGrouper.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 1;" + "-fx-padding: 5;");
-
-        TableView switchTable = new TableView();
-        
-        //TODO what is the person class still ehre for
-        
-        TableColumn<String, BlockProperties> switchID = new TableColumn<>("Switch ID");
-        switchID.setCellValueFactory(new PropertyValueFactory<>("blockNumber"));
-        TableColumn<String, BlockProperties> switchPosition = new TableColumn<>("Switch Position");
-        switchPosition.setCellValueFactory(new PropertyValueFactory<>("position"));
-        switchTable.getColumns().add(switchID);
-        switchTable.getColumns().add(switchPosition);
-        switchTable.getItems().add(new BlockProperties(1, "", "", 1, 3, 2));
-        switchTable.getItems().add(new BlockProperties(5, "", "", 1, 3, 6));
-        switchTable.setPrefWidth(length/6);
-        switchTable.setPrefHeight(height/6);
-        
-
-        VBox box2 = new VBox(10, lightGrouper, statusGrouper, switchTable);
-        box2.setPrefWidth(length/3);
-        box2.setPrefHeight(height/2);
-        box2.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
-
-        /******************************************************************************/
 
 
         /*******************************box3*******************************************/
@@ -201,7 +262,7 @@ public class WaysideUI extends Stage{
         blockTable.getItems().add(new Person("3", "Occupied", "Closed", 25, 300));
         blockTable.getItems().add(new Person("4", "Empty", "Closed", 0, 0));
         blockTable.getItems().add(new Person("5", "Occupied", "Open", 25, 1000));*/
-        VBox box3 = new VBox(blockTable);
+        VBox box3 = new VBox(rightTables);
         box3.setPrefWidth(length/3);
         box3.setPrefHeight(height/2);
         box3.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
@@ -211,13 +272,9 @@ public class WaysideUI extends Stage{
         /******************************************************************************/
 
         /******bottom half******/
-        TextArea textArea3 = new TextArea("Test");
-        textArea3.setPrefWidth(length*2/3);
-        textArea3.setPrefHeight(height/2);
-        HBox bottomHalf = new HBox(textArea3);
-        bottomHalf.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
-        //textArea2.setMaxWidth(TextArea.USE_PREF_SIZE);
-        //textArea2.setMinWidth(TextArea.USE_PREF_SIZE);
+        Pane mapPane = createMapPane();    
+        VBox mapStatus = createMapStatus(length);
+        HBox bottomHalf = new HBox(10, mapStatus, mapPane);
         
         HBox topHalf = new HBox(10, box1, box2, box3);
         VBox fullScreen = new VBox(10, topHalf, bottomHalf);
@@ -229,7 +286,7 @@ public class WaysideUI extends Stage{
     }
 
 
-    public static void getPLCTextBox(int option, WaysideController waysideController){
+    public static void getPLCTextBox(int option){
         Stage popupwindow = new Stage();   
         popupwindow.initModality(Modality.APPLICATION_MODAL);
         final TextArea textArea3 = new TextArea();
@@ -278,12 +335,58 @@ public class WaysideUI extends Stage{
 
         else{       
             file = fileChooser.showOpenDialog(null);
-            waysideController.uploadPLC(file);
+            for(WaysideController waysideController : waysideControllers){
+                waysideController.uploadPLC(file);
+            }
         }
          
 
 
 
+    }
+
+    public static void setWaysideControllerTable(){
+        WaysideController waysideController = new WaysideController();
+        waysideControllers = trackControllerModule.getWaysideControllers();
+        int plcCount = 0;
+        for(WaysideController controller : waysideControllers){
+            controller.setId("" + ++plcCount);
+            plcTable.getItems().add(controller);
+        }
+
+    }
+
+    private static Pane createMapPane(){
+        graphPane = new Pane();
+        VBox.setVgrow(graphPane, Priority.ALWAYS);
+        return graphPane;
+    }
+
+    public static VBox createMapStatus(int length){        
+        Label mapTitle = UICommon.createLabel("Map Key");
+        mapTitle.setStyle("-fx-font-weight: bold;");
+        mapTitle.setAlignment(Pos.CENTER);
+        HBox titleBox = new HBox(10,  UICommon.createHSpacer(), mapTitle, UICommon.createHSpacer());
+
+        Circle circleGreen = UICommon.createCircle(10, Color.GREEN);
+        Label emptyLabel = UICommon.createLabel("Empty Block");
+        HBox emptyBox = new HBox(10, circleGreen, emptyLabel);
+
+        Circle circleBlue = UICommon.createCircle(10, Color.BLUE);
+        Label occupiedLabel = UICommon.createLabel("Occupied Block");
+        HBox occupiedBox = new HBox(10, circleBlue, occupiedLabel);
+
+        Circle circleRed = UICommon.createCircle(10, Color.RED);
+        Label brokenLabel = UICommon.createLabel("Broken Block");
+        HBox brokenBox = new HBox(10, circleRed, brokenLabel);
+
+        Circle circleGray = UICommon.createCircle(10, Color.GRAY);
+        Label closedLabel = UICommon.createLabel("Closed Block");
+        HBox closedBox = new HBox(10, circleGray, closedLabel);
+        
+        VBox statusBox = new VBox(10,titleBox , emptyBox, occupiedBox, brokenBox, closedBox);
+        statusBox.setPrefWidth(200);
+        return statusBox;   
     }
 
     
