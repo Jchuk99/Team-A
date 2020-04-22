@@ -34,7 +34,6 @@ public class TrainControllerModule extends Module {
 		
 		controllerList=FXCollections.observableArrayList();
 		TrainControllerUI.setModule(this);
-		TrainController.setModule(this);
 		//TrainController tc=createTrainController();
 	}
 
@@ -54,25 +53,19 @@ public class TrainControllerModule extends Module {
 	}
 	
 	public TrainController createTrainController(){//
-		TrainController tc=new TrainController();
+		TrainController tc=new TrainController(this);
 		controllerList.add(tc);
 		return tc;
 	}
-	public StringProperty getTimeStamp(){
-		
-		return new SimpleStringProperty("12:04:20 AM");
-	}
+	
 
 	public void destroy(int uuid) {
-		controllerList.remove(uuid -1);
-		/*
 		for (int i=0;i<controllerList.size();i++) {
 			if(Integer.parseInt(controllerList.get(i).getName().getValueSafe().split(" ")[1])==uuid){
 				controllerList.remove(i);
 				break;
 			}
 		}
-		*/
 	}
 	
 }
