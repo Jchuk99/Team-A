@@ -5,6 +5,7 @@ import src.track_module.BlockConstructor.Shift;
 import java.util.*;
 import java.io.File;
 import src.ctc.*;
+import src.ctc.CTCBlockConstructor.CTCShift;
 
 
 public class WaysideController {
@@ -42,6 +43,10 @@ public class WaysideController {
 		blocks.add(block);
 	}
 
+	public void addBlockBeginning(Block block){
+		blocks.add(0, block);
+	}
+
 	public LinkedList<Block> getBlocks(){
 		return blocks;
 	}
@@ -50,7 +55,7 @@ public class WaysideController {
 		this.trains = trainsInJuris;
 	}
 
-	public void setSwitchPosition(List<Shift> switchesInJuris){
+	public void setSwitchPositions(List<Shift> switchesInJuris){
 		this.switchPositions = switchesInJuris;
 	}
 
@@ -66,11 +71,30 @@ public class WaysideController {
 		this.lightsBlocks = lightsInJuris;
 	}
 
+	public List<CTCTrain> getTrains(){
+		return trains;
+	}
+
+	public List<Shift> getSwitchPositions(){
+		return switchPositions;
+	}
+
+	public List<UUID> getClosedBlocks(){
+		return closedBlocks;
+	}
+
+	public UUID getCrossingBlock(UUID uuid){
+		return uuid;
+	}
+
+	public List<Block> getLightsBlocks(List<Block> lightsInJuris){
+		return lightsInJuris;
+	}
+
 	public void runPLC(){
 		//plc.makeBits(blocks, trains, switchPositions, closedBlocks, crossingBlock, lightsBlocks);
 		//adjustedSwitchPositions = plc.runSwitchLogic();
 		//adjustedTrains = plc.runAuthorityLogic();
-		//
 
 	}
 
