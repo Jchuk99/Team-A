@@ -30,19 +30,16 @@ import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import src.UICommon;
-import src.ctc.CTCBlockConstructor.CTCStation;
 import src.track_module.Block;
+import src.track_module.BlockConstructor.Station;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.List;
 
 //TODO: IMPORT A STYLE GUIDE!!!
 
 public class CTCUI extends Stage {
     public static CTCModule ctcOffice;
-    static Button manualMode;
-    static GUIMap trackMap;
-    static Pane graphPane;
     static int trainID = 0;
 
     public static void setCTCModule(CTCModule ctcOffice0){
@@ -59,36 +56,24 @@ public class CTCUI extends Stage {
         HBox timeBox = createTimeBox();
         timeBox.setAlignment(Pos.CENTER);
 
-        Text greenLineHourText = new Text("Green Line Ticket Sales");
-        Text redLineHourText = new Text("Red Line Ticket Sales");
+        //TODO: rework this whole entire part
+        Text ticketText = new Text("Ticket Sales");
         //TODO: replace ticketLabel with actual value
-        Label greenLineHourLabel = new Label("");
-        Label redLineHourLabel = new Label("");
-        //greenLineHourLabel.textProperty().bind(ctcOffice.greenTickets);
-        //redLineHourLabel.textProperty().bind(ctcOffice.redTickets);
-        greenLineHourLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
-        redLineHourLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+        Label ticketLabel = new Label("205/h");
+        ticketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
 
-        HBox greenTicketBox = new HBox(10, greenLineHourText, greenLineHourLabel);
-        HBox redTicketBox = new HBox(10, redLineHourText, redLineHourLabel);
-        VBox ticketBox = new VBox(10, greenTicketBox, redTicketBox);
+        HBox ticketBox = new HBox(10, ticketText, ticketLabel);
         ticketBox.setAlignment(Pos.CENTER);
 
-        Text greenLineTotalText = new Text("Green Line Total Ticket Sales");
-        Text redLineTotalText = new Text("Red Line Total Ticket Sales");
-        Label greenLineTotalLabel = new Label("");
-        Label redLineTotalLabel = new Label("");
-        greenLineTotalLabel.textProperty().bind(ctcOffice.greenTickets);
-        redLineTotalLabel.textProperty().bind(ctcOffice.redTickets);
-        greenLineTotalLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
-        redLineTotalLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
+        Text totalTicketText = new Text("Total Ticket Sales");
+        //TODO: replace ticketLabel with actual value
+        Label totalTicketLabel = new Label("1000");
+        totalTicketLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
 
-        HBox greenTotalTicketBox = new HBox(10, greenLineTotalText, greenLineTotalLabel);
-        HBox redTotalTicketBox = new HBox(10, redLineTotalText, redLineTotalLabel);
-        VBox totalTicketBox = new VBox(10, greenTotalTicketBox, redTotalTicketBox);
+        HBox totalTicketBox = new HBox(10, totalTicketText, totalTicketLabel);
         totalTicketBox.setAlignment(Pos.CENTER);
 
-        manualMode = UICommon.createButton("Manual Input/Schedule", 300, 50);
+        Button manualMode = UICommon.createButton("Manual Input/Schedule", 300, 50);
         manualMode.setAlignment(Pos.CENTER);
 
          //TODO: style
@@ -101,7 +86,6 @@ public class CTCUI extends Stage {
                 getManualDisplay();
             }
         });
-        manualMode.setDisable(true);
 
         HBox topHalf1 = new HBox();
         HBox.setHgrow(timeBox, Priority.ALWAYS);
@@ -120,7 +104,7 @@ public class CTCUI extends Stage {
         VBox mapStatus = createMapStatus(length);
         HBox bottomHalf = new HBox(10, mapStatus, mapPane);
         
-        topHalf.setPrefHeight(height/4);
+        topHalf.setPrefHeight(height/2);
         VBox fullScreen = new VBox(10, topHalf, bottomHalf);
 
         /****full screen *****/
@@ -149,8 +133,8 @@ public class CTCUI extends Stage {
         trainBox.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;"); 
 
         //destBox
-        Pair<TableView<CTCStation>, TableView<Block>> bTable = createBlockTables();
-        TableView<CTCStation> stationTable = bTable.getKey();
+        Pair<TableView<Station>, TableView<Block>> bTable = createBlockTables();
+        TableView<Station> stationTable = bTable.getKey();
         TableView<Block> blocksTable = bTable.getValue();
 
         HBox destBox = new HBox(10, stationTable, blocksTable);
@@ -233,24 +217,17 @@ public class CTCUI extends Stage {
     }
 
     private static Pane createMapPane(){
-        trackMap = new GUIMap();
+        //GUIMap trackMap = new GUIMap();
         // TODO this isn't working right now and I cannot diagnose why easily.
         // Let me know on the fix - Eric
-        // initMap method in CTC Module must be called when track is read in. Gets blocks from waysides.
-        graphPane = new Pane();
+        Pane graphPane = new Pane();
 
         //TODO: ask eric about setting this stuff
         //graphPane.setStyle("-fx-background-color: -fx-focus-color;");
         VBox.setVgrow(graphPane, Priority.ALWAYS);
         graphPane.setViewOrder(1);
-        trackMap.mapUnavailable(graphPane);
         //trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
         return graphPane;
-    }
-
-    public static void buildMap(){
-        trackMap.buildMap(CTCModule.map.getBlockMap(), graphPane);
-        manualMode.setDisable(false);
     }
     
     private static TableView<CTCTrain> createTrainTable(){
@@ -312,13 +289,8 @@ public class CTCUI extends Stage {
     }
     
     private static Pair<VBox, TableView<Person>> createTrainBox(int length, int height, TableView<CTCTrain> statusTable){
-        trainID = TrainTable.largestID;
         ObservableList<Person> trainData = FXCollections.observableArrayList();
-        // get list of train IDS in CTC and use that to create initial presentation of trains
-        List<Integer> trainIds = ctcOffice.getTrainIDs();
-        for(Integer ID: trainIds){
-            trainData.add(new Person("Train " + ID));
-        }
+        // get size of trains in CTC and use that to create initial presentation of trains
         
         statusTable.setEditable(true);
         TableView<Person> trainTable = new TableView<Person>();
@@ -401,11 +373,11 @@ public class CTCUI extends Stage {
         return scheduleTable;
     }
 
-    private static Pair<TableView<CTCStation>, TableView<Block>> createBlockTables(){
-        TableView<CTCStation> stationTable = new TableView<CTCStation>();
+    private static Pair<TableView<Station>, TableView<Block>> createBlockTables(){
+        TableView<Station> stationTable = new TableView<Station>();
         stationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<CTCStation, String> stations = new TableColumn<>("Select Destination");
+        TableColumn<Station, String> stations = new TableColumn<>("Select Destination");
         stations.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
         stationTable.getColumns().add(stations);
          
@@ -432,10 +404,10 @@ public class CTCUI extends Stage {
             }
         });
 
-        return new Pair<TableView<CTCStation>, TableView<Block>>(stationTable, blockTable);
+        return new Pair<TableView<Station>, TableView<Block>>(stationTable, blockTable);
     }
 
-    private static Button createDispatchButton(TableView<Person> trainTable, TableView<Block> blocksTable,TableView<CTCStation> stationTable  ,Slider speedSlider){
+    private static Button createDispatchButton(TableView<Person> trainTable, TableView<Block> blocksTable,TableView<Station> stationTable  ,Slider speedSlider){
         Button dispatch = UICommon.createButton("DISPATCH", 400, 100);
         dispatch.setStyle("-fx-border-color: black;" + "-fx-border-width: 2;" + 
                                 "-fx-background-color: green;" + "-fx-font-size:30;" + "-fx-text-fill: white;");
