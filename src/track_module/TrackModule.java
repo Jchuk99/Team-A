@@ -32,6 +32,9 @@ public class TrackModule extends Module {
     }
     
     public void update(){
+        //Simple implementation of what needs to be receivied from the CTC
+        //All of this information should be gotten by the waysides, you and Calvin need to work it out.
+        //- Jason
         if(this.ctcModule.validMap()){
             List<CTCShift> ctcSwitches = this.ctcModule.getSwitchPositions();
             for(CTCShift shift: ctcSwitches){

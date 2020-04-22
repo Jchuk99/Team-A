@@ -53,14 +53,11 @@ public class TrainControllerModule extends Module {
 	}
 	
 	public TrainController createTrainController(){//
-		TrainController tc=new TrainController();
+		TrainController tc=new TrainController(this);
 		controllerList.add(tc);
 		return tc;
 	}
-	public StringProperty getTimeStamp(){
-		
-		return new SimpleStringProperty("12:04:20 AM");
-	}
+	
 
 	public void destroy(int uuid) {
 		for (int i=0;i<controllerList.size();i++) {
@@ -68,7 +65,7 @@ public class TrainControllerModule extends Module {
 				controllerList.remove(i);
 				break;
 			}
-		}	
+		}
 	}
 	
 }

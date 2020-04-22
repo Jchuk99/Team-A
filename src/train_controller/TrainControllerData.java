@@ -2,6 +2,8 @@ package src.train_controller;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.BooleanProperty;
 
@@ -33,13 +35,26 @@ public class TrainControllerData {
     private BooleanProperty emergencyBrakeWorking = new SimpleBooleanProperty(false);
     private BooleanProperty engineWorking = new SimpleBooleanProperty(false);
 
+    private StringProperty controlLaw = new SimpleStringProperty("20,10");
+    BooleanProperty tcDestroyedListener = new SimpleBooleanProperty(false);
+
+
     public TrainControllerData() {
+        tcDestroyedListener.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue o,Boolean oldVal, Boolean newVal){
+                if (newVal) setTrainController(null);
+            }
+        });
     }
 
     public void setTrainController(TrainController tc) {
         // set Train to train or null for GUI to pull data from
         currentTC = tc;
         if (tc == null) {
+            tcDestroyedListener.unbind();
+            tcDestroyedListener.setValue(false);
+
             suggestedSpeed.unbind();
             suggestedSpeed.setValue("");
             driverSpeed.unbind();
@@ -56,6 +71,8 @@ public class TrainControllerData {
             currentAcceleration.setValue("");
             hvacSetpoint.unbind();
             hvacSetpoint.setValue("");
+            controlLaw.unbind();
+            controlLaw.setValue("");
 
             leftDoorsControlClosed.unbind();
             leftDoorsControlClosed.setValue(false);
@@ -85,6 +102,8 @@ public class TrainControllerData {
             engineWorking.unbind();
             engineWorking.setValue(false);
         } else {
+            tcDestroyedListener.bind(currentTC.removeFlag);
+            
             beacon.bind(currentTC.getBeacon());
             suggestedSpeed.bind(currentTC.getSuggestedSpeed());
             currentSpeed.bind(currentTC.getCurrentSpeed());
@@ -93,6 +112,7 @@ public class TrainControllerData {
             currentPower.bind(currentTC.getCurrentPower());
             currentAcceleration.bind(currentTC.getCurrentAcceleration());
             hvacSetpoint.bind(currentTC.getHVACSetpoint());
+            controlLaw.bind(currentTC.getControlLaw());
 
             leftDoorsControlClosed.bind(currentTC.getLeftDoorsControlClosed());
             rightDoorsControlClosed.bind(currentTC.getRightDoorsControlClosed());
@@ -144,7 +164,10 @@ public class TrainControllerData {
     public StringProperty getHVACSetpoint() {
         return hvacSetpoint;
     }
- 
+
+    public StringProperty getControlLaw() {
+        return controlLaw;
+    }
     
     public BooleanProperty getLeftDoorWorking() {
         return leftDoorWorking;
@@ -222,6 +245,12 @@ public class TrainControllerData {
         }
     }
     
+    public void setControlLaw(String x){
+        if(currentTC!=null){
+        currentTC.setKpKi(x);
+        }
+    }
+
     /**
     
     */
