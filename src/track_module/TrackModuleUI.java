@@ -21,9 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import src.UICommon;
-import src.ctc.CTCUI;
 import src.track_module.TrackModule.FileFormatException;
-import src.track_controller.WaysideUI;
 
 public class TrackModuleUI extends Stage {
     static final int WIDTH = 900;
@@ -41,44 +39,19 @@ public class TrackModuleUI extends Stage {
 
         HBox topBox = new HBox(10);
 
-        Label temperatureLabel = UICommon.createLabel( trackModule.getTemperature() + "°F");
+        Label temperatureLabel = UICommon.createLabel( System.getenv("globalTemperature") + "°F");
         temperatureLabel.setAlignment(Pos.CENTER);
         temperatureLabel.setStyle("-fx-font-size: 24;");
-        temperatureLabel.prefWidthProperty().bind(topBox.widthProperty().divide((8)));
-        trackModule.temperatureProperty().addListener((obs, oldText, newText) -> {
-                temperatureLabel.setText( String.valueOf(trackModule.getTemperature()  + "°F"));
-            }
-        );
-        Button increaseTemperature = UICommon.createButton("+", 24, 24);
-        increaseTemperature.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                int temp = trackModule.getTemperature();
-                if(temp < 120) {
-                    trackModule.setTemperature(++temp);
-                }
-            }
-        });
-        Button decreaseTemperature = UICommon.createButton("-", 24, 24);
-        decreaseTemperature.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                int temp = trackModule.getTemperature();
-                if(temp > -40) {
-                    trackModule.setTemperature(--temp);
-                }
-            }
-        });
+        temperatureLabel.prefWidthProperty().bind(topBox.widthProperty().divide((4)));
         
-        Label timeLabel = UICommon.createLabel("9:30:00");
-        timeLabel.textProperty().bind(trackModule.timeString);
+        Label timeLabel = UICommon.createLabel( System.getenv("globalTime"));
         timeLabel.setAlignment(Pos.CENTER);
         timeLabel.setStyle("-fx-font-size: 24;");
         timeLabel.prefWidthProperty().bind(topBox.widthProperty().divide((4)));
 
         // select track file button
-        Button selectTrackFile = new Button("Select Track File");
-        selectTrackFile.setOnAction(new EventHandler<ActionEvent>() {
+        Button button = new Button("Select Track File");
+        button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 FileChooser fileChooser = new FileChooser();
@@ -103,32 +76,31 @@ public class TrackModuleUI extends Stage {
                     stage.show();
                     return;
                 }
-                WaysideUI.setWaysideControllerTable();
+                
                 trackMap.buildMap(trackModule.blocks, graphPane);
-                CTCUI.buildMap();
                 // Removes the select track button and resizes temperature and time boxes
-                temperatureLabel.prefWidthProperty().bind(topBox.widthProperty().divide((3)));
-                timeLabel.prefWidthProperty().bind(topBox.widthProperty().divide((1.5)));
-                topBox.getChildren().setAll(temperatureLabel, increaseTemperature, decreaseTemperature,timeLabel);
+                temperatureLabel.prefWidthProperty().bind(topBox.widthProperty().divide((2)));
+                timeLabel.prefWidthProperty().bind(topBox.widthProperty().divide((2)));
+                topBox.getChildren().setAll(temperatureLabel, timeLabel);
             }
         });
-        selectTrackFile.prefWidthProperty().bind(topBox.widthProperty().divide((2)));
+        button.prefWidthProperty().bind(topBox.widthProperty().divide((2)));
         
-        topBox.getChildren().addAll( temperatureLabel, increaseTemperature, decreaseTemperature, timeLabel, selectTrackFile);
+        topBox.getChildren().addAll( temperatureLabel, timeLabel, button);
         topBox.setStyle("-fx-background-color: -fx-title-color;");
         topBox.setEffect(new DropShadow(20, new Color(0,0,0,1)));
         topBox.setPadding(new Insets(10));
-        //topBox.setViewOrder(0);
+        topBox.setViewOrder(0);
 
         graphPane = new Pane();
         graphPane.setStyle("-fx-background-color: -fx-focus-color;");
         VBox.setVgrow(graphPane, Priority.ALWAYS);
-        //graphPane.setViewOrder(1);
+        graphPane.setViewOrder(1);
         trackMap.mapUnavailable(graphPane);
 
         Region spacer = new Region();
         spacer.setMinHeight(30);
-        //spacer.setViewOrder(1);
+        spacer.setViewOrder(1);
         spacer.setStyle("-fx-background-color: -fx-focus-color;");
 
 
@@ -136,6 +108,6 @@ public class TrackModuleUI extends Stage {
         Scene scene = new Scene(fullScreen, WIDTH, HEIGHT);
         scene.getStylesheets().add(Paths.get(System.getenv("cssStyleSheetPath")).toUri().toString());
         setScene(scene);
-        //showAndWait(); // TODO
+        showAndWait(); // TODO
     }
 }
