@@ -15,6 +15,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import src.UICommon;
 import src.BaseMap;
+import src.track_module.BlockConstructor.Shift;
+import src.track_module.BlockConstructor.Crossing;
+import src.track_module.BlockConstructor.Station;
+
 
 public class TrackMap extends BaseMap {
     @Override
@@ -72,8 +76,8 @@ public class TrackMap extends BaseMap {
         tableBox.getChildren().add(functionalBox);
 
         block.functionalProperty().addListener((obs, oldText, newText) -> {
-                functionalLabel1.setText(UICommon.booleanToYesNo(newText));
-                statusUpdate(block, circleRed, circleYellow, circleGreen);
+            functionalLabel1.setText(UICommon.booleanToYesNo(newText));
+            statusUpdate(block, circleRed, circleYellow, circleGreen);
         });
 
         // Occupied Box
@@ -96,8 +100,8 @@ public class TrackMap extends BaseMap {
         tableBox.getChildren().add(occupiedBox);
 
         block.occupiedProperty().addListener((obs, oldText, newText) -> {
-                occupiedLabel1.setText(UICommon.booleanToYesNo(newText));
-                statusUpdate(block, circleRed, circleYellow, circleGreen);
+            occupiedLabel1.setText(UICommon.booleanToYesNo(newText));
+            statusUpdate(block, circleRed, circleYellow, circleGreen);
         });
 
         // Heater Box
@@ -120,7 +124,7 @@ public class TrackMap extends BaseMap {
         tableBox.getChildren().add(heaterBox);
 
         block.heaterProperty().addListener((obs, oldText, newText) -> {
-                heaterLabel1.setText(UICommon.booleanToOnOff(newText));
+            heaterLabel1.setText(UICommon.booleanToOnOff(newText));
         });        
 
         // Final Values
@@ -159,6 +163,119 @@ public class TrackMap extends BaseMap {
             hBox.getChildren().addAll(l0,l1);
             tableBox.getChildren().add(hBox);
         }
+        if (block.getClass().getSimpleName().toLowerCase().equals("shift")) {
+            Shift shift = (Shift)block;
+            HBox hBox = new HBox();
+            hBox.setAlignment(Pos.CENTER);
+
+            Label l0 = UICommon.createLabel("Position");
+            l0.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+            l0.setAlignment(Pos.CENTER_LEFT);
+            l0.setPadding( new Insets(5));
+            l0.prefWidthProperty().bind(hBox.widthProperty().divide((2)));
+
+            Label l1 = UICommon.createLabel("Block #" + shift.getPosition().getBlockNumber());
+            l1.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+            l1.setAlignment(Pos.CENTER_LEFT);
+            l1.setPadding( new Insets(5));
+            l1.prefWidthProperty().bind(hBox.widthProperty().divide((2)));
+
+            shift.positionProperty().addListener((obs, oldText, newText) -> {
+                l1.setText("Block #" + shift.getPosition().getBlockNumber());
+            });
+            hBox.getChildren().addAll(l0,l1);
+            tableBox.getChildren().add(hBox);
+        }
+
+        if (block.getClass().getSimpleName().toLowerCase().equals("crossing")) {
+            Crossing crossing = (Crossing)block;
+            HBox hBox = new HBox();
+            hBox.setAlignment(Pos.CENTER);
+
+            Label l0 = UICommon.createLabel("Lights");
+            l0.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+            l0.setAlignment(Pos.CENTER_LEFT);
+            l0.setPadding( new Insets(5));
+            l0.prefWidthProperty().bind(hBox.widthProperty().divide((2)));
+
+            Label l1 = UICommon.createLabel( UICommon.booleanToOnOff(crossing.getLights()));
+            l1.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+            l1.setAlignment(Pos.CENTER_LEFT);
+            l1.setPadding( new Insets(5));
+            l1.prefWidthProperty().bind(hBox.widthProperty().divide((2)));
+
+            crossing.lightsProperty().addListener((obs, oldText, newText) -> {
+                l1.setText(UICommon.booleanToOnOff(crossing.getLights()));
+            });
+            hBox.getChildren().addAll(l0,l1);
+            tableBox.getChildren().add(hBox);
+
+            hBox = new HBox();
+            hBox.setAlignment(Pos.CENTER);
+
+            Label l2 = UICommon.createLabel("Crossing Closed");
+            l2.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+            l2.setAlignment(Pos.CENTER_LEFT);
+            l2.setPadding( new Insets(5));
+            l2.prefWidthProperty().bind(hBox.widthProperty().divide((2)));
+
+            Label l3 = UICommon.createLabel( UICommon.booleanToYesNo(crossing.getClosesd()));
+            l3.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+            l3.setAlignment(Pos.CENTER_LEFT);
+            l3.setPadding( new Insets(5));
+            l3.prefWidthProperty().bind(hBox.widthProperty().divide((2)));
+
+            crossing.lightsProperty().addListener((obs, oldText, newText) -> {
+                l3.setText(UICommon.booleanToYesNo(crossing.getClosesd()));
+            });
+            hBox.getChildren().addAll(l2,l3);
+            tableBox.getChildren().add(hBox);
+        }
+
+        if (block.getClass().getSimpleName().toLowerCase().equals("station")) {
+            Station station = (Station)block;
+            HBox hBox = new HBox();
+            hBox.setAlignment(Pos.CENTER);
+
+            Label l0 = UICommon.createLabel("Station Name");
+            l0.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+            l0.setAlignment(Pos.CENTER_LEFT);
+            l0.setPadding( new Insets(5));
+            l0.prefWidthProperty().bind(hBox.widthProperty().divide((2)));
+
+            Label l1 = UICommon.createLabel( station.getName());
+            l1.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+            l1.setAlignment(Pos.CENTER_LEFT);
+            l1.setPadding( new Insets(5));
+            l1.prefWidthProperty().bind(hBox.widthProperty().divide((2)));
+
+            hBox.getChildren().addAll(l0,l1);
+            tableBox.getChildren().add(hBox);
+
+            hBox = new HBox();
+            hBox.setAlignment(Pos.CENTER);
+
+            Label l2 = UICommon.createLabel("Tickets Sold");
+            l2.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+            l2.setAlignment(Pos.CENTER_LEFT);
+            l2.setPadding( new Insets(5));
+            l2.prefWidthProperty().bind(hBox.widthProperty().divide((2)));
+
+            Label l3 = UICommon.createLabel( Integer.toString(station.getTicketsSold()));
+            l3.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+            l3.setAlignment(Pos.CENTER_LEFT);
+            l3.setPadding( new Insets(5));
+            l3.prefWidthProperty().bind(hBox.widthProperty().divide((2)));
+
+            station.ticketsProperty().addListener((obs, oldText, newText) -> {
+                l3.setText(Integer.toString(station.getTicketsSold()));
+            });
+            hBox.getChildren().addAll(l2,l3);
+            tableBox.getChildren().add(hBox);
+        }
+
+        
+
         VBox totalBox = new VBox( headerBox, tableBox);
         Scene scene = new Scene(totalBox);
         return scene;

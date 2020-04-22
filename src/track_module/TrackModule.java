@@ -35,13 +35,6 @@ public class TrackModule extends Module {
         //All of this information should be gotten by the waysides, you and Calvin need to work it out.
         //- Jason
         if(this.ctcModule.validMap()){
-            List<CTCShift> ctcSwitches = this.ctcModule.getSwitchPositions();
-            for(CTCShift shift: ctcSwitches){
-                Shift myShift = (Shift) blocks.get(shift.getUUID());
-                myShift.setPosition(shift.getPosition());
-            }
-
-
             List<UUID> closedBlocks = this.trackControllerModule.getCTCClosedBlocks();
             if (closedBlocks != null){
                 for (UUID blockID: closedBlocks){
@@ -58,11 +51,13 @@ public class TrackModule extends Module {
             prevClosedBlocks = closedBlocks;
 
             List<CTCTrain> trains = this.trackControllerModule.getCTCTrains();
-            for (CTCTrain ctcTrain: trains){
-                Block currBlock = blocks.get(ctcTrain.getCurrPos());
-                Train train = currBlock.getTrain();
-                if (train != null){
-                    train.setTrain(ctcTrain.getSuggestedSpeed(), ctcTrain.getAuthority());
+            if (trains != null){
+                for (CTCTrain ctcTrain: trains){
+                    Block currBlock = blocks.get(ctcTrain.getCurrPos());
+                    Train train = currBlock.getTrain();
+                    if (train != null){
+                        train.setTrain(ctcTrain.getSuggestedSpeed(), ctcTrain.getAuthority());
+                    }
                 }
             }
         }
@@ -167,7 +162,7 @@ public class TrackModule extends Module {
             //////////
             try{ 
                 blockNumber= Integer.parseInt( data[2]);
-                if( myBlocks.containsKey(blockNumber) || blockNumber < 1) {
+                if( myBlocks.get(line).containsKey(blockNumber) || blockNumber < 1) {
                     throw new Exception();
                 }
             }
