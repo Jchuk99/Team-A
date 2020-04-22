@@ -1,0 +1,3 @@
+STEP-AU:!(ao)
+STEP-SW:&(!(so),!(sb),!(ao))
+STEP-CR:&(!(co),!(cb),!(wa))
