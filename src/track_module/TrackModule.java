@@ -9,8 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import src.Module;
 import src.track_controller.WaysideController;
 import src.track_module.BlockConstructor.*;
@@ -21,7 +19,6 @@ import src.ctc.CTCTrain;
 public class TrackModule extends Module {
     HashMap<UUID, Block> blocks;
     Yard yard;
-    IntegerProperty temperature = new SimpleIntegerProperty(50);
 
     public TrackModule() {
         super();
@@ -43,9 +40,9 @@ public class TrackModule extends Module {
         myBlocks.put("GREEN", new HashMap<Integer, Block>());
         myBlocks.put("RED", new HashMap<Integer, Block>());
 
-        HashMap<String, HashMap<Character, WaysideController>> myWaysides = new HashMap<String, HashMap<Character, WaysideController>>();
-        myWaysides.put("GREEN", new HashMap<Character, WaysideController>());
-        myWaysides.put("RED", new HashMap<Character, WaysideController>());
+        HashMap<String, HashMap<Integer, WaysideController>> myWaysides = new HashMap<String, HashMap<Integer, WaysideController>>();
+        myWaysides.put("GREEN", new HashMap<Integer, WaysideController>());
+        myWaysides.put("RED", new HashMap<Integer, WaysideController>());
 
         HashMap<String, HashSet<int[]>> myEdges = new HashMap<String, HashSet<int[]>>();
         myEdges.put("GREEN", new HashSet<int[]>());
@@ -329,12 +326,12 @@ public class TrackModule extends Module {
             }
             myBlocks.get(line).put( blockNumber, block);
             
-            
-            if( !myWaysides.get(line).containsKey( section)) {
-                myWaysides.get(line).put( section, this.trackControllerModule.createWayside());
+            /*
+            if( !waysides.containsKey( section)) {
+                waysides.put( section, this.trackControllerModule.createWayside());
             }
-            myWaysides.get(line).get( section).addBlock(block);
-            
+            waysides.get( section).addBlock(block);
+            */ 
         }
         csvReader.close();
         
@@ -367,7 +364,7 @@ public class TrackModule extends Module {
                 }
             }
         }
-        this.ctcModule.initMap();
+        //this.ctcModule.initMap();
         for(String line: myBlocks.keySet()) {
             for( Block block : myBlocks.get(line).values()) {
                 blocks.put( block.getUUID(), block);
@@ -381,7 +378,7 @@ public class TrackModule extends Module {
 
         Train train = trainModule.createTrain();
         train.setBlock(startingBlock);
-        train.setTrain(ctcTrain.getSuggestedSpeed(), ctcTrain.getAuthority());
+        train.setTrain(ctcTrain.getSuggestedSpeed(),ctcTrain.getAuthority());
        
         System.out.println("Suggeted Speed: " + ctcTrain.getSuggestedSpeed() + " Authority: " + ctcTrain.getAuthority());
         System.out.println("Starting Block Number: " + startingBlock.getBlockNumber());
@@ -392,24 +389,6 @@ public class TrackModule extends Module {
     public Block getBlockByUUID( UUID uuid) {
         return blocks.get( uuid);
     }
-
-    public IntegerProperty temperatureProperty(){ return temperature;};
-    public int getTemperature() {
-        return temperatureProperty().get();
-    }
-    public void setTemperature(int temperature) {
-        temperatureProperty().set(temperature);
-        if(getTemperature() == 32) {
-            for( Block block : blocks.values()) {
-                block.setHeater(true);
-            }
-        }
-        if(getTemperature() == 33) {
-            for( Block block : blocks.values()) {
-                block.setHeater(false);
-            }
-        }
-    };
 
     @SuppressWarnings("serial")
     public class FileFormatException extends Exception {
