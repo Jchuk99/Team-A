@@ -19,7 +19,8 @@ public class TimePath extends Path {
     }
     public float calcSuggestedSpeed(){
         float distance = 0;
-        float elapsedSeconds = Duration.between(startTime, endTime).toSeconds();
+        float elapsedSeconds = 0;
+        //Duration.between(startTime, endTime).toSeconds();
         for(UUID blockID: course){
             Block block = CTCModule.map.getBlock(blockID);
             if (block != null){

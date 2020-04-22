@@ -64,6 +64,7 @@ abstract public class Block {
     public Set<Edge> getEdges(){return edges;};
     public int getX() {return xCorrdinate;};
     public int getY() {return yCorrdinate;};
+    public Train getTrain(){return train;};
 
     public void setOccupied(boolean occupied){occupiedProperty().set(occupied);};
     public void setHeater(boolean heater){heaterProperty().set(heater);};

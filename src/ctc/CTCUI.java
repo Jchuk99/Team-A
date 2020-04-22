@@ -234,9 +234,6 @@ public class CTCUI extends Stage {
 
     private static Pane createMapPane(){
         trackMap = new GUIMap();
-        // TODO this isn't working right now and I cannot diagnose why easily.
-        // Let me know on the fix - Eric
-        // initMap method in CTC Module must be called when track is read in. Gets blocks from waysides.
         graphPane = new Pane();
 
         //TODO: ask eric about setting this stuff

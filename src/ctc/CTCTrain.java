@@ -2,13 +2,14 @@ package src.ctc;
 
 import java.text.DecimalFormat;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import src.track_module.Block;
 
 public class CTCTrain {
-
+    private static long dwellTime = 600; // IN SECONDS
     private float authority = 0;
     private float suggestedSpeed; // IN METERS PER SECOND INTENRALLY
     private int trainID;
@@ -20,7 +21,9 @@ public class CTCTrain {
     private UUID prevPos = null;
     private int errorStatus; //TODO: make this an enum.
     private LocalTime dispatchTime;
+    private LocalTime dwellStart;
     private Route route = new Route();
+    private boolean dwelling = false;
 
     private StringProperty suggestedSpeedString = new SimpleStringProperty("");
     private StringProperty currPosString = new SimpleStringProperty("");
@@ -52,8 +55,6 @@ public class CTCTrain {
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
 
-        //TODO: calculate authorities the real wau.
-        authority = (float) route.getCurrPath().getCourse().size();
     }
 
     public void addTimePath(UUID dest, LocalTime startTime, LocalTime endTime){
@@ -73,15 +74,12 @@ public class CTCTrain {
             route.addTimePath(start, dest, prevPathBlock, startTime, endTime);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
-
-        //TODO: calculate authorities the real wau.
-        authority = (float) route.getCurrPath().getCourse().size();
     }
     public void update(){
         //updateCurrPath();
         updateString();
     }
-    /*
+    
     public void updateCurrPath(){
         Path currPath = route.getCurrPath();
         if (currPath != null){
@@ -90,8 +88,7 @@ public class CTCTrain {
         }
 
     }
-    */
-
+    
     public UUID getNextBlockID(UUID currBlock){
         if (route.size() > 0){
             return route.getCurrPath().getNextBlockID(currBlock);
@@ -128,6 +125,25 @@ public class CTCTrain {
     public boolean onMap(){
         return !inYard();
     }
+    public boolean isDwelling(){
+        return dwelling;
+    }
+    public boolean isDoneDwelling(LocalTime currTime){
+        boolean doneDwelling = false;
+        long elapsedSeconds = ChronoUnit.SECONDS.between(dwellStart, currTime);
+        if (elapsedSeconds >= dwellTime){
+            doneDwelling = true;
+        }
+        return doneDwelling;
+    }
+    public boolean onPath(){
+        boolean onPath = false;
+        Path currPath = route.getCurrPath();
+        if (currPath != null){
+            onPath = currPath.getCourse().contains(currPos);
+        }
+        return onPath;
+    }
     
     // getters and setters.
     public void setAuthority(float authority){
@@ -149,6 +165,12 @@ public class CTCTrain {
     public void setDispatchTime(LocalTime dispatchTime){
         this.dispatchTime = dispatchTime;
     }
+    public void setDwelling( boolean dwelling){
+        this.dwelling = dwelling;
+    }
+    public void setDwellStart(LocalTime dwellStart){
+        this.dwellStart = dwellStart;
+    }
     public Route getRoute(){
         return route;
     }
@@ -166,6 +188,9 @@ public class CTCTrain {
     }
     public UUID getCurrPos(){
         return currPos;
+    }
+    public UUID getPrevPos(){
+        return prevPos;
     }
     public LocalTime getDispatchTime(){
         return dispatchTime;

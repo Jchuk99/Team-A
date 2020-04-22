@@ -8,17 +8,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
-
+import src.ctc.CTCBlockConstructor.CTCShift;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import src.Module;
 import src.track_controller.WaysideController;
 import src.track_module.BlockConstructor.*;
 import src.train_module.Train;
+import src.ctc.CTCBlock;
 import src.ctc.CTCTrain;
 
 
 public class TrackModule extends Module {
+    List<UUID> prevClosedBlocks;
     HashMap<UUID, Block> blocks;
     Yard yard;
     IntegerProperty temperature = new SimpleIntegerProperty(50);
@@ -30,7 +32,36 @@ public class TrackModule extends Module {
     }
     
     public void update(){
-		
+        if(this.ctcModule.validMap()){
+            List<CTCShift> ctcSwitches = this.ctcModule.getSwitchPositions();
+            for(CTCShift shift: ctcSwitches){
+                Shift myShift = (Shift) blocks.get(shift.getUUID());
+                myShift.setPosition(shift.getPosition());
+            }
+
+            List<UUID> closedBlocks = this.ctcModule.getClosedBlocks();
+            for (UUID blockID: closedBlocks){
+                blocks.get(blockID).setOccupied(true);
+            }
+
+            if (prevClosedBlocks != null){
+                for (UUID blockID: prevClosedBlocks){
+                    if (!closedBlocks.contains(blockID)){
+                        blocks.get(blockID).setOccupied(false);
+                    }
+                }
+            }
+            prevClosedBlocks = closedBlocks;
+
+            List<CTCTrain> trains = this.ctcModule.getTrainsOnMap();
+            for (CTCTrain ctcTrain: trains){
+                Block currBlock = blocks.get(ctcTrain.getCurrPos());
+                Train train = currBlock.getTrain();
+                if (train != null){
+                    train.setTrain(ctcTrain.getSuggestedSpeed(), ctcTrain.getAuthority());
+                }
+            }
+        }
 	}
 	
 
