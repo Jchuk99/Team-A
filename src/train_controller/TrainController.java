@@ -206,11 +206,11 @@ public class TrainController {
             attachedTrain.setPower(0);
             setEmergencyBrakeControlOn(true);
             setServiceBrakeControlOn(true);
-            System.out.println("Power vitality failed: P1 "+power1+" P2 "+power2);
-            System.out.println("Authority "+authority);
-            System.out.println("Radical Slowdown 1 "+radicalSlowDown1+" 2 "+radicalSlowDown2);
-            System.out.println("VCurr 1 "+v_curr+" 2 "+v_curr2);
-            System.out.println("VCmd 1 "+v_cmd+" 2 "+v_cmd2);
+            System.out.println("Power vitality failed: P1: "+power1+" P2: "+power2);
+            System.out.println("Authority: "+authority);
+            System.out.println("Radical Slowdown 1: "+radicalSlowDown1+" 2: "+radicalSlowDown2);
+            System.out.println("VCurr 1: "+v_curr+" 2: "+v_curr2);
+            System.out.println("VCmd 1: "+v_cmd+" 2 "+v_cmd2);
         }
     }
     public float setPower1(){
@@ -411,6 +411,7 @@ public class TrainController {
         //using driver or suggested speed
         else if(!manualModeOn.getValue()){
             v_cmd2=suggestedSpeed;
+		radicalSlowDown1=false;
         }
         else {
             
@@ -422,9 +423,11 @@ public class TrainController {
                 if(suggestedSpeed<Float.parseFloat(driverSpeed.getValueSafe().split(" ")[0])){
                     v_cmd2=suggestedSpeed;
                 }
+		    radicalSlowDown1=false;
             }
             else{
                 v_cmd2=(float)0.0;
+		    radicalSlowDown1=false;
             }
         }
         
