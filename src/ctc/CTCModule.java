@@ -18,7 +18,7 @@ import src.track_module.Block;
 import src.track_module.Edge;
 
 public class CTCModule extends Module{
-    public static final int MAX_AUTHORITY = 5;
+    public static final int MAX_AUTHORITY = 4;
     public static CTCMap map = null;
     public StringProperty greenTickets = new SimpleStringProperty("");
     public StringProperty redTickets = new SimpleStringProperty("");
