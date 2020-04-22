@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import src.UICommon;
 import src.ctc.CTCUI;
 import src.track_module.TrackModule.FileFormatException;
+import src.track_controller.WaysideUI;
 
 public class TrackModuleUI extends Stage {
     static final int WIDTH = 900;
@@ -102,7 +103,7 @@ public class TrackModuleUI extends Stage {
                     stage.show();
                     return;
                 }
-                
+                WaysideUI.setWaysideControllerTable();
                 trackMap.buildMap(trackModule.blocks, graphPane);
                 CTCUI.buildMap();
                 // Removes the select track button and resizes temperature and time boxes
@@ -117,17 +118,17 @@ public class TrackModuleUI extends Stage {
         topBox.setStyle("-fx-background-color: -fx-title-color;");
         topBox.setEffect(new DropShadow(20, new Color(0,0,0,1)));
         topBox.setPadding(new Insets(10));
-        topBox.setViewOrder(0);
+        //topBox.setViewOrder(0);
 
         graphPane = new Pane();
         graphPane.setStyle("-fx-background-color: -fx-focus-color;");
         VBox.setVgrow(graphPane, Priority.ALWAYS);
-        graphPane.setViewOrder(1);
+        //graphPane.setViewOrder(1);
         trackMap.mapUnavailable(graphPane);
 
         Region spacer = new Region();
         spacer.setMinHeight(30);
-        spacer.setViewOrder(1);
+        //spacer.setViewOrder(1);
         spacer.setStyle("-fx-background-color: -fx-focus-color;");
 
 

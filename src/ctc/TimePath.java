@@ -1,7 +1,7 @@
 package src.ctc;
 
-import java.time.Duration;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import src.track_module.Block;
@@ -19,14 +19,20 @@ public class TimePath extends Path {
     }
     public float calcSuggestedSpeed(){
         float distance = 0;
-        float elapsedSeconds = Duration.between(startTime, endTime).toSeconds();
+        float elapsedSeconds = (float) ChronoUnit.SECONDS.between(startTime, endTime);
         for(UUID blockID: course){
             Block block = CTCModule.map.getBlock(blockID);
             if (block != null){
                 distance += block.getLength();
             }
         }
-        return (float) (distance/elapsedSeconds);
+        float speed = distance/elapsedSeconds;
+        if (speed <= 22.0){
+            return speed;
+        }
+        else{
+            return (float) 22.0;
+        }
     }
 
     public LocalTime getStartTime() {return startTime;};
