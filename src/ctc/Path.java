@@ -36,7 +36,7 @@ public class Path {
     public UUID getNextBlockID(UUID currBlockID) {
         //TODO: error check.
             int currIndex = course.indexOf(currBlockID);
-            if (currIndex == (course.size() - 1)){
+            if (currIndex == (course.size() - 1) || currIndex == -1){
                 return null;
             }
             else{

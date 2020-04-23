@@ -31,6 +31,10 @@ public class Route {
     public void addTimePath(UUID start, UUID end, UUID prevBlock, LocalTime startTime, LocalTime endTime){
         paths.add(new TimePath(start, end, startTime, endTime, prevBlock));
     }
+    public void addTimePath(UUID start, UUID end, UUID prevBlock, LocalTime endTime){
+        paths.add(new TimePath(start, end, endTime, prevBlock));
+    }
+
 
     public int size(){ return paths.size();}
 

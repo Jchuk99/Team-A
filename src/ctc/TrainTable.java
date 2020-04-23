@@ -86,6 +86,13 @@ public class TrainTable {
         if (trainID > largestID) largestID = trainID;
     }
 
+    public void reHeapify(){
+        for (CTCTrain train: dispatchQueue){
+            dispatchQueue.remove(train);
+            dispatchQueue.add(train);
+        }
+    }
+
     /** FOR GUI */
     public ObservableList<CTCTrain> getObservableTrains(){
         return observableTrains;

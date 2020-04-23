@@ -29,6 +29,11 @@ public class CTCModule extends Module{
     public void update(){
 
         if (validMap()){
+
+            if (!schedule.created){
+                schedule.createSchedule();
+            }
+
             map.updateMap();
             dispatchTrains();
             updateTrainPositions();
@@ -66,8 +71,6 @@ public class CTCModule extends Module{
         if (map == null){
             map = new CTCMap(trackControllerModule, trackModule);
             map.initMap();
-            schedule.createSchedule();
-            System.out.println("done");
         }
     }
 
@@ -143,7 +146,7 @@ public class CTCModule extends Module{
     //
     public void updateTrainAuthorities(){
         //TODO: Error Check, discuss train coming out of yard.
-        List<CTCTrain> trains = getTrains();
+        List<CTCTrain> trains = getTrainsOnMap();
         List<UUID> occupiedBlocks = map.getOccupiedBlocks();
         List<UUID> authorityBlocks = new ArrayList<UUID>();
         List<UUID> closedBlocks = map.getClosedBlocks();
@@ -254,6 +257,15 @@ public class CTCModule extends Module{
             return null;
         }
     }
+    public List<UUID> getOccupiedBlocks() {
+        if (validMap()){
+            return map.getOccupiedBlocks();
+        }
+        else{
+            return null;
+        }
+    }
+
 
     /****** for GUI ******/
 

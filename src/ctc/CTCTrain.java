@@ -18,7 +18,6 @@ public class CTCTrain {
     public UUID startPos;
     private UUID currPos;
     private UUID prevPos = null;
-    private int errorStatus; //TODO: make this an enum.
     private LocalTime dispatchTime;
     private LocalTime dwellStart;
     private Route route = new Route();
@@ -46,7 +45,6 @@ public class CTCTrain {
         if (route.size() == 0){
             // block connected to yard depending on line
             startPos = CTCModule.map.getStartingBlockID(destination.getLine());
-            //TODO: add a isDipatched method;
             route.addPath(startPos, dest, prevPathBlock);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
@@ -64,7 +62,6 @@ public class CTCTrain {
         if (route.size() == 0){
             // block connected to yard depending on line
             startPos = CTCModule.map.getStartingBlockID(destination.getLine());
-            //TODO: add a isDipatched method, maybe just dispatched when not in yard.
             route.addTimePath(startPos, dest, prevPathBlock, startTime, endTime);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
@@ -73,15 +70,30 @@ public class CTCTrain {
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
     }
+
+    public void addTimePath(UUID dest, LocalTime endTime){
+        Block destination = CTCModule.map.getBlock(dest);
+
+        //If train does not have any queued paths then will be in yard.
+        if (route.size() == 0){
+            // block connected to yard depending on line
+            startPos = CTCModule.map.getStartingBlockID(destination.getLine());
+            route.addTimePath(startPos, dest, prevPathBlock, endTime);
+            prevPathBlock = route.getLastPath().getBeforeEndBlock();
+        }
+        else{
+            route.addTimePath(route.getLastPath().getEndBlock(), dest, prevPathBlock, endTime);
+            prevPathBlock = route.getLastPath().getBeforeEndBlock();
+        }
+    }
+
     public void update(){
-        //updateCurrPath();
         updateString();
     }
     
     public void updateCurrPath(){
         Path currPath = route.getCurrPath();
         if (currPath != null){
-            // this constantly updates
             currPath.updateCourse(currPos, prevPos);
         }
 

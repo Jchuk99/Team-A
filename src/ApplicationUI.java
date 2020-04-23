@@ -69,9 +69,15 @@ public class ApplicationUI extends Application {
                     public void run() {
                         for (int i = 0; i < clockUI.clockStepAmount; i++) {
                             clockUI.tickTock();
-                            for(Module module: modules) {
+                            trackModule.tickTock();
+                            trainControllerModule.tickTock();
+                            trackControllerModule.tickTock();
+                            trainModule.tickTock();
+                            ctcModule.tickTock();
+
+                            /*for(Module module: modules) {
                                 module.tickTock();
-                            }
+                            }*/
                         }
                     }
                 };

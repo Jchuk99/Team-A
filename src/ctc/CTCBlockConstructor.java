@@ -61,7 +61,6 @@ public class CTCBlockConstructor {
 
         public void setPosition( Block block) {
             positionProperty().set(block);
-           // updateConnected();
         }
         public void addSwitchPosition(Block position){
             switchPositions.add(position);

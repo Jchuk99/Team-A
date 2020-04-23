@@ -17,6 +17,31 @@ public class TimePath extends Path {
         this.endTime = endTime;
         course = findCourse(startBlock, endBlock, prevBlock);
     }
+    public TimePath(UUID startBlock, UUID endBlock, LocalTime endTime, UUID prevBlock){
+        this.endBlock = endBlock;
+        this.endTime = endTime;
+        course = findCourse(startBlock, endBlock, prevBlock);
+    }
+
+    public LocalTime calcStartTime(){
+        long distance = 0; // IN METERS
+        long  speed = 10; // IN METERS PER SECOND
+        for(UUID blockID: course){
+            Block block = CTCModule.map.getBlock(blockID);
+            if (block != null){
+                distance += block.getLength();
+            }
+        }
+
+        long timeToDestination =  distance/speed; //IN SECONDS
+        startTime = endTime.minusSeconds(timeToDestination);
+
+        return startTime;
+
+    }
+
+
+
     public float calcSuggestedSpeed(){
         float distance = 0;
         float elapsedSeconds = (float) ChronoUnit.SECONDS.between(startTime, endTime);
@@ -27,11 +52,11 @@ public class TimePath extends Path {
             }
         }
         float speed = distance/elapsedSeconds;
-        if (speed <= 22.0){
+        if (speed <= 17.88){
             return speed;
         }
         else{
-            return (float) 22.0;
+            return (float) 17.88;
         }
     }
 

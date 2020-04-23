@@ -11,10 +11,11 @@ import java.util.*;
 import src.track_module.Block;
 
 public class Schedule{
+    public boolean created = false;
+    public static final long HOUR_OFFSET = 8;
     public static final int OFFSET = 1;
     public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
     private List<List<String>> destinations = new ArrayList<List<String>>();
-    private List<LocalTime> dispatchTimes = new ArrayList<LocalTime>();
     private int trainSize = 0;
     private TrainTable trainTable;
 
@@ -30,16 +31,6 @@ public class Schedule{
             String [] data  = line.split(",");
             trainSize = data.length - 33;
 
-            line = scheduleReader.readLine();
-            data  = line.split(",");
-
-            List<String> dispatchTimeStrings = Arrays.asList(Arrays.copyOfRange(data, 31, 41));
-            for (int i = 0; i < dispatchTimeStrings.size(); i++){
-                String realTime = "0" + dispatchTimeStrings.get(i);
-                LocalTime dateTime = LocalTime.parse(realTime, formatter);
-                dispatchTimes.add(dateTime);
-            }
-            
             while ((line = scheduleReader.readLine()) != null) {
                 data = line.split(",");
                 if (data.length > 26){
@@ -63,29 +54,42 @@ public class Schedule{
     }
 
     public void createSchedule(){
-        LocalTime startTime;
+        created = true;
+        LocalTime startTime = null;
         LocalTime endTime;
+        boolean first;
         
         for(int trainID = 1; trainID < trainSize + 1; trainID++){
-            LocalTime dispatchTime = dispatchTimes.get(trainID - 1);
-            trainTable.createTrain(trainID, dispatchTime);
+            trainTable.createTrain(trainID, LocalTime.MAX);
            
             CTCTrain train = trainTable.getTrain(trainID);
-            startTime = train.getDispatchTime();
 
             for (int pos = 0; pos < destinations.size(); pos++){
-                List<String> destination = destinations.get(pos);
+                first = false;
+                if (pos == 0){
+                    first = true;
+                }
 
+                List<String> destination = destinations.get(pos);
                 String line = destination.get(0);
                 int blockNumber = Integer.parseInt(destination.get(1));
-                endTime = convertToTime(destination.get(OFFSET + trainID));
+                endTime = convertToTime(destination.get(OFFSET + trainID)).plusHours(HOUR_OFFSET);
                 Block blockDest = CTCModule.map.getBlock(line, blockNumber);
-
-                train.addTimePath(blockDest.getUUID(), startTime, endTime);
+                if (first){
+                    train.addTimePath(blockDest.getUUID(), endTime);
+                    TimePath currPath = (TimePath) train.getRoute().getCurrPath();
+                    startTime = currPath.calcStartTime();
+                    train.setDispatchTime(startTime);
+                }
+                else{
+                    train.addTimePath(blockDest.getUUID(), startTime, endTime);
+                }
                 startTime = endTime;
             }
             System.out.println("Done");
         }
+        //trainTable.reHeapify();
+        System.out.println("Re heapified");
 
     }
 
