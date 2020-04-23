@@ -142,9 +142,9 @@ public class TrainController {
         //Figure out door side
         if(serviceBrakeControlOn.get() && v_cmd<(float)0.0001 && v_curr<(float)0.0001)
         {
-            if(true){
+            /*if(true){
                 setLeftDoorsControlClosed(false);
-            }
+            }*/
             if(true){
                 setRightDoorsControlClosed(false);
             }
