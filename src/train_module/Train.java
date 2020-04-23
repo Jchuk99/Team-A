@@ -82,6 +82,7 @@ public class Train {
     private BooleanProperty emergencyBrakeState = new SimpleBooleanProperty(false);
     
     private StringProperty beacon = new SimpleStringProperty("");
+    private StringProperty blockNumber = new SimpleStringProperty("");
 
     private StringProperty suggestedSpeedString = new SimpleStringProperty("");
     private StringProperty currentSpeedString = new SimpleStringProperty("");
@@ -417,6 +418,7 @@ public class Train {
         currentAccelerationString.setValue(UICommon.metersPerSecondSquaredToFeetPerSecondSquared(currentAcceleration) + " ft/s^2");
         currentGradeString.setValue(currentGrade + " %");
         temperatureInsideString.setValue(temperatureInside + " F");
+        blockNumber.setValue("" + currentBlock.getBlockNumber());
     }
 
     public StringProperty getName() {
@@ -457,6 +459,10 @@ public class Train {
 
     public StringProperty getTemperatureInside() {
         return temperatureInsideString;
+    }
+
+    public StringProperty getBlockNumber() {
+        return blockNumber;
     }
     /****** for GUI ******/
 
