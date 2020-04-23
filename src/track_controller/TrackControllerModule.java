@@ -80,7 +80,7 @@ public class TrackControllerModule extends Module {
 					else{
 						if(count2 < 4){
 							System.out.println(linkedItr.next().getBlockNumber());
-							prevWayside.addBlock(linkedItr.next());
+							prevWayside.addBlockBeginning(linkedItr.next());
 							count2++;
 						}
 					}
@@ -110,6 +110,7 @@ public class TrackControllerModule extends Module {
 			waysideController.setSwitchPositions(getSwitchesInJuris(blocks));
 			waysideController.setClosedBlocks(getClosedBlocksInJuris(blocks));
 			waysideController.setCrossingBlock(getCrossingBlocksInJuris(blocks));
+			waysideController.setLightsBlocks(getLightsInJuris(blocks));
 			waysideController.runPLC();
 			/*
 			for(Shift shift : waysideController.getAdjustedSwitchPosition()){
@@ -119,7 +120,6 @@ public class TrackControllerModule extends Module {
 				adjustedTrains.add(train);
 			}*/
 		}
-
 	}
 	
 	public List<CTCTrain> getTrainsInJuris(LinkedList<Block> blocks){
@@ -195,7 +195,7 @@ public class TrackControllerModule extends Module {
 		//change to lights when there is a lights infrastructure
 		List<Block> lights = new ArrayList<Block>();
 		for(Block block : blocks){	
-			if(block instanceof Station){
+			if(block instanceof Shift){
 				lights.add(block);
 			}
 		}
