@@ -115,6 +115,7 @@ public class CTCModule extends Module{
                             boolean isOccupied = occupiedBlocks.contains(edgeBlockID);
                             boolean isClosed = closedBlocks.contains(edgeBlockID);  
                             boolean prevBlock = edgeBlockID.equals(train.getPrevPos());
+                            
                             if(edgeBlockID.equals(map.getYard().getUUID()) && e.getConnected() && !occupiedBlocks.contains(currBlock.getUUID())){
                                 train.setCurrPos(map.getYard().getUUID());
                             }

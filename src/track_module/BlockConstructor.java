@@ -83,7 +83,7 @@ public class BlockConstructor {
         public SimpleBooleanProperty closedProperty() {return closed;};
 
         public boolean getLights() {return lights.get();};
-        public boolean getClosesd() {return closed.get();};
+        public boolean getClosed() {return closed.get();};
         public void setLights( boolean set) {lights.set(set);};
         public void setClosed( boolean set) {lights.set(set);};
     }
