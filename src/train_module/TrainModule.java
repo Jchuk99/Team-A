@@ -27,6 +27,10 @@ public class TrainModule extends Module {
         removeList = new ArrayList<Train>();
         for (Train train : trainList) {
             train.update();
+            if (train.crashed) {
+                crashed = true;
+                return;
+            }
             if (train.removeFlag.getValue()) removeList.add(train);
         }
         for (Train train : removeList) {

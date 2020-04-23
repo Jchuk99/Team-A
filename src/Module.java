@@ -20,6 +20,8 @@ public abstract class Module{
     final int MINUTE = 0;
     final int SECOND = 0;
 
+    public Boolean crashed = false;
+
     public TrainModule trainModule;
     public TrainControllerModule trainControllerModule;
     public TrackModule trackModule;

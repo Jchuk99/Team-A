@@ -11,10 +11,14 @@ import src.track_module.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.BooleanProperty;
 
 public class ApplicationUI extends Application {
     @Override
     public void start(Stage primaryStage) {
+
+        BooleanProperty systemCrashed = new SimpleBooleanProperty(false);
 
         ClockUI clockUI = new ClockUI();
 
@@ -68,12 +72,14 @@ public class ApplicationUI extends Application {
                     @Override
                     public void run() {
                         for (int i = 0; i < clockUI.clockStepAmount; i++) {
+                            if (systemCrashed.getValue()) return;
                             clockUI.tickTock();
                             trackModule.tickTock();
                             trainControllerModule.tickTock();
                             trackControllerModule.tickTock();
                             trainModule.tickTock();
                             ctcModule.tickTock();
+                            systemCrashed.setValue(trackModule.crashed || trainModule.crashed || trackControllerModule.crashed || trainControllerModule.crashed || ctcModule.crashed);
 
                             /*for(Module module: modules) {
                                 module.tickTock();
