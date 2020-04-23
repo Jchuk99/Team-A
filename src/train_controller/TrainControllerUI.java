@@ -245,8 +245,13 @@ public class TrainControllerUI extends Stage {
         trainControllerData.getDriverSpeed().addListener(new ChangeListener<String>() { 
         
             public void changed(ObservableValue <? extends String > observable, String oldValue, String newValue) { 
-                speedSlider.setValue(Integer.parseInt(newValue.split(" ")[0]));
-                //System.out.println(trainControllerData.getDriverSpeed()); 
+                if(newValue.split(" ")[0].isEmpty()){
+                    speedSlider.setValue(0);
+                }
+                else{
+                    speedSlider.setValue(Integer.parseInt(newValue.split(" ")[0]));
+                    //System.out.println(trainControllerData.getDriverSpeed());
+                } 
            } 
         });
 
@@ -274,8 +279,13 @@ public class TrainControllerUI extends Stage {
         trainControllerData.getHVACSetpoint().addListener(new ChangeListener<String>() { 
         
             public void changed(ObservableValue <? extends String > observable, String oldValue, String newValue) { 
-                tempSlider.setValue(Integer.parseInt(newValue.split(" ")[0]));
-                //System.out.println(trainControllerData.getDriverSpeed()); 
+                if(newValue.split(" ")[0].isEmpty()){
+                    tempSlider.setValue(68);
+                }
+                else{
+                    tempSlider.setValue(Integer.parseInt(newValue.split(" ")[0]));
+                    //System.out.println(trainControllerData.getDriverSpeed());
+                } 
            } 
         });
         
