@@ -83,6 +83,8 @@ public class TrainController {
         suggestedSpeed=(float)0.0;
         v_curr=(float)0.0;
         timerMan.bind(trainControllerModule.timeString);
+
+        
         
     }
 
@@ -137,18 +139,29 @@ public class TrainController {
             System.out.println("CrawlDistance: "+crawlDistance);*/
         }
 
-        //check lights needs to be done
-        if(timerMan.getValueSafe().equalsIgnoreCase("06:00:00")){
-            setHeadLightsControlOn(false);
-            setCabinLightsControlOn(false);
-        }
-        else if(timerMan.getValueSafe().equalsIgnoreCase("18:00:00")){
+        //check lights
+        if(Integer.parseInt(timerMan.getValueSafe().split(":")[0])<6 || Integer.parseInt(timerMan.getValueSafe().split(":")[0])>18){
             setHeadLightsControlOn(true);
             setCabinLightsControlOn(true);
         }
+        
 
         //door opening and closing
-        
+        //Figure out door side
+        if(serviceBrakeControlOn.get() && v_cmd<(float)0.0001 && v_curr<(float)0.0001)
+        {
+            if(true){
+                setLeftDoorsControlClosed(false);
+            }
+            if(true){
+                setRightDoorsControlClosed(false);
+            }
+        }
+        else{
+            setLeftDoorsControlClosed(true);
+            setRightDoorsControlClosed(true);
+        }
+
         //announcing 
         if(beaconUpdate){
             announce(beacon.getValueSafe());
