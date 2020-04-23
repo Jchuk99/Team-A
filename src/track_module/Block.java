@@ -5,22 +5,28 @@ import java.util.Set;
 import java.util.UUID;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import src.train_module.Train;
 
 abstract public class Block {
+    public final static int GREEN_SIGNAL = 0;
+    public final static int YELLOW_SIGNAL = 1;
+    public final static int RED_SIGNAL = 2;
+
     private Set<Edge> edges= new HashSet<Edge>();
     // https://stackoverflow.com/questions/42786313/javafx-eventhandler-new-alert-if-boolean-equals-true
     private BooleanProperty occupied= new SimpleBooleanProperty(false);
     private BooleanProperty functional= new SimpleBooleanProperty(true);
     private BooleanProperty heater= new SimpleBooleanProperty(false);
+    private IntegerProperty signalLight = new SimpleIntegerProperty(GREEN_SIGNAL);
     private Train train;
     private UUID id;
     private final String line;
     private final char section;
     private final int length;
     private int blockNumber;
-    private boolean bidirectional;
     private final float speedLimit;
     private final float grade;
     private final float elevation;
@@ -47,6 +53,7 @@ abstract public class Block {
     public BooleanProperty occupiedProperty() {return occupied;};
     public BooleanProperty functionalProperty() {return functional;};
     public BooleanProperty heaterProperty() {return heater;};
+    public IntegerProperty signalLightProperty() {return signalLight;};
 
     public String getLine() {return line;};
     public char getSection() {return section;};
@@ -64,7 +71,8 @@ abstract public class Block {
     public Set<Edge> getEdges(){return edges;};
     public int getX() {return xCorrdinate;};
     public int getY() {return yCorrdinate;};
-    public Train getTrain(){return train;};
+    public Train getTrain() {return train;};
+    public int getSignalLight() {return signalLightProperty().get();};
 
     public void setOccupied(boolean occupied){occupiedProperty().set(occupied);};
     public void setHeater(boolean heater){heaterProperty().set(heater);};
@@ -88,6 +96,8 @@ abstract public class Block {
         if( this.train != null)
             this.train.setTrain( suggestedSpeed, authority);
     }
+    public void setSignalLight( int set) {signalLightProperty().set(set);};
+
     public boolean equals(Block block){
         return id == block.getUUID();
     }

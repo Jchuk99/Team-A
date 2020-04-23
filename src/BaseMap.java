@@ -146,7 +146,6 @@ public abstract class BaseMap {
             });
             circleMap.put(block, circle);
         }
-
     }
     public abstract Scene buildPopUp(Block block);
 }

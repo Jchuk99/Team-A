@@ -6,12 +6,13 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.text.Text;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
+import javafx.scene.paint.Color;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+
+import src.track_module.Block;
 
 public class UICommon{
     public static Button createButton(String text, int width, int height) {
@@ -105,5 +106,20 @@ public class UICommon{
     }
     public static float roundToTwoDecimal(float f) {
         return (float)(Math.round(f * 100.0) / 100.0);
+    }
+
+    public static String intToColorString(int color) {
+        if(color == Block.GREEN_SIGNAL) {
+            return "Green";
+        }
+        else if(color == Block.YELLOW_SIGNAL) {
+            return "Yellow";
+        }
+        else if(color == Block.RED_SIGNAL) {
+            return "Red";
+        }
+        else {
+            return null;
+        }
     }
 }

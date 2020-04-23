@@ -56,7 +56,9 @@ public class TrackMap extends BaseMap {
 
         VBox tableBox = new VBox();
 
-        // Occupied Box
+        //////////
+        // Functional Box
+        //////////
         HBox functionalBox= new HBox();
         functionalBox.setAlignment(Pos.CENTER);
 
@@ -80,7 +82,9 @@ public class TrackMap extends BaseMap {
             statusUpdate(block, circleRed, circleYellow, circleGreen);
         });
 
+        //////////
         // Occupied Box
+        //////////
         HBox occupiedBox= new HBox();
         occupiedBox.setAlignment(Pos.CENTER);
 
@@ -104,7 +108,9 @@ public class TrackMap extends BaseMap {
             statusUpdate(block, circleRed, circleYellow, circleGreen);
         });
 
+        //////////
         // Heater Box
+        //////////
         HBox heaterBox= new HBox();
         heaterBox.setAlignment(Pos.CENTER);
 
@@ -127,8 +133,34 @@ public class TrackMap extends BaseMap {
             heaterLabel1.setText(UICommon.booleanToOnOff(newText));
         });        
 
-        // Final Values
+        //////////
+        // Signal Box
+        //////////
+        HBox signalBox= new HBox();
+        signalBox.setAlignment(Pos.CENTER);
 
+        Label signalLabel0 = UICommon.createLabel("Signal Light");
+        signalLabel0.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+        signalLabel0.setAlignment(Pos.CENTER_LEFT);
+        signalLabel0.setPadding( new Insets(5));
+        signalLabel0.prefWidthProperty().bind(signalBox.widthProperty().divide((2)));
+        
+        Label signalLabel1 = UICommon.createLabel(UICommon.intToColorString( block.getSignalLight()));
+        signalLabel1.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
+        signalLabel1.setAlignment(Pos.CENTER_LEFT);
+        signalLabel1.setPadding( new Insets(5));
+        signalLabel1.prefWidthProperty().bind(signalBox.widthProperty().divide((2)));
+
+        signalBox.getChildren().addAll(signalLabel0,signalLabel1);
+        tableBox.getChildren().add(signalBox);
+
+        block.heaterProperty().addListener((obs, oldText, newText) -> {
+            heaterLabel1.setText(UICommon.booleanToOnOff(newText));
+        });     
+
+        //////////
+        // Final Values
+        //////////
         List<String[]> strLists = new ArrayList<String[]>();
         String[] strs0 = {"Type", block.getClass().getSimpleName()};
         String[] strs1 = {"Length", UICommon.metersToYards(block.getLength()) + " Yards"};
@@ -163,6 +195,10 @@ public class TrackMap extends BaseMap {
             hBox.getChildren().addAll(l0,l1);
             tableBox.getChildren().add(hBox);
         }
+
+        //////////
+        // Properties unique to shift block
+        //////////
         if (block.getClass().getSimpleName().toLowerCase().equals("shift")) {
             Shift shift = (Shift)block;
             HBox hBox = new HBox();
@@ -187,6 +223,9 @@ public class TrackMap extends BaseMap {
             tableBox.getChildren().add(hBox);
         }
 
+        //////////
+        // Properties unique to crossing block
+        //////////
         if (block.getClass().getSimpleName().toLowerCase().equals("crossing")) {
             Crossing crossing = (Crossing)block;
             HBox hBox = new HBox();
@@ -232,6 +271,9 @@ public class TrackMap extends BaseMap {
             tableBox.getChildren().add(hBox);
         }
 
+        //////////
+        // Properties unique to station block
+        //////////
         if (block.getClass().getSimpleName().toLowerCase().equals("station")) {
             Station station = (Station)block;
             HBox hBox = new HBox();
@@ -282,6 +324,7 @@ public class TrackMap extends BaseMap {
     }
 
     private void statusUpdate( Block block, Circle circleRed, Circle circleYellow, Circle circleGreen) {
+        // Updates the circle colors depending on the state of the block
         if(block.getFunctional() == false) {
             circleRed.setFill(Color.RED);
             circleYellow.setFill(Color.GRAY);
