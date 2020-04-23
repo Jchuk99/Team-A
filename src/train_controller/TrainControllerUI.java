@@ -97,15 +97,15 @@ public class TrainControllerUI extends Stage {
         /****** select train ******/
 
         /****** beacon and Kp/Ki******/
-        Button kpki =new Button("Set Control Law Constants");
+       /* Button kpki =new Button("Set Control Law Constants");
         kpki.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                getKpKi();
-            }
-        });
+            */    getKpKi();
+            /*}
+        });*/
         
-        final HBox beaconBox = new HBox(10, createTextBox("Beacon"), createLabelBox("",trainControllerData.getBeacon()),kpki);
+        final HBox beaconBox = new HBox(10, createTextBox("Beacon"), createLabelBox("",trainControllerData.getBeacon()));
         beaconBox.setStyle("-fx-border-style: solid inside; -fx-border-width: 1; -fx-padding: 10;");
         /****** beacon ******/
 
@@ -527,9 +527,9 @@ public class TrainControllerUI extends Stage {
 
     private void getKpKi(){
         Stage popupwindow = new Stage();   
-        popupwindow.setTitle("CTC UI");  
+        popupwindow.setTitle("Train Controller Engineering UI");  
 
-        int length = 200;
+        int length = 400;
         int height = 200; 
 
         Label kpl=createLabel("Kp");
@@ -544,23 +544,30 @@ public class TrainControllerUI extends Stage {
         ki.setPrefColumnCount(10);
         ki.getText();
         
-        TextField pw=new TextField();
+        /*TextField pw=new TextField();
         pw.setPromptText("Enter password");
         pw.setPrefColumnCount(10);
-        pw.getText();
+        pw.getText();*/
+
+        trainControllerData.getControlLaw().addListener(new ChangeListener<String>() { 
+        
+            public void changed(ObservableValue <? extends String > observable, String oldValue, String newValue) { 
+                kp.setText(trainControllerData.getControlLaw().getValueSafe().split(",")[0]);
+                ki.setText(trainControllerData.getControlLaw().getValueSafe().split(",")[1]);
+           } 
+        });
 
         Button submit=new Button("Submit");
         submit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if(isNumeric(kp.getText()) && isNumeric(ki.getText()) && pw.getText().equals("password")){
+                if(isNumeric(kp.getText()) && isNumeric(ki.getText()) ){
                     String x=kp.getText()+","+ki.getText();
                     trainControllerData.setControlLaw(x);
-                    popupwindow.close();
                 }
             }
         });
-        VBox smallScreenField = new VBox(10, kp, ki,pw,submit);
+        VBox smallScreenField = new VBox(10, kp, ki,submit);
         VBox smallScreenLabel=new VBox(10,kpl,kil);
         HBox smallScreen=new HBox(10,smallScreenLabel,smallScreenField);
         smallScreen.setPadding(new Insets(10));
