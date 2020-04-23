@@ -22,15 +22,18 @@ public class BlockConstructor {
     public static class Station extends Block {
         int tickets= 0;
         String name;
+        String beacon;
 
         public Station( String line, char section, int blockNumber, int length,float speedLimit, float grade, 
             float elevation, float cummElevation, boolean underground, String name, int xCoordinate, int yCoordinate) {
             super( line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
             this.name= name;
+            this.beacon = name;
         }
        public void addTicketsSold( int tickets) {this.tickets+= tickets;};
        public int getTicketsSold() {return tickets;};
        public String getName() {return name;};
+       public String getBeacon() {return beacon;};
     }
 
     public static class Shift extends Block {  
