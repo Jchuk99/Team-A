@@ -287,7 +287,7 @@ public class Train {
             destroyTrain();
             return;
         } else if (nextBlock instanceof Station) {
-            beacon.setValue(((Station) currentBlock).getBeacon());
+            beacon.setValue(((Station) nextBlock).getBeacon());
         } else {
             beacon.setValue("");
         }

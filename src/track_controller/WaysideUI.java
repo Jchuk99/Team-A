@@ -178,7 +178,7 @@ public class WaysideUI extends Stage{
 
                         else if(block instanceof Crossing){
                             inJuris.setText("True");
-                            if(((Crossing)block).getClosesd()){
+                            if(((Crossing)block).getClosed()){
                                 activated.setText("True");
                             }
                             else{

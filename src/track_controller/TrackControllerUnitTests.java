@@ -63,8 +63,8 @@ public class TrackControllerUnitTests {
 		blocksL.add(block73);
 
 		//sent trains
-		CTCTrain train1 = new CTCTrain();
-		CTCTrain train2 = new CTCTrain();
+		CTCTrain train1 = new CTCTrain(1);
+		CTCTrain train2 = new CTCTrain(1);
 		train1.setAuthority(2);
 		train1.setCurrPos(block70.getUUID());
 		train2.setAuthority(2);
@@ -453,9 +453,9 @@ public class TrackControllerUnitTests {
 		blocksL.add(block73);
 
 		//sent trains
-		CTCTrain train1 = new CTCTrain();
-		CTCTrain train2 = new CTCTrain();
-		CTCTrain train3 = new CTCTrain();
+		CTCTrain train1 = new CTCTrain(1);
+		CTCTrain train2 = new CTCTrain(1);
+		CTCTrain train3 = new CTCTrain(1);
 		train1.setAuthority(2);
 		train2.setAuthority(1);
 		train3.setAuthority(3);
@@ -612,8 +612,8 @@ public class TrackControllerUnitTests {
 		blocksL.add(block73);
 
 		//sent trains
-		CTCTrain train1 = new CTCTrain();
-		CTCTrain train2 = new CTCTrain();
+		CTCTrain train1 = new CTCTrain(1);
+		CTCTrain train2 = new CTCTrain(1);
 		train1.setAuthority(2);
 		train1.setCurrPos(block70.getUUID());
 		train2.setAuthority(2);
