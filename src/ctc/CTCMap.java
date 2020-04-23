@@ -60,7 +60,7 @@ public class CTCMap{
         Block startingBlock = null;
             for (Edge edge: myYard.getEdges()){
                 //assumes only one starting block will be found for each line
-                if ((edge.getBlock().getLine().equalsIgnoreCase(line) && (edge.getConnected()))){
+                if ((edge.getBlock().getLine().equalsIgnoreCase(line) && edge.getOriginalConnection())){
                     startingBlock = edge.getBlock();
                 }
             }

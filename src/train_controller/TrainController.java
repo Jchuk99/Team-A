@@ -118,7 +118,7 @@ public class TrainController {
             attachedTrain.setPower(0);
             setEmergencyBrakeControlOn(true);
             setServiceBrakeControlOn(true);
-            System.out.println("Authority<0.1");
+            //System.out.println("Authority<0.1");
         }
         else if(vitalCheck1()!=vitalCheck2()){
             attachedTrain.setPower(0);
@@ -299,7 +299,7 @@ public class TrainController {
         else {
             v_cmd=suggestedSpeed;
             radicalSlowDown1=false;
-            System.out.println("Triggering here");
+            //System.out.println("Triggering here");
            /* if(crawlDistance>(float)(0.0)){
                 crawlDistance=(float)0.0;
             }*/

@@ -55,9 +55,11 @@ public class TrackModule extends Module {
             if (trains != null){
                 for (CTCTrain ctcTrain: trains){
                     Block currBlock = blocks.get(ctcTrain.getCurrPos());
-                    Train train = currBlock.getTrain();
-                    if (train != null){
-                        train.setTrain(ctcTrain.getSuggestedSpeed(), ctcTrain.getAuthority());
+                    if (currBlock != null){
+                        Train train = currBlock.getTrain();
+                        if (train != null){
+                            train.setTrain(ctcTrain.getSuggestedSpeed(), ctcTrain.getAuthority());
+                        }
                     }
                 }
             }
@@ -412,7 +414,7 @@ public class TrackModule extends Module {
 
         Train train = trainModule.createTrain();
         train.setBlock(startingBlock);
-        train.setTrain(ctcTrain.getSuggestedSpeed(), ctcTrain.getAuthority());
+        train.setTrain(ctcTrain.getSuggestedSpeed(), 1);
        
         System.out.println("Suggeted Speed: " + ctcTrain.getSuggestedSpeed() + " Authority: " + ctcTrain.getAuthority());
         System.out.println("Starting Block Number: " + startingBlock.getBlockNumber());

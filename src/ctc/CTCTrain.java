@@ -23,6 +23,7 @@ public class CTCTrain {
     private LocalTime dwellStart;
     private Route route = new Route();
     private boolean dwelling = false;
+    private boolean dispatched = false;
 
     private StringProperty suggestedSpeedString = new SimpleStringProperty("");
     private StringProperty currPosString = new SimpleStringProperty("");
@@ -58,19 +59,17 @@ public class CTCTrain {
 
     public void addTimePath(UUID dest, LocalTime startTime, LocalTime endTime){
         Block destination = CTCModule.map.getBlock(dest);
-        UUID start;
 
         //If train does not have any queued paths then will be in yard.
         if (route.size() == 0){
             // block connected to yard depending on line
-            start = CTCModule.map.getStartingBlockID(destination.getLine());
+            startPos = CTCModule.map.getStartingBlockID(destination.getLine());
             //TODO: add a isDipatched method, maybe just dispatched when not in yard.
-            route.addTimePath(start, dest, prevPathBlock, startTime, endTime);
+            route.addTimePath(startPos, dest, prevPathBlock, startTime, endTime);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
         else{
-            start = route.getLastPath().getEndBlock();
-            route.addTimePath(start, dest, prevPathBlock, startTime, endTime);
+            route.addTimePath(route.getLastPath().getEndBlock(), dest, prevPathBlock, startTime, endTime);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
     }
@@ -144,6 +143,9 @@ public class CTCTrain {
         }
         return onPath;
     }
+    public boolean isDispatched(){
+        return dispatched;
+    }
     
     // getters and setters.
     public void setAuthority(float authority){
@@ -170,6 +172,9 @@ public class CTCTrain {
     }
     public void setDwellStart(LocalTime dwellStart){
         this.dwellStart = dwellStart;
+    }
+    public void setDispatched(Boolean dispatched){
+        this.dispatched = dispatched;
     }
     public Route getRoute(){
         return route;

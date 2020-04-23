@@ -84,12 +84,12 @@ public class Path {
                 for (Edge e : b.getEdges()) {
                     Block edgeBlock = e.getBlock();
                     // not the previous block, connected, and edgeTo the block isn't the current block(circle)
-                    if (!edgeBlock.getUUID().equals(prevBlock) && e.getConnected() && !b.getUUID().equals(edgeTo.get(edgeBlock.getUUID()).peek())){
+                    if (!edgeBlock.getUUID().equals(prevBlock) && e.getOriginalConnection() && !b.getUUID().equals(edgeTo.get(edgeBlock.getUUID()).peek())){
                             edgeTo.get(edgeBlock.getUUID()).addFirst(b.getUUID());
                             q.add(edgeBlock);
                     }
                 }
-              if (limit >= 1000 || edgeTo.get(destination).size() >=1){
+              if (limit >= 10000 || edgeTo.get(destination).size() >=1){
                   break;
               }
               limit++;
@@ -107,11 +107,11 @@ public class Path {
         }
         course.add(0, curr);
         
-        
+        /*
         for (UUID blockID: course){
             System.out.println("Block Number: " + map.getBlock(blockID).getBlockNumber());
             System.out.println("Block ID: " + blockID);
-        }
+        }*/
         
         
 		return course;

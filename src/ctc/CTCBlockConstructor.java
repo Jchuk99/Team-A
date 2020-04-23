@@ -58,20 +58,6 @@ public class CTCBlockConstructor {
                 addSwitchPosition(block);
             }
         }
-        /*
-        public void updateConnected() {
-                    for (Edge e: this.getEdges()){
-                        if(switchPositions.contains(e.getBlock())){
-                            if(position.get().equals(e.getBlock())){
-                                e.setConnected(true);
-                            }
-                            else{
-                                e.setConnected(false);
-                            }
-                        }
-                    }
-        }
-        */
 
         public void setPosition( Block block) {
             positionProperty().set(block);

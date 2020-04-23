@@ -204,9 +204,9 @@ public class TrackMap extends BaseMap {
             l1.setPadding( new Insets(5));
             l1.prefWidthProperty().bind(hBox.widthProperty().divide((2)));
 
-            crossing.lightsProperty().addListener((obs, oldText, newText) -> {
+            /*crossing.lightsProperty().addListener((obs, oldText, newText) -> {
                 l1.setText(UICommon.booleanToOnOff(crossing.getLights()));
-            });
+            });*/
             hBox.getChildren().addAll(l0,l1);
             tableBox.getChildren().add(hBox);
 
@@ -219,15 +219,15 @@ public class TrackMap extends BaseMap {
             l2.setPadding( new Insets(5));
             l2.prefWidthProperty().bind(hBox.widthProperty().divide((2)));
 
-            Label l3 = UICommon.createLabel( UICommon.booleanToYesNo(crossing.getClosesd()));
+            Label l3 = UICommon.createLabel( UICommon.booleanToYesNo(crossing.getClosed()));
             l3.setStyle("-fx-font-size: 12; -fx-border-color: -fx-focus-color;");
             l3.setAlignment(Pos.CENTER_LEFT);
             l3.setPadding( new Insets(5));
             l3.prefWidthProperty().bind(hBox.widthProperty().divide((2)));
 
-            crossing.lightsProperty().addListener((obs, oldText, newText) -> {
-                l3.setText(UICommon.booleanToYesNo(crossing.getClosesd()));
-            });
+           /* crossing.lightsProperty().addListener((obs, oldText, newText) -> {
+                l3.setText(UICommon.booleanToYesNo(crossing.getClosed()));
+            });*/
             hBox.getChildren().addAll(l2,l3);
             tableBox.getChildren().add(hBox);
         }
@@ -267,9 +267,9 @@ public class TrackMap extends BaseMap {
             l3.setPadding( new Insets(5));
             l3.prefWidthProperty().bind(hBox.widthProperty().divide((2)));
 
-            station.ticketsProperty().addListener((obs, oldText, newText) -> {
+            /*station.ticketsProperty().addListener((obs, oldText, newText) -> {
                 l3.setText(Integer.toString(station.getTicketsSold()));
-            });
+            });*/
             hBox.getChildren().addAll(l2,l3);
             tableBox.getChildren().add(hBox);
         }

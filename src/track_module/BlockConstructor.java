@@ -1,12 +1,17 @@
 package src.track_module;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import src.ctc.CTCTrain;
 import src.track_module.Block;
+import src.train_module.Train;
 
 public class BlockConstructor {
     public static class Normal extends Block {
@@ -17,7 +22,7 @@ public class BlockConstructor {
     }
 
     public static class Station extends Block {
-        SimpleIntegerProperty tickets= new SimpleIntegerProperty(0);
+        int tickets= 0;
         String name;
 
         public Station( String line, char section, int blockNumber, int length,float speedLimit, float grade, 
@@ -25,12 +30,9 @@ public class BlockConstructor {
             super( line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
             this.name= name;
         }
-
-        public SimpleIntegerProperty ticketsProperty() {return tickets;};
-
-        public void addTicketsSold( int tickets) {this.tickets.set(this.tickets.get() + tickets);};
-        public int getTicketsSold() {return tickets.get();};
-        public String getName() {return name;};
+       public void addTicketsSold( int tickets) {this.tickets+= tickets;};
+       public int getTicketsSold() {return tickets;};
+       public String getName() {return name;};
     }
 
     public static class Shift extends Block {  
@@ -63,33 +65,71 @@ public class BlockConstructor {
         }
         public void setPosition( Block block) {
             positionProperty().set(block);
+            for (Edge edge : getEdges()) {
+                if(switchPositions.contains(edge.getBlock())){
+                    if (edge.getBlock().getUUID().equals(block.getUUID())) {
+                        // if the blocks were originally connected then
+                        // set connected, however if they weren't go the destination block, and change it's connectedness
+                        if (edge.getOriginalConnection()){
+                            edge.setConnected(true);
+                        }
+                        else{
+                            for (Edge e : edge.getBlock().getEdges()){
+                                if (e.getBlock().getUUID().equals(this.getUUID())){
+                                    e.setConnected(true);
+                                }
+                            }
+                        } 
+                    } 
+                    else {
+                        if (edge.getOriginalConnection()){
+                            edge.setConnected(false);
+                        }
+                        else{
+                            for (Edge e : edge.getBlock().getEdges()){
+                                if (e.getBlock().getUUID().equals(this.getUUID())){
+                                    e.setConnected(false);
+                                }
+                            }   
+                        }
+                    }
+                }
+            }
         }
-        public void addSwitchPosition(Block position){
-            switchPositions.add(position);
-            setPosition(position);
+        public void addSwitchPosition(Block block){
+            for (Edge edge : getEdges()) {
+                if (edge.getBlock().getUUID().equals(block.getUUID())) {
+                    edge.setIsSwitch(true);
+                    switchPositions.add(block);
+                    setPosition(block);
+                }
+            }
         }   
     }
 
     public static class Crossing extends Block {
-        private SimpleBooleanProperty lights= new SimpleBooleanProperty(false);
-        private SimpleBooleanProperty closed= new SimpleBooleanProperty(false);
+        private boolean lights= false;
+        private boolean closed= false;
 
         public Crossing( String line, char section, int blockNumber,int length, float speedLimit, float grade, 
             float elevation, float cummElevation, boolean underground, int xCoordinate, int yCoordinate) {
             super( line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, xCoordinate, yCoordinate);
         }
-
-        public SimpleBooleanProperty lightsProperty() {return lights;};
-        public SimpleBooleanProperty closedProperty() {return closed;};
-
-        public boolean getLights() {return lights.get();};
-        public boolean getClosed() {return closed.get();};
-        public void setLights( boolean set) {lights.set(set);};
-        public void setClosed( boolean set) {lights.set(set);};
+        public boolean getLights() {return lights;};
+        public boolean getClosed() {return closed;};
+        public void setLights( boolean set) {lights= set;};
+        public void setClosed( boolean set) {lights= set;};
     }
     public static class Yard extends Block {
+
+        private Set<Train> trains = new HashSet<Train>();
         public Yard(int xCoordinate, int yCoordinate) {
             super( "YARD", ' ', 0, 0, 0, 0, 0, 0, false, xCoordinate, yCoordinate);
+        }
+        public void createTrain(CTCTrain ctcTrain, Block startingBlock) {
+        //new Train(ctcTrain.getTrainID(), new TrainController(), this);
+        
+            
         }
     }
 }
