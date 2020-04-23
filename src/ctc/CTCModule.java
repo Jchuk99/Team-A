@@ -54,7 +54,7 @@ public class CTCModule extends Module{
     
 
     public void main() {
-        schedule.readInSchedule();
+       // schedule.readInSchedule();
     }
 
     public CTCModule(){

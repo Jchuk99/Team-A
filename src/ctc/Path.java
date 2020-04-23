@@ -51,10 +51,10 @@ public class Path {
     //TODO: Make algorithim account for distance of blocks
     protected LinkedList<UUID> findCourse(UUID start, UUID destination, UUID prevBlock) {
 
-
         LinkedList<UUID> course = null;
         int limit = 0;
         CTCMap map = CTCModule.map;
+        
         System.out.println("Start: " + map.getBlock(start).getBlockNumber());
         System.out.println("End: " + map.getBlock(destination).getBlockNumber());
         Set<UUID> blockIDs = map.getBlockIDs();
@@ -106,13 +106,6 @@ public class Path {
             }
         }
         course.add(0, curr);
-        
-        /*
-        for (UUID blockID: course){
-            System.out.println("Block Number: " + map.getBlock(blockID).getBlockNumber());
-            System.out.println("Block ID: " + blockID);
-        }*/
-        
         
 		return course;
     }
