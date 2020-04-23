@@ -23,6 +23,7 @@ public class TrainData {
     StringProperty temperatureInside = new SimpleStringProperty("");
 
     StringProperty beacon = new SimpleStringProperty("");
+    StringProperty blockNumber = new SimpleStringProperty("");
 
     BooleanProperty leftDoorWorking = new SimpleBooleanProperty(false);
     BooleanProperty rightDoorWorking = new SimpleBooleanProperty(false);
@@ -69,6 +70,8 @@ public class TrainData {
 
             beacon.unbind();
             beacon.setValue("");
+            blockNumber.unbind();
+            blockNumber.setValue("");
 
             leftDoorWorking.unbind();
             leftDoorWorking.setValue(false);
@@ -98,6 +101,7 @@ public class TrainData {
             temperatureInside.bind(currentTrain.getTemperatureInside());
 
             beacon.bind(currentTrain.getBeacon());
+            blockNumber.bind(currentTrain.getBlockNumber());
 
             leftDoorWorking.bind(currentTrain.getLeftDoorWorking());
             rightDoorWorking.bind(currentTrain.getRightDoorWorking());
@@ -150,6 +154,10 @@ public class TrainData {
 
     public StringProperty getBeacon() {
         return beacon;
+    }
+
+    public StringProperty getBlockNumber() {
+        return blockNumber;
     }
 
     public BooleanProperty getLeftDoorWorking() {

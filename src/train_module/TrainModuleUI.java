@@ -32,7 +32,7 @@ public class TrainModuleUI extends Stage {
     TrainData trainData = new TrainData();
 
     final int width = 900;
-    final int height = 800;
+    final int height = 400;
 
     public TrainModuleUI() {
         setTitle("TrainModel UI");
@@ -77,13 +77,8 @@ public class TrainModuleUI extends Stage {
         final VBox box3 = new VBox(10, box2, beaconBox);
 
         final HBox topHalf = new HBox(10, box3, statusBox);
-        // TODO: map
-        final TableView mapTable = new TableView();
 
-        topHalf.setPrefHeight(height / 2);
-        mapTable.setPrefHeight(height / 2);
-
-        final VBox fullScreen = new VBox(10, topHalf, mapTable);
+        final VBox fullScreen = new VBox(10, topHalf);
 
         fullScreen.setPadding(new Insets(10));
 
@@ -130,7 +125,8 @@ public class TrainModuleUI extends Stage {
         VBox name2 = createTextBox("Current Speed");
         VBox name3 = createTextBox("Authority");
         VBox name4 = createTextBox("Engine Power");
-        VBox nameBox1 = new VBox(10, name1, name2, name3, name4);
+        VBox nameid = createTextBox("Block Number");
+        VBox nameBox1 = new VBox(10, name1, name2, name3, name4, nameid);
 
         VBox name5 = createTextBox("Passenger Count");
         VBox name6 = createTextBox("Current Weight");
@@ -143,7 +139,8 @@ public class TrainModuleUI extends Stage {
         VBox label2 = createLabelBox("", trainData.getCurrentSpeed());
         VBox label3 = createLabelBox("", trainData.getAuthority());
         VBox label4 = createLabelBox("", trainData.getCurrentPower());
-        VBox labelBox1 = new VBox(10, label1, label2, label3, label4);
+        VBox labelid = createLabelBox("", trainData.getBlockNumber());
+        VBox labelBox1 = new VBox(10, label1, label2, label3, label4, labelid);
 
         VBox label5 = createLabelBox("", trainData.getPassengetCount());
         VBox label6 = createLabelBox("", trainData.getCurrentWeight());
