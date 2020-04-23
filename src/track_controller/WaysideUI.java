@@ -159,37 +159,40 @@ public class WaysideUI extends Stage{
                         if(block instanceof Shift){
                             Properties shiftFix = new Properties(1, "", "", 1, 1, ((Shift)block).getBlockNumber(), ((Shift)block).getPosition().getBlockNumber());
                             switchTable.getItems().add(shiftFix);
+                            if(block.getSignalLight() == 2) {
+                                redCircle.setFill(Color.RED);
+                                yellowCircle.setFill(Color.GRAY);
+                                greenCircle.setFill(Color.GRAY);
+                            }
+                            else if(block.getSignalLight() == 1) {
+                                redCircle.setFill(Color.GRAY);
+                                yellowCircle.setFill(Color.YELLOW);
+                                greenCircle.setFill(Color.GRAY);  
+                            }                      
+                            else {
+                                redCircle.setFill(Color.GRAY);
+                                yellowCircle.setFill(Color.GRAY);
+                                greenCircle.setFill(Color.GRAY);   
+                            }
                         }
 
                         else if(block instanceof Crossing){
                             inJuris.setText("True");
-                            if(((Crossing)block).getClosed()){
+                            if(((Crossing)block).getClosesd()){
                                 activated.setText("True");
                             }
                             else{
                                 activated.setText("False");
                             }
 
+
+
                         }
                         else if(block instanceof Station){
-                            /*if(block.getRed() == false) {
-                                redCircle.setFill(Color.RED);
-                                yellowCircle.setFill(Color.GRAY);
-                                greenCircle.setFill(Color.GRAY);
-                                this.circleMap.get(block).setFill(Color.RED);
-                            }
-                            else if(block.getYellow() == true) {
-                                redCircle.setFill(Color.GRAY);
-                                yellowCircle.setFill(Color.YELLOW);
-                                greenCircle.setFill(Color.GRAY);
-                                this.circleMap.get(block).setFill(Color.YELLOW);
-                            }
-                            else {*/
-                                redCircle.setFill(Color.GRAY);
-                                yellowCircle.setFill(Color.GRAY);
-                                greenCircle.setFill(Color.GREEN);
-                                //this.circleMap.get(block).setFill(Color.GREEN);
-                            //}
+
+                            redCircle.setFill(Color.GRAY);
+                            yellowCircle.setFill(Color.GRAY);
+                            greenCircle.setFill(Color.GREEN);
                         }
                         
                         Properties blockFix = new Properties(block.getBlockNumber(), occupiedText, "Open", 50, 5, 1, 1);
@@ -198,6 +201,7 @@ public class WaysideUI extends Stage{
                     } 
                     if(waysideController.getTrains() != null){
                         for(CTCTrain train : waysideController.getTrains()){
+                            System.out.println(train.getAuthority());
                             Properties trainFix = new Properties(1, "", "", train.getSuggestedSpeed(), train.getAuthority(), 1, 1);
                             trainTable.getItems().add(trainFix);
                         }
@@ -337,6 +341,7 @@ public class WaysideUI extends Stage{
             file = fileChooser.showOpenDialog(null);
             for(WaysideController waysideController : waysideControllers){
                 waysideController.uploadPLC(file);
+                //System.out.println("test");
             }
         }
          

@@ -6,6 +6,7 @@ import src.track_module.BlockConstructor.*;
 import src.track_module.Edge;
 import src.train_controller.TrainController;
 import src.UICommon;
+import src.CrashUI;
 import java.util.Random;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -15,6 +16,7 @@ import javafx.beans.property.BooleanProperty;
 public class Train {
     
     public BooleanProperty removeFlag = new SimpleBooleanProperty(false);
+    public boolean crashed = false;
 
     /****** constants ******/
     // in tons
@@ -264,37 +266,36 @@ public class Train {
         Block nextBlock = null;
 
         // if its a connected edge and it's not the previous block
-            try{
-            for (Edge edge: currentBlock.getEdges()){
-                Block edgeBlock = edge.getBlock();
-                if(edge.getConnected() && !edgeBlock.equals(prevBlock)){
-                    nextBlock = edgeBlock;
-                }
-            };
-
-            assert nextBlock != null;
-            System.out.println("Next Block: " + nextBlock.getBlockNumber());
-
-            // check if we arrived in yard
-            if (nextBlock instanceof Yard) {
-                currentBlock.setTrain(null);
-                destroyTrain();
-                return;
-            } else if (nextBlock instanceof Station) {
-                // TODO: pickup beacon
-                // beacon.setValue(nextBlock.getBeacon());
-            } else {
-                beacon.setValue("");
+        for (Edge edge: currentBlock.getEdges()){
+            Block edgeBlock = edge.getBlock();
+            if(edge.getConnected() && !edgeBlock.equals(prevBlock)){
+                nextBlock = edgeBlock;
             }
+        };
+        if (nextBlock == null) {
+            new CrashUI("Train crashed", getName() + " crashed into end of track");
+            crashed = true;
+            return;
+        }
 
-            prevBlock = currentBlock;
-            currentBlock = nextBlock;
-            currentBlock.setTrain(this);
-            controller.nextBlock();
+        assert nextBlock != null;
+        System.out.println(getName() + " - Next Block: " + nextBlock.getBlockNumber());
+
+        // check if we arrived in yard
+        if (nextBlock instanceof Yard) {
+            currentBlock.setTrain(null);
+            destroyTrain();
+            return;
+        } else if (nextBlock instanceof Station) {
+            beacon.setValue(((Station) currentBlock).getBeacon());
+        } else {
+            beacon.setValue("");
         }
-        catch(NullPointerException e){
-            System.out.println("The train has crashed.");
-        }
+
+        prevBlock = currentBlock;
+        currentBlock = nextBlock;
+        currentBlock.setTrain(this);
+        controller.nextBlock();
         
     }
 

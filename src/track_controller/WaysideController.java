@@ -21,6 +21,7 @@ public class WaysideController {
 
 	List<CTCTrain> adjustedTrains;
 	List<Shift> adjustedSwitchPositions;
+	Block activatedCrossing;
 
 	public WaysideController(){
 		this.blocks= new LinkedList<Block>();
@@ -36,7 +37,6 @@ public class WaysideController {
 
 	public void uploadPLC(File file){
 		plc = new PLC(file);
-
 	}
 
 	public void addBlock(Block block){
@@ -52,6 +52,9 @@ public class WaysideController {
 	}
 
 	public void setTrains(List<CTCTrain> trainsInJuris){
+		/*for(CTCTrain train : trainsInJuris){
+			System.out.println(train.getCurrPos());
+		}*/
 		this.trains = trainsInJuris;
 	}
 
@@ -91,10 +94,21 @@ public class WaysideController {
 		return lightsInJuris;
 	}
 
+
+
 	public void runPLC(){
-		//plc.makeBits(blocks, trains, switchPositions, closedBlocks, crossingBlock, lightsBlocks);
-		//adjustedSwitchPositions = plc.runSwitchLogic();
-		//adjustedTrains = plc.runAuthorityLogic();
+		/*for(Block block : blocks){
+			System.out.print(block.getBlockNumber() + " ");
+		}*/
+		//System.out.println();
+		if(plc != null){
+			plc.parseAndCompile();
+			plc.makeBits(blocks, trains, switchPositions, closedBlocks, crossingBlock, lightsBlocks);
+			adjustedSwitchPositions = plc.runSwitchLogic();
+			adjustedTrains = plc.runAuthorityLogic();
+			activatedCrossing = plc.runCrossingLogic();
+		}
+
 
 	}
 

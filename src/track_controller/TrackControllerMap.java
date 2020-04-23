@@ -1,5 +1,4 @@
 package src.track_controller;
-
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -30,7 +29,11 @@ public class TrackControllerMap extends BaseMap {
         toggleSwitch.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
             ((Shift)block).togglePosition();
         });
-        Scene scene = new Scene(toggleSwitch);
+        Label label = new Label("Not a Switch");
+        Scene scene = new Scene(label);
+        if (block instanceof Shift){
+            scene = new Scene(toggleSwitch);
+        }  
         return scene;
     }
 }

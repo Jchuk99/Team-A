@@ -40,7 +40,7 @@ public class PLC {
     private int numBlocks = 0;
 
     //adjustments
-	private List<CTCTrain> adjustedTrains;
+	private List<CTCTrain> adjustedTrains = new ArrayList<CTCTrain>();
 
     //acted on by plc
     private List<Shift> adjustedSwitchPositions;
@@ -98,7 +98,8 @@ public class PLC {
         }
         catch(IOException e) {
         System.out.println("Error processing file.");
-        }            
+        }      
+      
     }
 
     public void makeBits(LinkedList<Block> blocks, List<CTCTrain> trains, List<Shift> switchPositions, List<UUID> closedBlocks, UUID crossingBlock, List<Block> lightsBlocks){
@@ -109,20 +110,23 @@ public class PLC {
         this.crossingBlock = crossingBlock;
         this.lightsBlocks = lightsBlocks;
 
+		//System.out.println();
         //go through each block and make a bitstring based on occupied ("1") or unoccupied ("0")
-        for(Block block : blocks){
-            if(block.getOccupied()){
-                blockBits = blockBits + "1";
+        if(blockBits.length() == 0){
+            for(Block block : this.blocks){               
+                    if(block.getOccupied()){
+                        blockBits = blockBits + "1";
+                    }
+                    else{
+                        blockBits = blockBits + "0";
+                    }
+                    numBlocks++;
             }
-            else{
-                blockBits = blockBits + "0";
-            }
-            numBlocks++;
         }
         
         //compare the uuids of the list of closed blocks and replace
         int blockIndex = 0;
-        for(Block block : blocks){
+        for(Block block : this.blocks){
             for(UUID uuid : closedBlocks){
                 if(block.getUUID() == uuid){
                     blockBits = blockBits.substring(0, blockIndex) + "1" + blockBits.substring(blockIndex + 1);
@@ -134,33 +138,40 @@ public class PLC {
    
 
         //get the authority of the trains in the jurisdiction and make a bitstring of max size 111 (3 authority)
-        for(CTCTrain train : trains){
+        for(CTCTrain train : this.trains){
             authorityBits = binAndPad(Math.round(train.getAuthority()), numBlocks);
             authorityBitsMultiple.add(authorityBits);
         }
 
         //check if there is a switch in this jurisdiction that is toggled to that jurisdiction
-        if(switchPositions.size() > 0){
+        if(this.switchPositions != null){
             switchOn = true; 
         }
 
-        if(lightsBlocks.size() > 0){
+        if(this.lightsBlocks != null){
             lightsOn = true;
         }
 
         //check if there is a crossing in this jurisdiction
-        if(crossingBlock != null){
+        if(this.crossingBlock != null){
             crossingOn = true;
             //go through each block and make a bitstring based on occupied ("1") or unoccupied ("0")
-            for(Block block : blocks){
-                if(block.getUUID() == crossingBlock){
-                    crossingBits = crossingBits + "1";
+            if(crossingBits.length() == 0){
+                for(Block block : blocks){
+                    if(block.getUUID() == crossingBlock){
+                        crossingBits = crossingBits + "1";
+                    }
+                else{
+                    crossingBits = crossingBits + "0";
                 }
-            else{
-                crossingBits = crossingBits + "0";
             }
         } 
         }
+        /*System.out.println(crossingBits);
+		for(Block block : blocks){
+			System.out.print(block.getBlockNumber() + " ");
+        }
+        System.out.println();*/
 
     }
     
@@ -170,7 +181,7 @@ public class PLC {
         String nextChar = "";
         boolean pass = false;
         boolean temp = false; 
-
+        //System.out.println(expression);
         for(int i = 0; i<expression.length(); i++){
             currentChar = expression.substring(i, i+1);
             if(i != expression.length()-1){
@@ -215,15 +226,23 @@ public class PLC {
                 }
                 else if(currentChar.equals("w")){
                     if(nextChar.equals("a")){
-                        //switch occupied
+                        if(crossingCheck(blockBits, crossingBits, numBlocks)){
+                            boolExpression = boolExpression + "t";
+                        }
+                        else{
+                            boolExpression = boolExpression + "f";
+                        }
                     }
                 }
                 else if(currentChar.equals("a")){
+                    if(nextChar.equals("o")){
+                        boolExpression = boolExpression + "f";
                     if(authorityAndBlockCheck(blockBits, authorityBits, 12)){
                         boolExpression = boolExpression + "t";
                     }
                     else{
                         boolExpression = boolExpression + "f";
+                    }
                     }
                 }
                 
@@ -232,9 +251,7 @@ public class PLC {
                 boolExpression = boolExpression + currentChar;
             }
         }
-
         return parseBoolExpr(boolExpression);
-
     }
     
     //modify then send
@@ -252,12 +269,14 @@ public class PLC {
             	adjustString = adjustString + "0";
             }
         }
-        for(CTCTrain train : trains){
-        	if(adjustString.substring(count, count + 1).equals("1")){
-        		train.setAuthority(0);
-        	}
-        	adjustedTrains.add(train);
-        	count++;     	
+        if(trains != null){
+            for(CTCTrain train : trains){
+                if(adjustString.substring(count, count + 1).equals("1")){
+                    train.setAuthority(0);
+                }
+                adjustedTrains.add(train);
+                count++;     	
+            }
         }
         return adjustedTrains;
     }
@@ -313,27 +332,27 @@ public class PLC {
     public Block runPLCLogicLights(){
         if(lightsOn){
             lightsCycle(blockBits, numBlocks);
-            /*if(oneBlockAwayOccupied){
+            if(oneBlockAwayOccupied){
                 for(Block block : blocks){
-                    if(block instanceof Lights){
-                        ((Lights) block).setRed();
+                    if(block instanceof Shift){
+                        block.setSignalLight(2);
                     }
                 }
             }
             else if(twoBlocksAwayOccupied){
                 for(Block block : blocks){
-                    if(block instanceof Lights){
-                        ((Lights) block).setYellow();
+                    if(block instanceof Shift){
+                        block.setSignalLight(1);
                     }
                 }               
             }
             else{
                 for(Block block : blocks){
-                    if(block instanceof Lights){
-                        ((Lights) block).setGreen();
+                    if(block instanceof Shift){
+                        block.setSignalLight(0);
                     }
                 }                
-            }*/
+            }
         }
 
         return null;   
@@ -365,6 +384,12 @@ public class PLC {
 			}
 			if(and(crossingBits, "1") && and(blockBits, "1000")){
 				pass1 = true; 
+            }
+            else if(and(crossingBits, "1") && and(blockBits, "0100")){
+				pass1 = true; 
+            }
+            else if(and(crossingBits, "1") && and(blockBits, "0010")){
+				pass1 = true; 
 			}
 		}
 
@@ -379,6 +404,12 @@ public class PLC {
 			}
 			if(and(crossingBits, pad("1", numBlocks)) && and(blockBits, pad("0001", numBlocks))){
 				pass2 = true; 
+            }
+            else if(and(crossingBits, pad("1", numBlocks)) && and(blockBits, pad("0010", numBlocks))){
+				pass2 = true; 
+            }
+            else if(and(crossingBits, pad("1", numBlocks)) && and(blockBits, pad("0100", numBlocks))){
+				pass2 = true; 
 			}
 		}
 
@@ -388,16 +419,16 @@ public class PLC {
 	public static boolean authorityAndBlockCheck(String blocks, String author, int numBlocks){
         boolean failure = false;
         int[] occupiedIndices = getOccupiedIndicies(blocks, numBlocks);
-        int[] occupiedIndicesRev = getOccupiedIndiciesRev(blocks, numBlocks);
+        //int[] occupiedIndicesRev = getOccupiedIndiciesRev(blocks, numBlocks);
 
-		for(int i = 0; i<occupiedIndicesRev.length; i++){
+		/*for(int i = 0; i<occupiedIndicesRev.length; i++){
 			if(occupiedIndicesRev[i] != 0){
 				if(and(shiftLeft(author, occupiedIndicesRev[i]), blocks)){
 					System.out.println("1 fail for: "+ and(shiftLeft(author, occupiedIndicesRev[i]), blocks));
 					failure = true;
 				}
 			}
-		}
+		}*/
 
 		author = shiftLeft(author, numBlocks-1);
 	
@@ -473,7 +504,7 @@ public class PLC {
     }
 
     public static boolean isOperator(String chara){
-		if(!chara.equals("&") && !chara.equals("|") && !chara.equals("(") && !chara.equals(")") && !chara.equals("!")){
+		if(!chara.equals("&") && !chara.equals("|") && !chara.equals("(") && !chara.equals(")") && !chara.equals("!") && !chara.equals(",")){
 			return false;
 		}
 		return true;
@@ -482,7 +513,7 @@ public class PLC {
     
     public static boolean parseBoolExpr(String expression) {
         if (expression == null || expression.length() == 0) return false;
-
+        //System.out.println(expression);
         Stack<Character> ops = new Stack<>();
         Stack<Boolean> operands = new Stack<>();
 
@@ -525,7 +556,7 @@ public class PLC {
     public static int[] getOccupiedIndicies(String blocks, int numBlocks){
 	    int maxBlocks = 28;
 		int[] occupiedIndices = new int[maxBlocks];
-		int overlap = 3;
+		int overlap = 0;
 
 		for(int i = 0; i<blocks.length(); i++){
 			if(blocks.substring(i, i+1).equals("1") && i < numBlocks-overlap){
@@ -536,19 +567,20 @@ public class PLC {
 		return occupiedIndices;
 	}
 
-	public static int[] getOccupiedIndiciesRev(String blocks, int numBlocks){
+	/*public static int[] getOccupiedIndiciesRev(String blocks, int numBlocks){
 	    int maxBlocks = 28;
 		int[] occupiedIndicesRev = new int[maxBlocks];
-		int overlap = 3;
+		int overlap = 0;
 
 		for(int i = numBlocks-1; i>0; i--){
+
 			if(blocks.substring(i, i+1).equals("1") && numBlocks - i < numBlocks-overlap){
 				occupiedIndicesRev[i] = numBlocks - i;
 			}
 		}
 
 		return occupiedIndicesRev;
-	}
+	}*/
 
 
 }
