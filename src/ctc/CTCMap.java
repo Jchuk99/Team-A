@@ -169,9 +169,10 @@ public class CTCMap{
                         Station blockStation = (Station)block;
                         CTCStation myBlock = new CTCStation(line, section, blockNumber, length, speedLimit, grade, elevation, cummElevation, underground, blockStation.getName(), xCoordinate, yCoordinate);
                         myBlock.setUUID(block.getUUID());
-
-                        stationList.add(myBlock);
-                        blockMap.put(block.getUUID(), myBlock);
+                        if (!blockMap.containsKey(myBlock.getUUID())){
+                            stationList.add(myBlock);
+                            blockMap.put(block.getUUID(), myBlock);
+                        }
                     }
                     else if (block instanceof Shift){
                         Shift shiftBlock = (Shift)block;
