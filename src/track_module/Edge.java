@@ -1,18 +1,24 @@
 package src.track_module;
 
-import java.util.UUID;
-
 public class Edge {
     private Block block;
     private Boolean connected;
-    private UUID id;
+    private Boolean originallyConnected = false;
+    private Boolean isSwitch = false;
 
     public Edge( Block block, Boolean connected) {
-        id = UUID.randomUUID();
         this.block = block;
+        if(connected){
+            originallyConnected = true;
+        }
         this.connected = connected;
+        
+        
     }
-    public Block getBlock(){return block;};
-    public Boolean getConnected(){return connected;};
-    public void setConnected(Boolean connected){this.connected = connected;};
+    public Block getBlock(){return block;}
+    public Boolean getOriginalConnection(){return originallyConnected;}
+    public Boolean getConnected(){return connected;}
+    public void setConnected(Boolean connected){this.connected = connected;}
+    public Boolean getIsSwitch() {return isSwitch;}
+    public void setIsSwitch(Boolean isSwitch) {this.isSwitch = isSwitch;}
 }

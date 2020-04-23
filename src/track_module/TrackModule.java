@@ -35,13 +35,6 @@ public class TrackModule extends Module {
         //All of this information should be gotten by the waysides, you and Calvin need to work it out.
         //- Jason
         if(this.ctcModule.validMap()){
-            List<CTCShift> ctcSwitches = this.ctcModule.getSwitchPositions();
-            for(CTCShift shift: ctcSwitches){
-                Shift myShift = (Shift) blocks.get(shift.getUUID());
-                myShift.setPosition(shift.getPosition());
-            }
-
-
             List<UUID> closedBlocks = this.trackControllerModule.getCTCClosedBlocks();
             if (closedBlocks != null){
                 for (UUID blockID: closedBlocks){
@@ -57,12 +50,17 @@ public class TrackModule extends Module {
             }
             prevClosedBlocks = closedBlocks;
 
+            //List<CTCTrain> trains = this.trackControllerModule.getCTCTrains();
             List<CTCTrain> trains = this.ctcModule.getTrainsOnMap();
-            for (CTCTrain ctcTrain: trains){
-                Block currBlock = blocks.get(ctcTrain.getCurrPos());
-                Train train = currBlock.getTrain();
-                if (train != null){
-                    train.setTrain(ctcTrain.getSuggestedSpeed(), ctcTrain.getAuthority());
+            if (trains != null){
+                for (CTCTrain ctcTrain: trains){
+                    Block currBlock = blocks.get(ctcTrain.getCurrPos());
+                    if (currBlock != null){
+                        Train train = currBlock.getTrain();
+                        if (train != null){
+                            train.setTrain(ctcTrain.getSuggestedSpeed(), ctcTrain.getAuthority());
+                        }
+                    }
                 }
             }
         }
@@ -416,7 +414,7 @@ public class TrackModule extends Module {
 
         Train train = trainModule.createTrain();
         train.setBlock(startingBlock);
-        train.setTrain(ctcTrain.getSuggestedSpeed(), ctcTrain.getAuthority());
+        train.setTrain(ctcTrain.getSuggestedSpeed(), 1);
        
         System.out.println("Suggeted Speed: " + ctcTrain.getSuggestedSpeed() + " Authority: " + ctcTrain.getAuthority());
         System.out.println("Starting Block Number: " + startingBlock.getBlockNumber());

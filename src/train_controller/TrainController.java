@@ -23,25 +23,19 @@ public class TrainController {
     private BooleanProperty headLightsControlOn;
     private StringProperty hvacSetpoint;
     private StringProperty driverSpeed;
-    //private StringProperty beacon;
     private BooleanProperty emergencyBrakeControlOn;
     private BooleanProperty serviceBrakeControlOn;
     private int UUID;
-    //public BooleanProperty leftDoorStateTest=new SimpleBooleanProperty(false);
     private float suggestedSpeed;
     private float authority;
     private float v_cmd;
     private float v_cmd2;
-    //float v_cmd_prev;
     private float v_curr;
     private float v_curr2;
     private float v_err;
     private float v_err2;
-    //float v_err_prev;
-    private float power;
     private float v_prev;
-    private float v_prev2;
-    //float TIMESTEP=(float)50.0; //ms
+    private float v_driver; 
     private float kp=(float)20.0;
     private float ki=(float)10.0;
     private StringProperty timerMan=new SimpleStringProperty("11:00:23");
@@ -60,12 +54,12 @@ public class TrainController {
     private boolean radicalSlowDown1;
     private boolean radicalSlowDown2;
     public BooleanProperty removeFlag = new SimpleBooleanProperty(false);
+    public final float z=(float)(-1.0);
+    
     /**
     
     */
     public TrainController(TrainControllerModule tcm){ //
-        //attachedUI = new TrainControllerUI(this);
-        
         UUID=0;
         leftDoorsControlClosed=new SimpleBooleanProperty(false);
         rightDoorsControlClosed=new SimpleBooleanProperty(false);
@@ -74,15 +68,15 @@ public class TrainController {
         headLightsControlOn=new SimpleBooleanProperty(true);
         hvacSetpoint=new SimpleStringProperty("68 deg F");
         driverSpeed=new SimpleStringProperty("0 mph");
-        emergencyBrakeControlOn=new SimpleBooleanProperty(true);
+        emergencyBrakeControlOn=new SimpleBooleanProperty(false);
         serviceBrakeControlOn=new SimpleBooleanProperty(true);
-        //v_prev=(float)0.0;
-        //v_cmd_prev=(float)0.0;
         trainControllerModule=tcm;
         authority=(float)0.0;
         suggestedSpeed=(float)0.0;
         v_curr=(float)0.0;
         timerMan.bind(trainControllerModule.timeString);
+
+        
         
     }
 
@@ -127,21 +121,39 @@ public class TrainController {
             System.out.println("Vitality vitality failed");            
         }
         else{
-            setPowerVote();
+            setPowerVote();//comment out for testing
+            //testing code only, to test if setPower 1 logic works
+            /*attachedTrain.setPower(setPower1());
+            if(authority-crawlAuth<((float)0.01) && midStop-crawlDistance>((float)0.01)){
+                crawlDistance=crawlDistance+(float)0.5*timeStep*(v_curr+v_prev);
+            }
+            System.out.println("Authority: "+authority);
+            System.out.println("CrawlDistance: "+crawlDistance);*/
         }
 
-        //check lights needs to be done
-        if(timerMan.getValueSafe().equalsIgnoreCase("06:00:00")){
-            setHeadLightsControlOn(false);
-            setCabinLightsControlOn(false);
-        }
-        else if(timerMan.getValueSafe().equalsIgnoreCase("18:00:00")){
+        //check lights
+        if(Integer.parseInt(timerMan.getValueSafe().split(":")[0])<6 || Integer.parseInt(timerMan.getValueSafe().split(":")[0])>18){
             setHeadLightsControlOn(true);
             setCabinLightsControlOn(true);
         }
+        
 
         //door opening and closing
-        
+        //Figure out door side
+        if(serviceBrakeControlOn.get() && v_cmd<(float)0.0001 && v_curr<(float)0.0001)
+        {
+            /*if(true){
+                setLeftDoorsControlClosed(false);
+            }*/
+            if(true){
+                setRightDoorsControlClosed(false);
+            }
+        }
+        else{
+            setLeftDoorsControlClosed(true);
+            setRightDoorsControlClosed(true);
+        }
+
         //announcing 
         if(beaconUpdate){
             announce(beacon.getValueSafe());
@@ -198,7 +210,7 @@ public class TrainController {
 
     public void setPowerVote(){
         float power1=setPower1();
-        float power2=setPower2();
+        float power2=setPower3();
         if(power1-power2<((float)0.01) && power1-power2>(float)(-0.01)){
             attachedTrain.setPower(power1);
         }
@@ -212,10 +224,14 @@ public class TrainController {
             System.out.println("VCurr 1: "+v_curr+" 2: "+v_curr2);
             System.out.println("VCmd 1: "+v_cmd+" 2 "+v_cmd2);
         }
+        if(authority-crawlAuth<((float)0.01) && midStop-crawlDistance>((float)0.01)){
+            crawlDistance=crawlDistance+(float)0.5*timeStep*(v_curr+v_prev);
+        }
     }
     public float setPower1(){
         //current speed
         v_prev=v_curr;
+        
         if(attachedTrain.getCurrentSpeed().getValueSafe().isEmpty()){
             v_curr=(float)0.0;
         }
@@ -223,12 +239,26 @@ public class TrainController {
             v_curr=Float.parseFloat(attachedTrain.getCurrentSpeed().getValueSafe().split(" ")[0]);
         }
 
+        if(driverSpeed.getValueSafe().isEmpty()){
+            v_driver=suggestedSpeed;
+        }
+        else{
+            v_driver=Float.parseFloat(driverSpeed.getValueSafe().split(" ")[0]);
+        }
+
         //slowdown and crawl
-        if (authority-slowdownAuth<((float)0.01) && authority-crawlAuth>((float)0.01)){
+        if (authority+z*slowdownAuth<((float)0.01) && crawlAuth+z*authority<((float)(-0.01))){
+            if(suggestedSpeed+z*slowdownSpeed<(float)(-0.01)){    
+                v_cmd=suggestedSpeed;
+            }
+            else if (manualModeOn.getValue() && v_driver+z*slowdownSpeed<(float)(-0.01) && v_driver+z*suggestedSpeed<(float)(-0.01)){
+                v_cmd=v_driver;
+            }
+            else{
+                v_cmd=slowdownSpeed;
+            }
             
-            v_cmd=slowdownSpeed;
-            
-            if(v_curr-v_cmd>((float)0.01)){
+            if(v_cmd+z*v_curr<((float)(-0.01))){
                 setServiceBrakeControlOn(true);
                 radicalSlowDown1=true;
             }
@@ -238,27 +268,32 @@ public class TrainController {
             }
             
         }
-        else if (authority-crawlAuth<((float)0.01) && midStop-crawlDistance>((float)0.01)){
-            v_cmd=crawlSpeed;
-            if(v_curr-v_cmd>((float)0.01)){
+        else if (authority+z*crawlAuth<((float)0.01) && crawlDistance+z*midStop<((float)(-0.01))){
+            
+            if(suggestedSpeed+z*crawlSpeed<(float)(-0.01)){    
+                v_cmd=suggestedSpeed;
+            }
+            else if (manualModeOn.getValue() && v_driver+z*crawlSpeed<-0.01 && v_driver+z*suggestedSpeed<-0.01){
+                v_cmd=v_driver;
+            }
+            else{
+                v_cmd=crawlSpeed;
+            }
+
+            if(v_cmd+z*v_curr<-0.01){
                 setServiceBrakeControlOn(true);
-                //return (float)0.0;
                 radicalSlowDown1=true;
             }
             else{
                 setServiceBrakeControlOn(false);
                 radicalSlowDown1=false;
             }
-            //update crawlDistance
-            crawlDistance=crawlDistance+(float)0.5*timeStep*(v_curr+v_prev);
             
         }//final stop
-        else if (authority-crawlAuth<((float)0.01) && midStop-crawlDistance<((float)0.01)){
+        else if (authority+z*crawlAuth<((float)0.01) && midStop+z*crawlDistance<((float)0.01)){
             v_cmd=(float)0.0;
             setServiceBrakeControlOn(true);
-            //return (float)0.0;
             radicalSlowDown1=true;
-
         }
         //if none of the above, get suggested/driver speed
         else if(manualModeOn.getValue()){
@@ -269,14 +304,29 @@ public class TrainController {
                 v_cmd=Float.parseFloat(driverSpeed.getValueSafe().split(" ")[0]);
             }
             //safety check: if driver speed greater than suggested speed, use suggested speed
-            if(v_cmd>suggestedSpeed){
+            if(suggestedSpeed+z*v_cmd<-0.01){
                 v_cmd=suggestedSpeed;
             }
             radicalSlowDown1=false;
+
+            if (v_curr+z*v_cmd<=(float)0.1){
+                setServiceBrakeControlOn(false);
+            }
+            else{
+                setServiceBrakeControlOn(true);
+            }
+
         }
         else {
             v_cmd=suggestedSpeed;
             radicalSlowDown1=false;
+
+            if (v_curr+z*v_cmd<=(float)0.1){
+                setServiceBrakeControlOn(false);
+            }
+            else{
+                setServiceBrakeControlOn(true);
+            }
         }
         
         //braking distance calc (does this violate non-constant-acceleration)
@@ -290,37 +340,158 @@ public class TrainController {
         //for slightly over top speed (20 m/s), 116.43 m (within 4 blocks) to eBrake 
         //159.56 m (witihn 5 blocks) to sBrake, 224.90 m (within 7 blocks) just powered down to 0
 
-        int eBrakeDistance=(int)(1.7*(1/(-2.93-2.73))*(-9.81*(5)-0.5*v_curr*v_curr));
+        /*int eBrakeDistance=(int)(1.7*(1/(-2.93-2.73))*(-9.81*(5)-0.5*v_curr*v_curr));
         int sBrakeDistance=(int)(1.7*(1/(-2.93-1.2))*(-9.81*(5)-0.5*v_curr*v_curr));
         int noPowerDistance= (int) ( 1.7 * (1 / (-2.93)) * (-9.81 * (5) - 0.5 * v_curr * v_curr));
+        */
 
-
-        v_err=v_cmd-v_curr;
-        //v_err_prev=v_cmd_prev-v_prev;
+        v_err=v_cmd+z*v_curr;
         
-
-        
-        
-
-        //v_cmd_prev=v_cmd_curr;
-        //v_prev=v_curr;
-        if(authority<=0){    
+        if(authority<=0.1){    
             return (float)(0.0);
         }
-        else if(!radicalSlowDown1){
+        else if(radicalSlowDown1==false){
             return (float)(v_err*kp+v_curr*ki);
         
         }
         else{
             return (float)(0.0);
         }
+    }
+
+    public float setPower3(){
+        //current speed
+        v_prev=v_curr;
         
-        //attachedTrain.setPower(power);
-        //return power;
+        if(attachedTrain.getCurrentSpeed().getValueSafe().isEmpty()){
+            v_curr=(float)0.0;
+        }
+        else{
+            v_curr=Float.parseFloat(attachedTrain.getCurrentSpeed().getValueSafe().split(" ")[0]);
+        }
+
+        if(driverSpeed.getValueSafe().isEmpty()){
+            v_driver=suggestedSpeed;
+        }
+        else{
+            v_driver=Float.parseFloat(driverSpeed.getValueSafe().split(" ")[0]);
+        }
+
+        //slowdown and crawl
+        if (!(!(slowdownAuth-authority>-0.01) || !(authority-crawlAuth>0.01))){
+            if(slowdownSpeed-suggestedSpeed>(float)(0.01)){    
+                v_cmd=suggestedSpeed;
+            }
+            else if (!(!manualModeOn.getValue() || !(slowdownSpeed-v_driver>(float)(0.01)) || !(suggestedSpeed-v_driver>(float)(0.01)))){
+                v_cmd=v_driver;
+            }
+            else{
+                v_cmd=slowdownSpeed;
+            }
+            
+            if(!(v_cmd-v_curr>((float)(-0.01)))){
+                setServiceBrakeControlOn(true);
+                radicalSlowDown1=true;
+            }
+            else{
+                setServiceBrakeControlOn(false);
+                radicalSlowDown1=false;
+            }
+            
+        }
+        else if (!(!(crawlAuth-authority>-0.01) || !(midStop-crawlDistance>0.01))){
+            
+            if(crawlSpeed-suggestedSpeed>0.01){    
+                v_cmd=suggestedSpeed;
+            }
+            else if (!(!manualModeOn.getValue() || !(crawlSpeed-v_driver>0.01) || !(suggestedSpeed-v_driver>0.01))){
+                v_cmd=v_driver;
+            }
+            else{
+                v_cmd=crawlSpeed;
+            }
+
+            if(v_curr-v_cmd>0.01){
+                setServiceBrakeControlOn(true);
+                radicalSlowDown1=true;
+            }
+            else{
+                setServiceBrakeControlOn(false);
+                radicalSlowDown1=false;
+            }
+            
+        }//final stop
+        else if (!(!(crawlAuth-authority>-0.01) || !(crawlDistance-midStop>-0.01))){
+            v_cmd=(float)0.0;
+            setServiceBrakeControlOn(true);
+            radicalSlowDown1=true;
+        }
+        //if none of the above, get suggested/driver speed
+        else if(manualModeOn.getValue()){
+            if(driverSpeed.getValueSafe().isEmpty()){
+                v_cmd=(float)0.0;
+            }
+            else{
+                v_cmd=Float.parseFloat(driverSpeed.getValueSafe().split(" ")[0]);
+            }
+            //safety check: if driver speed greater than suggested speed, use suggested speed
+            if(v_cmd-suggestedSpeed>0.01){
+                v_cmd=suggestedSpeed;
+            }
+            radicalSlowDown1=false;
+
+            if (v_cmd-v_curr>-0.1){
+                setServiceBrakeControlOn(false);
+            }
+            else{
+                setServiceBrakeControlOn(true);
+            }
+
+        }
+        else {
+            v_cmd=suggestedSpeed;
+            radicalSlowDown1=false;
+
+            if (v_cmd-v_curr>(float)0.1){
+                setServiceBrakeControlOn(false);
+            }
+            else{
+                setServiceBrakeControlOn(true);
+            }
+        }
+        
+        //braking distance calc (does this violate non-constant-acceleration)
+        //aS+0.5*(V_curr-0)^2+g(h1-h2)=0
+        //S=(1/a)(-g(h1-h2)-0.5*V_curr^2)
+        //biggest grade=5% and -5%
+        //acceleration IS NOT A CONSTANT
+
+         //stupid soln (dry track, 5% grade downhill, 19.125 meter change in elevation)
+        //S=1.7*(1/(-2.93-2.73))*(-9.81*(19.125)-0.5*V_curr^2)
+        //for slightly over top speed (20 m/s), 116.43 m (within 4 blocks) to eBrake 
+        //159.56 m (witihn 5 blocks) to sBrake, 224.90 m (within 7 blocks) just powered down to 0
+
+        /*int eBrakeDistance=(int)(1.7*(1/(-2.93-2.73))*(-9.81*(5)-0.5*v_curr*v_curr));
+        int sBrakeDistance=(int)(1.7*(1/(-2.93-1.2))*(-9.81*(5)-0.5*v_curr*v_curr));
+        int noPowerDistance= (int) ( 1.7 * (1 / (-2.93)) * (-9.81 * (5) - 0.5 * v_curr * v_curr));
+        */
+
+        v_err=v_cmd-v_curr;
+        
+        if(!(authority>0.1)){    
+            return (float)(0.0);
+        }
+        else if(!radicalSlowDown1){
+            return (float)((v_err/(((float)1.0)/kp))-(v_curr/(z/ki)));
+        
+        }
+        else{
+            return (float)(0.0);
+        }
     }
 
     public float setPower2(){
-       v_prev2=v_curr2;
+        
         if(!attachedTrain.getCurrentSpeed().getValueSafe().equalsIgnoreCase("")){
             v_curr2=Float.parseFloat(attachedTrain.getCurrentSpeed().getValueSafe().split(" ")[0]);
         }
@@ -328,10 +499,25 @@ public class TrainController {
             v_curr2=(float)0.0;
         }
        
+        if(!driverSpeed.getValueSafe().isEmpty()){
+            v_driver=Float.parseFloat(driverSpeed.getValueSafe().split(" ")[0]);
+        }
+        else{
+            v_driver=suggestedSpeed;
+        }
+
         //slowdown and crawl
         if (slowdownAuth-authority>((float)(-0.01)) && crawlAuth-authority<((float)(-0.01))){
             
-            v_cmd2=slowdownSpeed;
+            if(suggestedSpeed+(slowdownSpeed/((float)(-1.0)))<(float)(-0.01)){    
+                v_cmd2=suggestedSpeed;
+            }
+            else if (manualModeOn.getValue() && v_driver+(slowdownSpeed/z)<(float)(-0.01) && v_driver+(suggestedSpeed/z)<(float)(-0.01)){
+                v_cmd2=v_driver;
+            }
+            else{
+                v_cmd2=slowdownSpeed;
+            }
             
             if(v_cmd2-v_curr2<((float)(-0.01))){
                 setServiceBrakeControlOn(true);
@@ -344,74 +530,36 @@ public class TrainController {
             
         }
         else if (crawlAuth-authority>((float)(-0.01)) && crawlDistance-midStop<((float)(-0.01))){
-            v_cmd2=crawlSpeed;
+            
+            if(suggestedSpeed+(crawlSpeed/z)<(float)(-0.01)){    
+                v_cmd2=suggestedSpeed;
+            }
+            else if (manualModeOn.getValue() && v_driver+(crawlSpeed/((float)(-1.0)))<(float)(-0.01) && v_driver+(suggestedSpeed/((float)(-1.0)))<(float)(-0.01)){
+                v_cmd2=v_driver;
+            }
+            else{
+                v_cmd2=crawlSpeed;
+            }
+            
             if(v_cmd2-v_curr2<((float)(-0.0001))){
                 setServiceBrakeControlOn(true);
-                //return (float)0.0;
                 radicalSlowDown2=true;
             }
             else{
                 setServiceBrakeControlOn(false);
                 radicalSlowDown2=false;
             }
-            //update crawlDistance
-            crawlDistance=crawlDistance-(((v_curr2)/(float)(-1.0))-v_prev2)/(((float)2.0)/timeStep);
-            
         }
         else if (crawlAuth-authority>((float)(-0.01)) && crawlDistance-midStop>((float)(-0.01))){
             v_cmd2=(float)0.0;
             setServiceBrakeControlOn(true);
-            //return (float)0.0;
             radicalSlowDown2=true;
-
         }
-        
-
-        /*//TESTING SETPOWER 1 setup
-        if (authority-slowdownAuth<((float)0.0001) && authority-crawlAuth>((float)0.0001)){
-            
-            v_cmd2=slowdownSpeed;
-            
-            if(v_curr2-v_cmd2>((float)0.0001)){
-                setServiceBrakeControlOn(true);
-                radicalSlowDown2=true;
-            }
-            else{
-                setServiceBrakeControlOn(false);
-                radicalSlowDown2=false;
-            }
-            
-        }
-        else if (authority-crawlAuth<((float)0.0001) && midStop-crawlDistance>((float)0.0001)){
-            v_cmd2=crawlSpeed;
-            if(v_curr2-v_cmd2>((float)0.0001)){
-                setServiceBrakeControlOn(true);
-                //return (float)0.0;
-                radicalSlowDown2=true;
-            }
-            else{
-                setServiceBrakeControlOn(false);
-                radicalSlowDown2=false;
-            }
-            //update crawlDistance
-            crawlDistance=crawlDistance+(float)0.5*timeStep*(v_curr2+v_prev2);
-            //testing
-            ki=crawlDistance;
-            
-        }
-        else if (authority-crawlAuth<((float)0.0001) && midStop-crawlDistance<((float)0.0001)){
-            v_cmd2=(float)0.0;
-            setServiceBrakeControlOn(true);
-            //return (float)0.0;
-            radicalSlowDown2=true;
-            //testing
-            kp=crawlDistance;
-        }*/
 
         //using driver or suggested speed
         else if(!manualModeOn.getValue()){
             v_cmd2=suggestedSpeed;
-		radicalSlowDown2=false;
+		    radicalSlowDown2=false;
         }
         else {
             
@@ -423,11 +571,27 @@ public class TrainController {
                 if(suggestedSpeed<Float.parseFloat(driverSpeed.getValueSafe().split(" ")[0])){
                     v_cmd2=suggestedSpeed;
                 }
-		    radicalSlowDown2=false;
+                radicalSlowDown2=false;
+                
+                if (v_cmd2+(v_curr2/((float)(-1.0)))<(float)(-1.9)){
+                    setServiceBrakeControlOn(true);
+                }
+                else{
+                    setServiceBrakeControlOn(false);
+                }
+
             }
             else{
                 v_cmd2=(float)0.0;
-		    radicalSlowDown2 = false;
+                radicalSlowDown2=false;
+                
+                if (v_cmd2+(v_curr2/((float)(-1.0)))<(float)(-1.9)){
+                    setServiceBrakeControlOn(true);
+                }
+                else{
+                    setServiceBrakeControlOn(false);
+                }
+
             }
         }
         
@@ -445,27 +609,19 @@ public class TrainController {
         //for slightly over top speed (20 m/s), 116.43 m (within 4 blocks) to eBrake 
         //159.56 m (witihn 5 blocks) to sBrake, 224.90 m (within 7 blocks) just powered down to 0
 
-        int eBrakeDistance=(int)(1.7*(1/(-2.93-2.73))*(-9.81*(19.125)-0.5*v_curr*v_curr));
+        /*int eBrakeDistance=(int)(1.7*(1/(-2.93-2.73))*(-9.81*(19.125)-0.5*v_curr*v_curr));
         int sBrakeDistance=(int)(1.7*(1/(-2.93-1.2))*(-9.81*(19.125)-0.5*v_curr*v_curr));
         int noPowerDistance= (int) ( 1.7 * (1 / (-2.93)) * (-9.81 * (19.125) - 0.5 * v_curr * v_curr));
+        */
 
-
-        v_err2=v_cmd2+(v_curr2/(-1));
-        //v_err_prev=v_cmd_prev-v_prev;
-        
-
-        
-        
-
-        //v_cmd_prev=v_cmd_curr;
-        //v_prev=v_curr;
+        v_err2=v_cmd2+(v_curr2/((float)(-1.0)));
+    
         if(authority>(float)0.0 && !radicalSlowDown2){
-            return (float)(((v_err2/(-1/kp))-(v_curr2/(1/ki)))/(-1));    
+            return (float)((v_err2/((float)(-1.0)/kp))-(v_curr2/(((float)(1.0))/ki)))/((float)(-1.0));    
         }
         else{
             return (float)0.0;            
         }
-        //attachedTrain.setPower(power);
     }
 
     public void setTrain(float sSpeed, float auth) {
@@ -508,6 +664,9 @@ public class TrainController {
     }
     public void nextBlock(){
         authority=authority-(float)1.0;
+        if(crawlDistance>(float)(0.0)){
+            crawlDistance=(float)0.0;
+        }
     }
 
     /**

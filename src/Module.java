@@ -16,7 +16,7 @@ public abstract class Module{
     final int YEAR = 2020;
     final int MONTH = 1;
     final int DAY = 1;
-    final int HOUR = 0;
+    final int HOUR = 8;
     final int MINUTE = 0;
     final int SECOND = 0;
 

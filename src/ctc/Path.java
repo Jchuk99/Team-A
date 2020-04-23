@@ -36,7 +36,7 @@ public class Path {
     public UUID getNextBlockID(UUID currBlockID) {
         //TODO: error check.
             int currIndex = course.indexOf(currBlockID);
-            if (currIndex == (course.size() - 1)){
+            if (currIndex == (course.size() - 1) || currIndex == -1){
                 return null;
             }
             else{
@@ -51,10 +51,10 @@ public class Path {
     //TODO: Make algorithim account for distance of blocks
     protected LinkedList<UUID> findCourse(UUID start, UUID destination, UUID prevBlock) {
 
-
         LinkedList<UUID> course = null;
         int limit = 0;
         CTCMap map = CTCModule.map;
+        
         System.out.println("Start: " + map.getBlock(start).getBlockNumber());
         System.out.println("End: " + map.getBlock(destination).getBlockNumber());
         Set<UUID> blockIDs = map.getBlockIDs();
@@ -84,12 +84,12 @@ public class Path {
                 for (Edge e : b.getEdges()) {
                     Block edgeBlock = e.getBlock();
                     // not the previous block, connected, and edgeTo the block isn't the current block(circle)
-                    if (!edgeBlock.getUUID().equals(prevBlock) && e.getConnected() && !b.getUUID().equals(edgeTo.get(edgeBlock.getUUID()).peek())){
+                    if (!edgeBlock.getUUID().equals(prevBlock) && e.getOriginalConnection() && !b.getUUID().equals(edgeTo.get(edgeBlock.getUUID()).peek())){
                             edgeTo.get(edgeBlock.getUUID()).addFirst(b.getUUID());
                             q.add(edgeBlock);
                     }
                 }
-              if (limit >= 1000 || edgeTo.get(destination).size() >=1){
+              if (limit >= 10000 || edgeTo.get(destination).size() >=1){
                   break;
               }
               limit++;
@@ -106,13 +106,6 @@ public class Path {
             }
         }
         course.add(0, curr);
-        
-        
-        for (UUID blockID: course){
-            System.out.println("Block Number: " + map.getBlock(blockID).getBlockNumber());
-            System.out.println("Block ID: " + blockID);
-        }
-        
         
 		return course;
     }

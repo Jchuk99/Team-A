@@ -72,7 +72,7 @@ public class TrainControllerData {
             hvacSetpoint.unbind();
             hvacSetpoint.setValue("");
             controlLaw.unbind();
-            controlLaw.setValue("");
+            controlLaw.setValue("20,10");
 
             leftDoorsControlClosed.unbind();
             leftDoorsControlClosed.setValue(false);

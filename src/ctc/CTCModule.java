@@ -18,7 +18,7 @@ import src.track_module.Block;
 import src.track_module.Edge;
 
 public class CTCModule extends Module{
-    public static final int MAX_AUTHORITY = 5;
+    public static final int MAX_AUTHORITY = 4;
     public static CTCMap map = null;
     public StringProperty greenTickets = new SimpleStringProperty("");
     public StringProperty redTickets = new SimpleStringProperty("");
@@ -29,6 +29,11 @@ public class CTCModule extends Module{
     public void update(){
 
         if (validMap()){
+
+            if (!schedule.created){
+                schedule.createSchedule();
+            }
+
             map.updateMap();
             dispatchTrains();
             updateTrainPositions();
@@ -49,7 +54,7 @@ public class CTCModule extends Module{
     
 
     public void main() {
-        //schedule.readInSchedule();
+       // schedule.readInSchedule();
     }
 
     public CTCModule(){
@@ -66,7 +71,6 @@ public class CTCModule extends Module{
         if (map == null){
             map = new CTCMap(trackControllerModule, trackModule);
             map.initMap();
-            schedule.createSchedule();
         }
     }
 
@@ -80,7 +84,7 @@ public class CTCModule extends Module{
     public void updateTrainPositions(){
         List<UUID> occupiedBlocks = map.getOccupiedBlocks();
         List<UUID> closedBlocks = map.getClosedBlocks();
-        List<CTCTrain> trains = getTrainsOnMap();
+        List<CTCTrain> trains = getTrains();
 
         if(trains.size() > 0){
             for (CTCTrain train : trains){
@@ -108,63 +112,41 @@ public class CTCModule extends Module{
                 }
                // not at it's destination
                 else{
-                    Block currBlock = map.getBlock(train.getCurrPos());
-                    for (Edge e: currBlock.getEdges()){
-                        UUID edgeBlockID = e.getBlock().getUUID();
-                        boolean isOccupied = occupiedBlocks.contains(edgeBlockID);
-                        boolean isClosed = closedBlocks.contains(edgeBlockID);  
-                        boolean prevBlock = edgeBlockID.equals(train.getPrevPos());
-                        if(!prevBlock && isOccupied && !isClosed){
-                            train.setCurrPos(edgeBlockID);
-                            if (!train.onPath()){
-                                train.updateCurrPath();
+                    if (train.inYard() && train.isDispatched()){
+                        trainTable.destroyTrain(train);
+                        break;
+                    }
+
+                    if (train.onMap()){
+                        Block currBlock = map.getBlock(train.getCurrPos());
+                        for (Edge e: currBlock.getEdges()){
+                            UUID edgeBlockID = e.getBlock().getUUID();
+                            boolean isOccupied = occupiedBlocks.contains(edgeBlockID);
+                            boolean isClosed = closedBlocks.contains(edgeBlockID);  
+                            boolean prevBlock = edgeBlockID.equals(train.getPrevPos());
+
+                            if(edgeBlockID.equals(map.getYard().getUUID()) && e.getConnected() && !occupiedBlocks.contains(currBlock.getUUID())){
+                                train.setCurrPos(map.getYard().getUUID());
+                            }
+                            else{
+                                if(!prevBlock && isOccupied && !isClosed){
+                                    train.setCurrPos(edgeBlockID);
+                                    if (!train.onPath()){
+                                        train.updateCurrPath();
+                                    }
+                                }
                             }
                         }
                     }
                 }
             } 
         }  
-           
-          /* 
-            for (CTCTrain train: trains){
-                //TODO: change all the blockID's to blocks, just get the ID from the block.
-                UUID nextBlock = train.getNextBlockID(train.getCurrPos());
-                if (nextBlock != null){
-                    boolean isOccupied = occupiedBlocks.contains(nextBlock);
-                    boolean isClosed = closedBlocks.contains(nextBlock);
-
-                    if (isOccupied && !isClosed) {
-                        train.setCurrPos(nextBlock);
-                       // System.out.println("Train ID: " + train.getTrainID());
-                       // System.out.println("currPos : " + map.getBlock(train.getCurrPos()).getBlockNumber());
-                    }
-                }
-                else{
-                    // if the nextBlock is null then we should be @ our destination
-                    //TODO: think of edge cases.
-                    //TODO: only update the current Path after waiting 3 minutes at station.
-                    if (train.atDestination()){
-                        train.getNextPath();
-                        if (train.getRoute().size() == 0 ){
-                            System.out.println("Train route is done.");
-                            if (!train.inYard()){
-                                train.goToYard();
-                            }else{
-                                trainTable.destroyTrain(train);
-                            }
-                        }
-                    }
-                }
-
-            }
-            
-        }*/
     }
 
     //
     public void updateTrainAuthorities(){
         //TODO: Error Check, discuss train coming out of yard.
-        List<CTCTrain> trains = getTrains();
+        List<CTCTrain> trains = getTrainsOnMap();
         List<UUID> occupiedBlocks = map.getOccupiedBlocks();
         List<UUID> authorityBlocks = new ArrayList<UUID>();
         List<UUID> closedBlocks = map.getClosedBlocks();
@@ -182,8 +164,8 @@ public class CTCModule extends Module{
                 }
                 nextBlockID = train.getNextBlockID(nextBlockID);
             }
-            System.out.println("Train ID: " + train.getTrainID());
-            System.out.println("Train authority: "+ authority);
+            //System.out.println("Train ID: " + train.getTrainID());
+            //System.out.println("Train authority: "+ authority);
             train.setAuthority(authority + 1);
         }
     }
@@ -215,6 +197,7 @@ public class CTCModule extends Module{
                     }
                 }
 
+                trainToDispatch.setDispatched(true);
                 this.trackModule.dispatchTrain(trainToDispatch);
                 // take train out of dispatch Queue if dispatched.
                 dispatchQueue.poll(); 
@@ -274,6 +257,15 @@ public class CTCModule extends Module{
             return null;
         }
     }
+    public List<UUID> getOccupiedBlocks() {
+        if (validMap()){
+            return map.getOccupiedBlocks();
+        }
+        else{
+            return null;
+        }
+    }
+
 
     /****** for GUI ******/
 

@@ -101,24 +101,25 @@ public class TrackControllerModule extends Module {
 
 	@Override
 	public void update(){
-		//trains = this.ctcModule.getTrains();	
-		//switchPositions = this.ctcModule.getSwitchPositions();
-		//closedBlocks = this.ctcModule.getClosedBlocks();
-		/*for(WaysideController waysideController : waysideControllers){
-			LinkedList<Blocks> blocks = waysideController.getBlocks();
+		trains = this.ctcModule.getTrainsOnMap();	
+		switchPositions = this.ctcModule.getSwitchPositions();
+		closedBlocks = this.ctcModule.getClosedBlocks();
+		for(WaysideController waysideController : waysideControllers){
+			LinkedList<Block> blocks = waysideController.getBlocks();
 			waysideController.setTrains(getTrainsInJuris(blocks));
-			waysideController.setSwitches(getSwitchesInJuris(blocks));
+			waysideController.setSwitchPositions(getSwitchesInJuris(blocks));
 			waysideController.setClosedBlocks(getClosedBlocksInJuris(blocks));
-			waysideController.setCrossingBlock(getCrossingBlockInJuris(blocks));
+			waysideController.setCrossingBlock(getCrossingBlocksInJuris(blocks));
 			waysideController.runPLC();
+			/*
 			for(Shift shift : waysideController.getAdjustedSwitchPosition()){
 				adjustedSwitchPositions.add(shift);
 			}
 			for(CTCTrain train : waysideController.getAdjustedTrains()){
 				adjustedTrains.add(train);
-			}
+			}*/
 		}
-		*/
+
 	}
 	
 	public List<CTCTrain> getTrainsInJuris(LinkedList<Block> blocks){
@@ -140,10 +141,12 @@ public class TrackControllerModule extends Module {
 		for(CTCShift ctcSwitch : switchPositions){
 			for(Block block : blocks){
 				if(ctcSwitch.getBlockNumber() == block.getBlockNumber()){
-					if(ctcSwitch.getPosition() != ((Shift)block).getPosition()){
-						((Shift)block).togglePosition();
+					if (block instanceof Shift){
+						if(ctcSwitch.getPosition() != ((Shift)block).getPosition()){
+							((Shift)block).togglePosition();
+						}
+						candidateSwitches.add((Shift) block);
 					}
-					candidateSwitches.add((Shift) block);
 				}
 			}
 		}

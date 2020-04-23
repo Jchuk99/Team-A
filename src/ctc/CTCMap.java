@@ -60,7 +60,7 @@ public class CTCMap{
         Block startingBlock = null;
             for (Edge edge: myYard.getEdges()){
                 //assumes only one starting block will be found for each line
-                if ((edge.getBlock().getLine().equalsIgnoreCase(line) && (edge.getConnected()))){
+                if ((edge.getBlock().getLine().equalsIgnoreCase(line) && edge.getOriginalConnection())){
                     startingBlock = edge.getBlock();
                 }
             }
@@ -192,10 +192,12 @@ public class CTCMap{
         }
 
         Yard trackYard =  trackModule.getYard();
-        myYard = new CTCYard(trackYard.getX(), trackYard.getY()); 
-        myYard.setUUID(trackYard.getUUID());
-        myYard.setEdges(trackYard.getEdges());
-        blockMap.put(trackYard.getUUID(), myYard);
+        if(trackYard != null){
+            myYard = new CTCYard(trackYard.getX(), trackYard.getY()); 
+            myYard.setUUID(trackYard.getUUID());
+            myYard.setEdges(trackYard.getEdges());
+            blockMap.put(trackYard.getUUID(), myYard);
+        }
     
         // need an extra for loop to put in edges now that I have all the blocks
         for(WaysideController wayside: waysides){

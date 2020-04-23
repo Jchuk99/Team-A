@@ -27,11 +27,14 @@ import javafx.scene.shape.Circle;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import src.UICommon;
 import src.ctc.CTCBlockConstructor.CTCStation;
 import src.track_module.Block;
+
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -538,6 +541,16 @@ public class CTCUI extends Stage {
             @Override 
             public void handle(MouseEvent e) {
                 scheduleButton.setEffect(null);
+            }
+        });
+
+        scheduleButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Open File");
+                
+                File csvFile= fileChooser.showOpenDialog( null);
             }
         });
 

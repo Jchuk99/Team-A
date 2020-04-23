@@ -44,6 +44,7 @@ public class TrainTable {
     }
 
     public void destroyTrain(CTCTrain train){
+        System.out.println("destroy train");
         trains.remove(train.getTrainID(), train);
         observableTrains.remove(train);
     }
@@ -83,6 +84,13 @@ public class TrainTable {
 
     public void maxID(int trainID){
         if (trainID > largestID) largestID = trainID;
+    }
+
+    public void reHeapify(){
+        for (CTCTrain train: dispatchQueue){
+            dispatchQueue.remove(train);
+            dispatchQueue.add(train);
+        }
     }
 
     /** FOR GUI */

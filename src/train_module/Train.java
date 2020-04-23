@@ -264,32 +264,38 @@ public class Train {
         Block nextBlock = null;
 
         // if its a connected edge and it's not the previous block
-        for (Edge edge: currentBlock.getEdges()){
-               Block edgeBlock = edge.getBlock();
-            if(edge.getConnected() && !edgeBlock.equals(prevBlock)){
-                nextBlock = edgeBlock;
+            try{
+            for (Edge edge: currentBlock.getEdges()){
+                Block edgeBlock = edge.getBlock();
+                if(edge.getConnected() && !edgeBlock.equals(prevBlock)){
+                    nextBlock = edgeBlock;
+                }
+            };
+
+            assert nextBlock != null;
+            System.out.println("Next Block: " + nextBlock.getBlockNumber());
+
+            // check if we arrived in yard
+            if (nextBlock instanceof Yard) {
+                currentBlock.setTrain(null);
+                destroyTrain();
+                return;
+            } else if (nextBlock instanceof Station) {
+                // TODO: pickup beacon
+                // beacon.setValue(nextBlock.getBeacon());
+            } else {
+                beacon.setValue("");
             }
-        };
 
-        assert nextBlock != null;
-        System.out.println("Next Block: " + nextBlock.getBlockNumber());
-
-        // check if we arrived in yard
-        if (nextBlock instanceof Yard) {
-            currentBlock.setTrain(null);
-            destroyTrain();
-            return;
-        } else if (nextBlock instanceof Station) {
-            // TODO: pickup beacon
-            // beacon.setValue(nextBlock.getBeacon());
-        } else {
-            beacon.setValue("");
+            prevBlock = currentBlock;
+            currentBlock = nextBlock;
+            currentBlock.setTrain(this);
+            controller.nextBlock();
         }
-
-        prevBlock = currentBlock;
-        currentBlock = nextBlock;
-        currentBlock.setTrain(this);
-        controller.nextBlock();
+        catch(NullPointerException e){
+            System.out.println("The train has crashed.");
+        }
+        
     }
 
 

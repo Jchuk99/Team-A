@@ -97,11 +97,14 @@ public abstract class BaseMap {
             }
             
             block.occupiedProperty().addListener((obs, oldText, newText) -> {
-                if (block.getOccupied()){
-                    this.circleMap.get(block).setFill(Color.BLUE);
-                }
-                else {
-                    this.circleMap.get(block).setFill(Color.GREEN);
+                Circle circleBlock = this.circleMap.get(block);
+                if (circleBlock !=null){
+                    if (block.getOccupied()){
+                        circleBlock.setFill(Color.BLUE);
+                    }
+                    else {
+                        circleBlock.setFill(Color.GREEN);
+                    }
                 }
             });
             block.functionalProperty().addListener((obs, oldText, newText) -> {

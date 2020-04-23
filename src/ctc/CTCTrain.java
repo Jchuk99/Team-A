@@ -9,7 +9,7 @@ import javafx.beans.property.StringProperty;
 import src.track_module.Block;
 
 public class CTCTrain {
-    private static long dwellTime = 600; // IN SECONDS
+    private static long dwellTime = 60; // IN SECONDS
     private float authority = 0;
     private float suggestedSpeed; // IN METERS PER SECOND INTENRALLY
     private int trainID;
@@ -18,11 +18,11 @@ public class CTCTrain {
     public UUID startPos;
     private UUID currPos;
     private UUID prevPos = null;
-    private int errorStatus; //TODO: make this an enum.
     private LocalTime dispatchTime;
     private LocalTime dwellStart;
     private Route route = new Route();
     private boolean dwelling = false;
+    private boolean dispatched = false;
 
     private StringProperty suggestedSpeedString = new SimpleStringProperty("");
     private StringProperty currPosString = new SimpleStringProperty("");
@@ -45,7 +45,6 @@ public class CTCTrain {
         if (route.size() == 0){
             // block connected to yard depending on line
             startPos = CTCModule.map.getStartingBlockID(destination.getLine());
-            //TODO: add a isDipatched method;
             route.addPath(startPos, dest, prevPathBlock);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
@@ -58,31 +57,43 @@ public class CTCTrain {
 
     public void addTimePath(UUID dest, LocalTime startTime, LocalTime endTime){
         Block destination = CTCModule.map.getBlock(dest);
-        UUID start;
 
         //If train does not have any queued paths then will be in yard.
         if (route.size() == 0){
             // block connected to yard depending on line
-            start = CTCModule.map.getStartingBlockID(destination.getLine());
-            //TODO: add a isDipatched method, maybe just dispatched when not in yard.
-            route.addTimePath(start, dest, prevPathBlock, startTime, endTime);
+            startPos = CTCModule.map.getStartingBlockID(destination.getLine());
+            route.addTimePath(startPos, dest, prevPathBlock, startTime, endTime);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
         else{
-            start = route.getLastPath().getEndBlock();
-            route.addTimePath(start, dest, prevPathBlock, startTime, endTime);
+            route.addTimePath(route.getLastPath().getEndBlock(), dest, prevPathBlock, startTime, endTime);
             prevPathBlock = route.getLastPath().getBeforeEndBlock();
         }
     }
+
+    public void addTimePath(UUID dest, LocalTime endTime){
+        Block destination = CTCModule.map.getBlock(dest);
+
+        //If train does not have any queued paths then will be in yard.
+        if (route.size() == 0){
+            // block connected to yard depending on line
+            startPos = CTCModule.map.getStartingBlockID(destination.getLine());
+            route.addTimePath(startPos, dest, prevPathBlock, endTime);
+            prevPathBlock = route.getLastPath().getBeforeEndBlock();
+        }
+        else{
+            route.addTimePath(route.getLastPath().getEndBlock(), dest, prevPathBlock, endTime);
+            prevPathBlock = route.getLastPath().getBeforeEndBlock();
+        }
+    }
+
     public void update(){
-        //updateCurrPath();
         updateString();
     }
     
     public void updateCurrPath(){
         Path currPath = route.getCurrPath();
         if (currPath != null){
-            // this constantly updates
             currPath.updateCourse(currPos, prevPos);
         }
 
@@ -119,7 +130,8 @@ public class CTCTrain {
         return currPos.equals(destination);
     }
     public boolean inYard(){
-        return currPos == CTCModule.map.getYard().getUUID();
+        boolean inYard = currPos.equals(CTCModule.map.getYard().getUUID());
+        return inYard;
     }
     public boolean onMap(){
         return !inYard();
@@ -142,6 +154,9 @@ public class CTCTrain {
             onPath = currPath.getCourse().contains(currPos);
         }
         return onPath;
+    }
+    public boolean isDispatched(){
+        return dispatched;
     }
     
     // getters and setters.
@@ -169,6 +184,9 @@ public class CTCTrain {
     }
     public void setDwellStart(LocalTime dwellStart){
         this.dwellStart = dwellStart;
+    }
+    public void setDispatched(Boolean dispatched){
+        this.dispatched = dispatched;
     }
     public Route getRoute(){
         return route;
