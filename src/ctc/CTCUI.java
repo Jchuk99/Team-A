@@ -62,21 +62,6 @@ public class CTCUI extends Stage {
         HBox timeBox = createTimeBox();
         timeBox.setAlignment(Pos.CENTER);
 
-        Text greenLineHourText = new Text("Green Line Ticket Sales");
-        Text redLineHourText = new Text("Red Line Ticket Sales");
-        //TODO: replace ticketLabel with actual value
-        Label greenLineHourLabel = new Label("");
-        Label redLineHourLabel = new Label("");
-        //greenLineHourLabel.textProperty().bind(ctcOffice.greenTickets);
-        //redLineHourLabel.textProperty().bind(ctcOffice.redTickets);
-        greenLineHourLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
-        redLineHourLabel.setStyle("-fx-border-style: solid inside;" + "-fx-border-width: 2;" + "-fx-padding: 5;");
-
-        HBox greenTicketBox = new HBox(10, greenLineHourText, greenLineHourLabel);
-        HBox redTicketBox = new HBox(10, redLineHourText, redLineHourLabel);
-        VBox ticketBox = new VBox(10, greenTicketBox, redTicketBox);
-        ticketBox.setAlignment(Pos.CENTER);
-
         Text greenLineTotalText = new Text("Green Line Total Ticket Sales");
         Text redLineTotalText = new Text("Red Line Total Ticket Sales");
         Label greenLineTotalLabel = new Label("");
@@ -108,10 +93,9 @@ public class CTCUI extends Stage {
 
         HBox topHalf1 = new HBox();
         HBox.setHgrow(timeBox, Priority.ALWAYS);
-        HBox.setHgrow(ticketBox, Priority.ALWAYS);
         HBox.setHgrow(totalTicketBox, Priority.ALWAYS);
         HBox.setHgrow(manualMode, Priority.ALWAYS);
-        topHalf1.getChildren().addAll(ticketBox, totalTicketBox, manualMode, timeBox);
+        topHalf1.getChildren().addAll(totalTicketBox, manualMode, timeBox);
 
         TableView<CTCTrain> trainTable = createTrainTable();
 

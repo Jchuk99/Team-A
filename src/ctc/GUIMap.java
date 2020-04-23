@@ -143,7 +143,7 @@ public class GUIMap extends BaseMap {
         Circle circleOrange = UICommon.createCircle(10, Color.WHITE);
         statusUpdate(block, circleRed, circleOrange, circleBlue, circleGreen);
 
-        Button closedMode = UICommon.createButton("Set Closed", 200, 10);
+        Button closedMode = UICommon.createButton("Toggle Closed", 200, 10);
         closedMode.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
             CTCBlock ctcBlock = (CTCBlock)block;
             ctcBlock.setClosed(!ctcBlock.getClosed());
